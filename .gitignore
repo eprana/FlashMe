@@ -64,6 +64,7 @@ Desktop.ini
 *.pydevproject
 .project
 .metadata
+libs/
 tmp/**
 tmp/**/*
 *.tmp
