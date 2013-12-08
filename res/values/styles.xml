@@ -1,0 +1,98 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+        Base application theme, dependent on API level. This theme is replaced
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+    -->
+    <style name="AppBaseTheme" parent="android:Theme.Light">
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+        -->
+    </style>
+
+    <!-- Application theme. -->
+    <style name="AppTheme" parent="AppBaseTheme">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
+    
+    <style name="translucide">
+		<item name="android:background">@color/translucide</item>
+	</style>
+	
+    <style name="blue">
+        <item name="android:textColor">@color/blue</item>
+    </style>
+    
+    <style name="white">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="topLine">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@color/blue</item>
+        <item name="android:textSize">@dimen/small_tx</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/verysmall_wd</item>
+        <item name="android:gravity">center</item>
+    </style>
+    
+    <style name="topLineButton">
+        <item name="android:background">@color/translucide</item>
+        <item name="android:layout_width">@dimen/verysmall_wd</item>
+        <item name="android:layout_height">@dimen/verysmall_wd</item>
+    </style>
+    
+    <style name="topLineLight">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@color/secondBlue</item>
+        <item name="android:textSize">@dimen/small_tx</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/verysmall_wd</item>
+        <item name="android:gravity">center</item>
+    </style>
+    
+    <style name="whiteOnBlue">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@color/blue</item>
+    </style>
+    
+    <style name="buttonWhite">
+    	<item name="android:textColor">@color/blue</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:layout_height">@dimen/verysmall_wd</item>
+        <item name="android:textSize">@dimen/medium_tx</item>
+    </style>
+    
+    <style name="buttonLightBlue">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@color/secondBlue</item>
+        <item name="android:layout_height">@dimen/verysmall_wd</item>
+        <item name="android:textSize">@dimen/medium_tx</item>
+    </style>    
+    
+    <style name="buttonDarkBlue">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@color/blue</item>
+        <item name="android:layout_height">@dimen/verysmall_wd</item>
+        <item name="android:textSize">@dimen/medium_tx</item>
+    </style>    
+    
+    <style name="team_completed">
+        <item name="android:text">.</item>
+        <item name="android:textColor">@color/blue</item>
+        <item name="android:background">@color/blue</item>
+        <item name="android:layout_height">@dimen/verysmall_wd</item>
+        <item name="android:textSize">@dimen/medium_tx</item>
+    </style>
+    
+    <style name="team_waiting">
+        <item name="android:text">.</item>
+        <item name="android:textColor">@color/grey</item>
+        <item name="android:background">@color/grey</item>
+        <item name="android:layout_height">@dimen/verysmall_wd</item>
+        <item name="android:textSize">@dimen/medium_tx</item>
+    </style>
+    
+</resources>
