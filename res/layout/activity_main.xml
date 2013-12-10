@@ -1,7 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white" >
+    android:layout_height="match_parent" >
     
    	<ImageButton
 		android:id="@+id/bobble_help"
@@ -14,18 +14,18 @@
 		style="@style/translucide" />
     
     <TextView
-        android:id="@+id/flash_me"
+        android:id="@+id/FlashMe"
         android:layout_below="@id/bobble_help"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/large_tx"
         android:layout_centerHorizontal="true"
-        android:text="@string/FlashMe"
+        android:text="@string/flash_me"
         style="@style/blue" />
     
     <ImageView 
         android:id="@+id/logo"
-        android:layout_below="@id/flash_me"
+        android:layout_below="@id/FlashMe"
 		android:layout_height="wrap_content" 
 		android:layout_width="wrap_content" 
 		android:layout_margin="@dimen/small_mg"
@@ -34,18 +34,18 @@
 		android:layout_centerHorizontal="true" />
 
     <TextView
-        android:id="@+id/if_you_can"
+        android:id="@+id/ifYouCan"
         android:layout_below="@id/logo" 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/large_tx"
         android:layout_centerHorizontal="true"
-        android:text="@string/ifYouCan"
+        android:text="@string/if_you_can"
         style="@style/blue" />
     
 	<EditText
 	    android:id="@+id/username"
-	    android:layout_below="@id/if_you_can"
+	    android:layout_below="@id/ifYouCan"
 	    android:layout_width="@dimen/button_wd"
 	    android:layout_height="wrap_content"
 	    android:layout_marginTop="@dimen/large_mg"

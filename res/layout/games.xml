@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white" >
+    
+    <TextView
+        android:id="@+id/name"
+        android:text="@string/name"
+        style="@style/topLine" />
+ 
+    <ImageButton
+		android:id="@+id/settings_bt"
+		android:contentDescription="@string/back_bt"
+		android:layout_alignRight="@id/name"
+		android:src="@drawable/settings_bt"
+		style="@style/topLineButton" />
+	
+    <LinearLayout
+        android:orientation="horizontal"
+        android:id="@+id/top_menu"
+        android:layout_below="@id/name"
+        android:layout_marginTop="@dimen/line_mg"
+ 		style="@style/topLine" >
+ 		
+	    <ImageButton
+			android:id="@+id/profile_bt"
+			android:layout_weight="1"
+			android:contentDescription="@string/profile_bt"
+			android:src="@drawable/profile_bt_in"
+			style="@style/topLineButton" />
+	    
+	    <ImageButton
+			android:id="@+id/team_bt"
+			android:contentDescription="@string/team_bt"
+			android:layout_weight="1" 
+			android:src="@drawable/team_bt_in"
+			style="@style/topLineButton" />
+	    
+	    <ImageButton
+			android:id="@+id/game_bt"
+			android:contentDescription="@string/game_bt"
+			android:layout_weight="1"
+			android:src="@drawable/game_bt"
+			style="@style/topLineButton" />
+	    
+	 </LinearLayout>
+	
+     <TextView
+        android:id="@+id/my_games"
+        android:layout_below="@id/top_menu"
+        android:text="@string/my_games"
+        style="@style/topLineLight" />
+     
+     <EditText
+	    android:id="@+id/enter_game"
+	    android:layout_below="@id/my_games"
+	    android:layout_width="@dimen/button_wd"
+	    android:layout_height="wrap_content"
+	    android:layout_margin="@dimen/medium_mg"
+	    android:hint="@string/enter_game"
+	    android:inputType="text" />
+     
+     <Button
+	    android:id="@+id/create_game"
+	    android:layout_below="@id/my_games"
+	    android:layout_toRightOf="@id/enter_game" 
+	    android:layout_width="@dimen/medium_wd"
+	    android:layout_marginTop="@dimen/medium_mg"
+	    android:text="@string/create"
+	    style="@style/buttonDarkBlue" />
+     
+     <TextView 
+        android:id="@+id/game1_state"
+        android:layout_below="@id/create_game"
+        android:layout_height="@dimen/small_wd"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="@dimen/medium_mg"
+        style="@style/team_completed" />
+     
+     <TextView 
+        android:id="@+id/game1_name"
+        android:layout_below="@id/create_game"
+        android:layout_toRightOf="@id/game1_state"
+        android:layout_height="wrap_content"
+        android:layout_width="@dimen/large_wd"
+        android:text="@string/game1_name"
+        android:layout_marginTop="@dimen/medium_mg"
+        android:layout_marginLeft="@dimen/small_mg"
+        android:textSize="@dimen/medium_tx" 
+        style="@style/blue" />
+     
+     <TextView 
+        android:id="@+id/game1_creator"
+        android:layout_below="@id/game1_name"
+        android:layout_toRightOf="@id/game1_state"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="@string/game1_creator"
+        android:layout_marginLeft="@dimen/medium_mg"
+        android:layout_marginTop="@dimen/verysmall_mg"
+        android:textSize="@dimen/small_tx" />
+     
+	<ImageButton 
+	    android:id="@+id/game1_delete"
+	    android:layout_below="@id/create_game"
+	    android:layout_toRightOf="@id/game1_name"
+	    android:layout_width="@dimen/small_wd"
+	    android:layout_height="@dimen/small_wd"
+		android:contentDescription="@string/delete"
+		android:src="@drawable/delete_bt"
+		android:layout_marginTop="@dimen/medium_mg"
+		style="@style/translucide"/>
+     
+    <!-- team 2 -->
+	
+	<TextView 
+        android:id="@+id/game2_state"
+        android:layout_below="@id/game1_state"
+        android:layout_height="@dimen/small_wd"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="@dimen/small_mg"
+        style="@style/team_waiting" />
+     
+     <TextView 
+        android:id="@+id/game2_name"
+        android:layout_below="@id/game1_state"
+        android:layout_toRightOf="@id/game2_state"
+        android:layout_height="wrap_content"
+        android:layout_width="@dimen/large_wd"
+        android:text="@string/game2_name"
+        android:layout_marginTop="@dimen/small_mg"
+        android:layout_marginLeft="@dimen/small_mg"
+        android:textSize="@dimen/medium_tx" 
+        style="@style/blue" />
+     
+     <TextView 
+        android:id="@+id/game2_creator"
+        android:layout_below="@id/game2_name"
+        android:layout_toRightOf="@id/game2_state"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="@string/game2_creator"
+        android:layout_marginLeft="@dimen/medium_mg"
+        android:layout_marginTop="@dimen/verysmall_mg"
+        android:textSize="@dimen/small_tx" />
+     
+	<ImageButton 
+	    android:id="@+id/game2_delete"
+	    android:layout_below="@id/game1_state"
+	    android:layout_toRightOf="@id/game2_name"
+	    android:layout_width="@dimen/small_wd"
+	    android:layout_height="@dimen/small_wd"
+		android:contentDescription="@string/delete"
+		android:src="@drawable/delete_bt"
+		android:layout_marginTop="@dimen/small_mg"
+		style="@style/translucide"/>
+	
+</RelativeLayout>

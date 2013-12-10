@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+    <TextView
+        android:id="@+id/name"
+        style="@style/topLine" />
+
+    <ImageButton
+		android:id="@+id/settings_bt"
+		android:contentDescription="@string/back_bt"
+		android:layout_alignRight="@id/name"
+		android:src="@drawable/settings_bt"
+		style="@style/topLineButton" />
+	
+    <LinearLayout
+        android:orientation="horizontal"
+        android:id="@+id/top_menu"
+        android:layout_below="@id/name"
+        android:layout_marginTop="@dimen/line_mg"
+ 		style="@style/topLine" >
+ 		
+	    <ImageButton
+			android:id="@+id/profile_bt"
+			android:layout_weight="1"
+			android:contentDescription="@string/profile_bt"
+			android:src="@drawable/profile_bt"
+			style="@style/topLineButton" />
+	    
+	    <ImageButton
+			android:id="@+id/team_bt"
+			android:contentDescription="@string/team_bt"
+			android:layout_weight="1" 
+			android:src="@drawable/team_bt_in"
+			style="@style/topLineButton" />
+	    
+	    <ImageButton
+			android:id="@+id/game_bt"
+			android:contentDescription="@string/game_bt"
+			android:layout_weight="1"
+			android:src="@drawable/game_bt_in"
+			style="@style/topLineButton" />
+	    
+	 </LinearLayout>
+	
+ 	<ImageView 
+        android:id="@+id/profile_picture"
+        android:layout_below="@id/top_menu"
+		android:layout_height="wrap_content" 
+		android:layout_width="wrap_content" 
+		android:background="@color/secondBlue"
+		android:src="@drawable/photo_zizi" 
+		android:contentDescription="@string/profile_picture"
+		android:layout_centerHorizontal="true" />
+ 	
+ 	<LinearLayout
+        android:orientation="horizontal"
+        android:id="@+id/scores"
+        android:layout_below="@id/profile_picture"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/medium_mg" >
+ 		
+	    <ImageView
+			android:id="@+id/score_ic"
+			android:layout_weight="1"
+			android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+			android:contentDescription="@string/score_ic"
+			android:src="@drawable/score_ic"
+			style="@style/translucide" />
+	    
+	    <ImageView
+			android:id="@+id/vics_ic"
+			android:layout_weight="1" 
+			android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+			android:contentDescription="@string/vics_ic"
+			android:src="@drawable/vics_ic"
+			style="@style/translucide" />
+	    
+	    <ImageView
+			android:id="@+id/deaths_ic"
+			android:layout_weight="1"
+			android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+			android:contentDescription="@string/deaths_ic"
+			android:src="@drawable/deaths_ic"
+			style="@style/translucide" />
+	    
+	 </LinearLayout>
+	 
+	 <LinearLayout
+        android:orientation="horizontal"
+        android:id="@+id/scores_txt"
+        android:layout_below="@id/scores"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/verysmall_mg" >
+	    
+ 	    <TextView
+ 	        android:id="@+id/score_txt"
+ 	        android:gravity="center"
+ 	        android:layout_width="wrap_content"
+ 	        android:layout_height="wrap_content"
+ 	        android:layout_weight="1"
+ 	        android:text="@string/score_txt"
+	        android:textSize="@dimen/verylarge_tx"
+	        style="@style/blue" />
+
+ 	    <TextView
+ 	        android:id="@+id/vics_txt"
+ 	        android:gravity="center"
+ 	        android:layout_width="wrap_content"
+ 	        android:layout_height="wrap_content"
+			android:layout_weight="1"
+	        android:text="@string/vics_txt"
+	        android:textSize="@dimen/verylarge_tx"
+	        style="@style/blue" />
+ 	    
+ 	   <TextView
+ 	        android:id="@+id/deaths_txt"
+ 	        android:gravity="center"
+			android:layout_weight="1"
+ 	        android:layout_width="wrap_content"
+ 	        android:layout_height="wrap_content"
+	        android:text="@string/deaths_txt"
+	        android:textSize="@dimen/verylarge_tx"
+	        style="@style/blue" />
+	</LinearLayout>
+    
+ 	<LinearLayout
+        android:orientation="horizontal"
+        android:id="@+id/scores2"
+        android:layout_below="@id/scores"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/verylarge_mg" >
+ 		
+	    <ImageView
+			android:id="@+id/score_ic2"
+			android:layout_weight="1"
+			android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+			android:contentDescription="@string/score_ic"
+			android:src="@drawable/score_ic"
+			style="@style/translucide" />
+	    
+	    <ImageView
+			android:id="@+id/vics_ic2"
+			android:layout_weight="1" 
+			android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+			android:contentDescription="@string/vics_ic"
+			android:src="@drawable/vics_ic"
+			style="@style/translucide" />
+	    
+	    <ImageView
+			android:id="@+id/deaths_ic2"
+			android:layout_weight="1"
+			android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+			android:contentDescription="@string/deaths_ic"
+			android:src="@drawable/deaths_ic"
+			style="@style/translucide" />
+	    
+	 </LinearLayout>
+	 
+	 <LinearLayout
+        android:orientation="horizontal"
+        android:id="@+id/scores_txt2"
+        android:layout_below="@id/scores2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/verysmall_mg" >
+	    
+ 	    <TextView
+ 	        android:id="@+id/score_txt2"
+ 	        android:gravity="center"
+ 	        android:layout_width="wrap_content"
+ 	        android:layout_height="wrap_content"
+ 	        android:layout_weight="1"
+ 	        android:text="@string/score_txt"
+	        android:textSize="@dimen/verylarge_tx"
+	        style="@style/blue" />
+
+ 	    <TextView
+ 	        android:id="@+id/vics_txt2"
+ 	        android:gravity="center"
+ 	        android:layout_width="wrap_content"
+ 	        android:layout_height="wrap_content"
+			android:layout_weight="1"
+	        android:text="@string/vics_txt"
+	        android:textSize="@dimen/verylarge_tx"
+	        style="@style/blue" />
+ 	    
+ 	   <TextView
+ 	        android:id="@+id/deaths_txt2"
+ 	        android:gravity="center"
+			android:layout_weight="1"
+ 	        android:layout_width="wrap_content"
+ 	        android:layout_height="wrap_content"
+	        android:text="@string/deaths_txt"
+	        android:textSize="@dimen/verylarge_tx"
+	        style="@style/blue" />
+	</LinearLayout>
+		 
+</RelativeLayout>

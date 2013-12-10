@@ -1,21 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Flash me</string>
-    <string name="app_description">An AR Android application using QCAR</string>
+    <string name="app_name">Flash me (if you can!)</string>
+    <string name="app_description">descritpion de l\'appli</string>
     <string name="action_settings">Settings</string>
+    
     
     <!-- connect -->
     <string name="bobble_help">help</string>
-    <string name="FlashMe">FLASH ME</string>
+    <string name="flash_me">FLASH ME</string>
     <string name="logo">logo</string>
-    <string name="ifYouCan">if you can !</string>
+    <string name="if_you_can">if you can !</string>
     <string name="username">Username</string>  
 	<string name="password">Password</string>
 	<string name="login">LOG IN</string>
 	<string name="or">Or</string>
 	<string name="signup">SIGN UP</string>
-	
+
+	<!-- sign up & log in -->
+    <string name="title_activity_sign_up">SignUpActivity</string>
+    <string name="title_activity_log_in">LogInActivity</string>
+    <string name="login_or_pass_empty">Ooops ! Your username or password is empty.</string>
+    <string name="title_alert">Ooops !</string>
+    <string name="wrong_username_or_pass">Seems like you haven\'t created an account yet.</string>
+    <string name="back_bt">back</string>
+	<string name="create_account">Create your account</string>
+	<string name="pic_empty">empty_picture</string>
+	<string name="choose_pic">CHOOSE PICTURE</string>
+	<string name="take_pic">TAKE PICTURE</string>
+		
 	<!-- profile -->
 	<string name="name">Zizi</string>
     <string name="profile_bt">profile</string>
@@ -28,13 +41,6 @@
     <string name="score_txt">254</string>
     <string name="vics_txt">003</string>
     <string name="deaths_txt">000</string>
-    
-    <!-- create account -->
-    <string name="back_bt">back</string>
-	<string name="createAccount">Create your account</string>
-	<string name="picEmpty">empty_picture</string>
-	<string name="choosePic">CHOOSE PICTURE</string>
-	<string name="takePic">TAKE PICTURE</string>
     
 	<!-- my teams -->
 	<string name="my_teams">My teams</string>
