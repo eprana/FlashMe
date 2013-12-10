@@ -91,7 +91,7 @@
         -->
         <activity android:label="@string/app_name"
                   android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize"
-                  android:name="com.qualcomm.QCARSamples.FlashMe.LoginActivity">
+                  android:name="com.qualcomm.QCARSamples.FlashMe.MainActivity">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
