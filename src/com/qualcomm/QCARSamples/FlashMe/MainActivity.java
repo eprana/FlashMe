@@ -111,11 +111,5 @@ public class MainActivity extends Activity {
 				startActivity(intent);
 			}
 		});
-	}
-	
-	// New class to set the different alert messages
-	class MessageAlert {
-		public TextView msg;
 	}		
-		
 }

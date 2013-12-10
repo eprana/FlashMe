@@ -60,10 +60,20 @@
 	    android:hint="@string/username"
 	    android:layout_centerHorizontal="true"
   	    android:inputType="text" />
+   	
+   	<EditText
+	    android:id="@+id/mail"
+	    android:layout_below="@id/username"
+	    android:layout_width="@dimen/button_wd"
+	    android:layout_height="wrap_content"
+	    android:layout_marginTop="@dimen/small_mg"
+	    android:hint="@string/mail"
+	    android:layout_centerHorizontal="true"
+  	    android:inputType="text" />
      
 	<EditText
 	    android:id="@+id/password"
-	    android:layout_below="@id/username" 
+	    android:layout_below="@id/mail" 
 	    android:layout_width="@dimen/button_wd"
 	    android:layout_height="wrap_content"
 	    android:layout_marginTop="@dimen/small_mg"
