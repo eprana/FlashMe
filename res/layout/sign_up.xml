@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+    <TextView
+        android:id="@+id/create_account"
+        android:text="@string/create_account"
+        style="@style/topLine" />
+ 
+    <ImageButton
+		android:id="@+id/back_bt"
+		android:contentDescription="@string/back_bt"
+		android:src="@drawable/back_bt"
+		style="@style/topLineButton" />  
+	
+    <ImageView 
+        android:id="@+id/pic_empty"
+        android:layout_below="@id/create_account"
+		android:layout_height="wrap_content" 
+		android:layout_width="wrap_content" 
+		android:layout_margin="@dimen/large_mg"
+		android:src="@drawable/pic_empty" 
+		android:contentDescription="@string/pic_empty"
+		android:layout_centerHorizontal="true" />
+    
+    <Button
+        android:id="@+id/choose_pic"
+        android:layout_below="@id/pic_empty" 
+        android:layout_width="@dimen/button_wd"
+        android:layout_centerHorizontal="true"
+        android:text="@string/choose_pic"
+        style="@style/buttonLightBlue" />
+
+    <TextView
+        android:id="@+id/or"
+        android:layout_below="@id/choose_pic" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/small_mg"
+        android:layout_centerHorizontal="true"
+        android:text="@string/or" 
+        style="@style/blue" />
+        
+   <Button
+        android:id="@+id/take_pic"
+        android:layout_below="@id/or" 
+        android:layout_width="@dimen/button_wd"
+        android:layout_marginTop="@dimen/small_mg"
+        android:layout_centerHorizontal="true"
+        android:text="@string/take_pic"
+        style="@style/buttonLightBlue" />
+   
+   	<EditText
+	    android:id="@+id/username"
+	    android:layout_below="@id/take_pic"
+	    android:layout_width="@dimen/button_wd"
+	    android:layout_height="wrap_content"
+	    android:layout_marginTop="@dimen/large_mg"
+	    android:hint="@string/username"
+	    android:layout_centerHorizontal="true"
+  	    android:inputType="text" />
+     
+	<EditText
+	    android:id="@+id/password"
+	    android:layout_below="@id/username" 
+	    android:layout_width="@dimen/button_wd"
+	    android:layout_height="wrap_content"
+	    android:layout_marginTop="@dimen/small_mg"
+	    android:layout_marginBottom="@dimen/verysmall_mg"
+	    android:hint="@string/password"
+	    android:layout_centerHorizontal="true"
+	    android:inputType="textPassword" />
+	
+	<Button
+        android:id="@+id/signup"
+        android:layout_below="@id/password" 
+        android:layout_width="@dimen/button_wd"
+        android:layout_marginTop="@dimen/large_mg"
+        android:layout_centerHorizontal="true"
+        android:text="@string/signup"
+        style="@style/buttonDarkBlue" />
+	
+</RelativeLayout>

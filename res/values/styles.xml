@@ -4,7 +4,7 @@
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
-    <style name="AppBaseTheme" parent="android:Theme.Light">
+    <style name="AppBaseTheme" parent="android:Theme.Holo.Light">
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
@@ -29,6 +29,10 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
+    <style name="gray">
+        <item name="android:textColor">@color/gray</item>
+    </style>
+    
     <style name="topLine">
         <item name="android:textColor">@color/white</item>
         <item name="android:background">@color/blue</item>
@@ -89,8 +93,8 @@
     
     <style name="team_waiting">
         <item name="android:text">.</item>
-        <item name="android:textColor">@color/grey</item>
-        <item name="android:background">@color/grey</item>
+        <item name="android:textColor">@color/gray</item>
+        <item name="android:background">@color/gray</item>
         <item name="android:layout_height">@dimen/verysmall_wd</item>
         <item name="android:textSize">@dimen/medium_tx</item>
     </style>
