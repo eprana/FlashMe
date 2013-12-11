@@ -1,9 +1,5 @@
 package com.qualcomm.QCARSamples.FlashMe;
 
-import com.parse.Parse;
-import com.parse.ParseAnalytics;
-import com.parse.ParseObject;
-
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -18,6 +14,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.parse.Parse;
+import com.parse.ParseAnalytics;
+import com.parse.ParseObject;
 
 public class MainActivity extends Activity {
 
@@ -116,11 +116,5 @@ public class MainActivity extends Activity {
 				startActivity(intent);
 			}
 		});
-	}
-	
-	// New class to set the different alert messages
-	class MessageAlert {
-		public TextView msg;
 	}		
-		
 }
