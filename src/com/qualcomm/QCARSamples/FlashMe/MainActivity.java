@@ -1,5 +1,9 @@
 package com.qualcomm.QCARSamples.FlashMe;
 
+import com.parse.Parse;
+import com.parse.ParseAnalytics;
+import com.parse.ParseObject;
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -36,15 +40,16 @@ public class MainActivity extends Activity {
 		final EditText login = (EditText) findViewById(R.id.username);
 		final EditText pass = (EditText) findViewById(R.id.password);
 		final Button logInButton = (Button) findViewById(R.id.login);
+     	
 		logInButton.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				
 				// Testing the data entered in the fields
 				final String loginTxt = login.getText().toString();
 				final String passTxt = pass.getText().toString();
-				
+                
 				// If one field is empty
 				if(loginTxt.equals("") || passTxt.equals("")){
 					Toast.makeText(MainActivity.this, R.string.login_or_pass_empty, Toast.LENGTH_SHORT).show();
