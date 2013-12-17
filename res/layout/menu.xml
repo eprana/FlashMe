@@ -1,35 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:id="@+id/top_menu"
- 		style="@style/topLine" >
- 		
-	    <ImageButton
-			android:id="@+id/profile_bt"
-			android:layout_weight="1"
-			android:contentDescription="@string/profile_bt"
-			android:src="@drawable/profile_bt"
-			style="@style/topLineButton" />
-	    
-	    <ImageButton
-			android:id="@+id/team_bt"
-			android:contentDescription="@string/team_bt"
-			android:layout_weight="1" 
-			android:src="@drawable/team_bt_in"
-			style="@style/topLineButton" />
-	    
-	    <ImageButton
-			android:id="@+id/game_bt"
-			android:contentDescription="@string/game_bt"
-			android:layout_weight="1"
-			android:src="@drawable/game_bt_in"
-			style="@style/topLineButton" />
-	    
-	 </LinearLayout>
-    
+      android:orientation="horizontal"
+      android:id="@+id/top_menu"
+	style="@style/topLine" >
+	
+   <ImageButton
+	android:id="@+id/profile_bt"
+	android:layout_weight="1"
+	android:contentDescription="@string/profile_bt"
+	android:src="@drawable/profile_bt"
+	style="@style/topLineButton" />
+   
+   <ImageButton
+	android:id="@+id/team_bt"
+	android:contentDescription="@string/team_bt"
+	android:layout_weight="1" 
+	android:src="@drawable/team_bt_in"
+	style="@style/topLineButton" />
+   
+   <ImageButton
+	android:id="@+id/game_bt"
+	android:contentDescription="@string/game_bt"
+	android:layout_weight="1"
+	android:src="@drawable/game_bt_in"
+	style="@style/topLineButton" />
+   
 </LinearLayout>

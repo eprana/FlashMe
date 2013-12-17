@@ -11,6 +11,7 @@ public class MenuActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 	 	setContentView(R.layout.menu_fragment);
+	 
     }
     
     public void onItemSelected(Uri object) {
@@ -26,4 +27,6 @@ public class MenuActivity extends Activity {
         // Else we update the user's choice
         else viewer.setContent(object);
     }
+    
+    
 }
