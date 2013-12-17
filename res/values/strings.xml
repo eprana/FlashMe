@@ -17,14 +17,19 @@
 	<string name="or">Or</string>
 	<string name="signup">SIGN UP</string>
 
-	<!-- sign up & log in -->
+	<!-- activities -->
     <string name="title_activity_sign_up">SignUpActivity</string>
-    <string name="title_activity_log_in">LogInActivity</string>
+    <string name="title_activity_profile">ProfileActivity</string>
+    <string name="title_activity_content">ChangingContentActivity</string>
+    <string name="title_activity_menu">MenuActivity</string>
+	
+	<!-- sign up & log in -->
     <string name="mail">E-mail</string>
     <string name="login_or_pass_empty">Ooops ! You must complete all the entries.</string>
     <string name="wrong_username_or_pass">Seems like you haven\'t created an account yet.</string>
     <string name="wrong_mail_pattern">Ooops! Invalid e-mail.</string>
     <string name="back_bt">back</string>
+    <string name="settings_bt">settings</string>
 	<string name="create_account">Create your account</string>
 	<string name="pic_empty">empty_picture</string>
 	<string name="choose_pic">CHOOSE PICTURE</string>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    
+    <fragment
+        android:name="com.qualcomm.QCARSamples.FlashMe.MenuFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/menu_fragment" >
+    </fragment>
+    
+    <fragment
+        android:name="com.qualcomm.QCARSamples.FlashMe.ContentFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/menu_fragment"
+        android:id="@+id/content_fragment" >
+    </fragment>
+    
+</RelativeLayout>

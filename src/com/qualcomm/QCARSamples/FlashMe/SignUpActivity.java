@@ -106,7 +106,7 @@ public class SignUpActivity extends Activity {
 				adb.setTitle("Success !");
 				adb.setPositiveButton("VIEW PROFILE", new DialogInterface.OnClickListener() {
 		            public void onClick(DialogInterface dialog, int which) {
-		            	Intent intent = new Intent(context, ProfileActivity.class);
+		            	Intent intent = new Intent(context, ContentActivity.class);
 		            	startActivity(intent);
 		        } });
 				

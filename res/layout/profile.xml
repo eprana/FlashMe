@@ -5,48 +5,19 @@
     
     <TextView
         android:id="@+id/name"
+        android:layout_marginTop="@dimen/line_mg"
         style="@style/topLine" />
 
     <ImageButton
 		android:id="@+id/settings_bt"
-		android:contentDescription="@string/back_bt"
+		android:contentDescription="@string/settings_bt"
 		android:layout_alignRight="@id/name"
 		android:src="@drawable/settings_bt"
 		style="@style/topLineButton" />
 	
-    <LinearLayout
-        android:orientation="horizontal"
-        android:id="@+id/top_menu"
-        android:layout_below="@id/name"
-        android:layout_marginTop="@dimen/line_mg"
- 		style="@style/topLine" >
- 		
-	    <ImageButton
-			android:id="@+id/profile_bt"
-			android:layout_weight="1"
-			android:contentDescription="@string/profile_bt"
-			android:src="@drawable/profile_bt"
-			style="@style/topLineButton" />
-	    
-	    <ImageButton
-			android:id="@+id/team_bt"
-			android:contentDescription="@string/team_bt"
-			android:layout_weight="1" 
-			android:src="@drawable/team_bt_in"
-			style="@style/topLineButton" />
-	    
-	    <ImageButton
-			android:id="@+id/game_bt"
-			android:contentDescription="@string/game_bt"
-			android:layout_weight="1"
-			android:src="@drawable/game_bt_in"
-			style="@style/topLineButton" />
-	    
-	 </LinearLayout>
-	
  	<ImageView 
         android:id="@+id/profile_picture"
-        android:layout_below="@id/top_menu"
+        android:layout_below="@id/name"
 		android:layout_height="wrap_content" 
 		android:layout_width="wrap_content" 
 		android:background="@color/secondBlue"

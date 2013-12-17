@@ -98,7 +98,7 @@ public class MainActivity extends Activity {
 				}
 				
 				// If nothing is wrong, going to the profile page and sending data
-				Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+				Intent intent = new Intent(MainActivity.this, ContentActivity.class);
 				intent.putExtra(EXTRA_LOGIN,  login.getText().toString());
 				intent.putExtra(EXTRA_PASSWORD,  pass.getText().toString());
 				startActivity(intent);
@@ -112,7 +112,7 @@ public class MainActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(MainActivity.this, SignUpActivity.class);
+				Intent intent = new Intent(MainActivity.this, ContentActivity.class);
 				startActivity(intent);
 			}
 		});
