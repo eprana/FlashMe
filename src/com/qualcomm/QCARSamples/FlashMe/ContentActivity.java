@@ -11,11 +11,13 @@ import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
@@ -33,6 +35,8 @@ public class ContentActivity extends FragmentActivity {
   // -------------------- TO CHANGE WITH THE BDD (setting the username on top of the page)
 	// Data to get
 	final static String EXTRA_LOGIN = "user_login";
+	private static ArrayList<Game> games = null;
+	private static ArrayList<Team> teams = null;
   // ------------------------------------------------------------------------------------
 	
 	public static class ProfileFragment extends Fragment {
@@ -70,7 +74,7 @@ public class ContentActivity extends FragmentActivity {
 	        //}
 	    // --------------------------------------------------------------------------------------
 			expandableList = (ExpandableListView) mainView.findViewById(R.id.teams_list);
-			ArrayList<Team> teams = new ArrayList<Team>();
+			teams = new ArrayList<Team>();
 
 			//Teams tests
 			Team team1 = createTeam("Anti-Heroes", "Zizi", getResources().getDrawable(R.drawable.team_empty_mini));
@@ -101,47 +105,50 @@ public class ContentActivity extends FragmentActivity {
 			
 			ELVTeamAdapter adapter = new ELVTeamAdapter(context, teams);
 			expandableList.setAdapter(adapter);
-			expandableList.setOnItemLongClickListener(new OnItemLongClickListener() {
+			
+			registerForContextMenu(expandableList);
+			
+//			expandableList.setOnItemLongClickListener(new OnItemLongClickListener() {
 	            
-				public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
-	            	           	
-	            	// Create an alert box
-					AlertDialog.Builder adb = new AlertDialog.Builder(context);
-					MessageAlert msg_a;
+//				public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
 					
-					if (alertDialogView == null) {
-						msg_a = new MessageAlert();
-						alertDialogView = inflater.inflate(R.layout.alert_dialog, null);
-						msg_a.msg = (TextView)alertDialogView.findViewById(R.id.text_alert);
-						alertDialogView.setTag(msg_a);
-					} else {
-						msg_a = (MessageAlert) alertDialogView.getTag();				
-					}
-					
-					// Choosing the type of message alert
-					msg_a.msg.setText(context.getResources().getString(R.string.quit_team));
-					
-					// Filling the alert box
-					adb.setView(alertDialogView);
-					adb.setTitle("What do you want to do ?");
-					adb.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-			            public void onClick(DialogInterface dialog, int which) {
-			            	ViewGroup adbParent = (ViewGroup) alertDialogView.getParent();
-							adbParent.removeView(alertDialogView);
-			        } });
-					adb.setPositiveButton("QUIT TEAM", new DialogInterface.OnClickListener() {
-			            public void onClick(DialogInterface dialog, int which) {
-			            	Intent intent = new Intent(context, ContentActivity.class);
-			            	startActivity(intent);
-			        } });
-					
-					// Showing the alert box
-			        adb.create();
-					adb.show();
-	            	
-	                return true;
-	            }
-	        }); 
+//	            	// Create an alert box
+//					AlertDialog.Builder adb = new AlertDialog.Builder(context);
+//					MessageAlert msg_a;
+//					
+//					if (alertDialogView == null) {
+//						msg_a = new MessageAlert();
+//						alertDialogView = inflater.inflate(R.layout.alert_dialog, null);
+//						msg_a.msg = (TextView)alertDialogView.findViewById(R.id.text_alert);
+//						alertDialogView.setTag(msg_a);
+//					} else {
+//						msg_a = (MessageAlert) alertDialogView.getTag();				
+//					}
+//					
+//					// Choosing the type of message alert
+//					msg_a.msg.setText(context.getResources().getString(R.string.quit_team));
+//					
+//					// Filling the alert box
+//					adb.setView(alertDialogView);
+//					adb.setTitle("What do you want to do ?");
+//					adb.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+//			            public void onClick(DialogInterface dialog, int which) {
+//			            	ViewGroup adbParent = (ViewGroup) alertDialogView.getParent();
+//							adbParent.removeView(alertDialogView);
+//			        } });
+//					adb.setPositiveButton("QUIT TEAM", new DialogInterface.OnClickListener() {
+//			            public void onClick(DialogInterface dialog, int which) {
+//			            	Intent intent = new Intent(context, ContentActivity.class);
+//			            	startActivity(intent);
+//			        } });
+//					
+//					// Showing the alert box
+//			        adb.create();
+//					adb.show();
+//	            	
+//	                return true;
+//	            }
+//	        }); 
 
 			return mainView;
 		}
@@ -171,7 +178,7 @@ public class ContentActivity extends FragmentActivity {
         	// --------------------------------------------------------------------------------------
         	
         	expandableList = (ExpandableListView) mainView.findViewById(R.id.games_list);
-			ArrayList<Game> games = new ArrayList<Game>();
+			games = new ArrayList<Game>();
 
 			//Games tests
 			Game game1 = createGame("Remember, remember", "Zizi");
@@ -195,6 +202,8 @@ public class ContentActivity extends FragmentActivity {
 			
 			ELVGameAdapter adapter = new ELVGameAdapter(context, games);
 			expandableList.setAdapter(adapter);
+			
+			registerForContextMenu(expandableList);
         	
 			return mainView;
 		}
@@ -278,4 +287,32 @@ public class ContentActivity extends FragmentActivity {
 			fragmentTransaction.commit();
 		}
  	}
+	
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+		if(v.getId() == R.id.teams_list){
+			super.onCreateContextMenu(menu, v, menuInfo);
+		    MenuInflater inflater = getMenuInflater();
+		    inflater.inflate(R.menu.context_menu_team, menu);
+		}
+		else if(v.getId() == R.id.games_list){
+			super.onCreateContextMenu(menu, v, menuInfo);
+		    MenuInflater inflater = getMenuInflater();
+		    inflater.inflate(R.menu.context_menu_game, menu);
+	    }
+	}
+	
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+	    switch (item.getItemId()) {
+	        case R.id.quit_team:
+	        	//teams.removeSelectedTeam();
+	            return true;
+	        case R.id.cancel:
+	            return true;
+	        default:
+	            return super.onContextItemSelected(item);
+	    }
+	}
 }
+
