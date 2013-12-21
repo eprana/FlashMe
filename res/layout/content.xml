@@ -3,22 +3,40 @@
     
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
     
-    <fragment
-        android:name="com.qualcomm.QCARSamples.FlashMe.MenuFragment"
+    <LinearLayout 
+		android:orientation="horizontal"
+		android:id="@+id/top_menu"
+		style="@style/topLine" >
+		
+	   <ImageButton
+			android:id="@+id/profile_bt"
+			android:layout_weight="1"
+			android:contentDescription="@string/profile_bt"
+			android:src="@drawable/profile_bt"
+			style="@style/topLineButton" />
+	   
+	   <ImageButton
+			android:id="@+id/team_bt"
+			android:contentDescription="@string/team_bt"
+			android:layout_weight="1" 
+			android:src="@drawable/team_bt_in"
+			style="@style/topLineButton" />
+	   
+	   <ImageButton
+			android:id="@+id/game_bt"
+			android:contentDescription="@string/game_bt"
+			android:layout_weight="1"
+			android:src="@drawable/game_bt_in"
+			style="@style/topLineButton" />
+	</LinearLayout>
+	
+    <FrameLayout 
+        android:id="@+id/maincontainer"
+        android:layout_below="@id/top_menu"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/menu_fragment" >
-    </fragment>
-    
-    <fragment
-        android:name="com.qualcomm.QCARSamples.FlashMe.ContentFragment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/menu_fragment"
-        android:id="@+id/content_fragment" >
-    </fragment>
+        android:layout_height="wrap_content">
+    </FrameLayout>
     
 </RelativeLayout>

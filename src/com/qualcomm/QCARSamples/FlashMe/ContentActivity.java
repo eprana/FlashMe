@@ -1,16 +1,109 @@
 package com.qualcomm.QCARSamples.FlashMe;
 
-import android.app.Activity;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.os.Bundle;
 
-public class ContentActivity extends Activity {
+public class ContentActivity extends FragmentActivity {
 
+	public static class ProfileFragment extends Fragment {
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) 
+		{
+			View mainView = inflater.inflate(R.layout.profile, container, false);		
+			return mainView;
+		}
+	}
+	
+	public static class TeamsFragment extends Fragment {
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) 
+		{
+			View mainView = inflater.inflate(R.layout.teams, container, false);		
+			return mainView;
+		}
+	}
+
+	public static class GamesFragment extends Fragment {
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) 
+		{
+			View mainView = inflater.inflate(R.layout.games, container, false);		
+			return mainView;
+		}
+	}
+	
+	private FragmentManager myFragmentManager;
+	private ProfileFragment profileFrag;
+	private TeamsFragment teamsFrag;
+	private GamesFragment gamesFrag;
+	final static String TAG_PROFILE = "PROFILE_FRAGMENT";
+	final static String TAG_TEAMS = "TEAMS_FRAGMENT";
+	final static String TAG_GAMES = "GAMES_FRAGMENT";
+		
 	@Override
     public void onCreate(Bundle savedInstanceState) {
-	        super.onCreate(savedInstanceState);
-		 	setContentView(R.layout.content);
-		 	
-		 	//setContent(Uri objet);
+        super.onCreate(savedInstanceState);
+	 	setContentView(R.layout.content);
+	 	
+	 	ImageButton profile_bt = (ImageButton) findViewById(R.id.profile_bt);
+	 	ImageButton teams_bt = (ImageButton) findViewById(R.id.team_bt);
+		ImageButton games_bt = (ImageButton) findViewById(R.id.game_bt);
+	 	
+		profile_bt.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View arg0){
+				ProfileFragment fragment = (ProfileFragment)myFragmentManager.findFragmentByTag(TAG_PROFILE);
+				if(fragment==null){
+					FragmentTransaction fragmentTransaction = myFragmentManager.beginTransaction();
+					fragmentTransaction.replace(R.id.maincontainer, profileFrag, TAG_PROFILE);
+					fragmentTransaction.commit();
+				}
+			}
+		});
+		
+		teams_bt.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View arg0){
+				TeamsFragment fragment = (TeamsFragment)myFragmentManager.findFragmentByTag(TAG_TEAMS);
+				if(fragment==null){
+					FragmentTransaction fragmentTransaction = myFragmentManager.beginTransaction();
+					fragmentTransaction.replace(R.id.maincontainer, teamsFrag, TAG_TEAMS);
+					fragmentTransaction.commit();
+				}
+			}
+		});
+		
+		games_bt.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View arg0){
+				GamesFragment fragment = (GamesFragment)myFragmentManager.findFragmentByTag(TAG_GAMES);
+				if(fragment==null){
+					FragmentTransaction fragmentTransaction = myFragmentManager.beginTransaction();
+					fragmentTransaction.replace(R.id.maincontainer, gamesFrag, TAG_GAMES);
+					fragmentTransaction.commit();
+				}
+			}
+		});
+		
+		myFragmentManager = getSupportFragmentManager();
+		profileFrag = new ProfileFragment();
+		teamsFrag = new TeamsFragment();
+		gamesFrag = new GamesFragment();
+
+		//if it is the first time created
+		if(savedInstanceState == null){
+			FragmentTransaction fragmentTransaction = myFragmentManager.beginTransaction();
+			fragmentTransaction.add(R.id.maincontainer, profileFrag, TAG_PROFILE);
+			fragmentTransaction.commit();
+		}
  	}
 }
 

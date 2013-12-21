@@ -112,17 +112,7 @@
         <activity
             android:name=".ContentActivity"
             android:label="@string/title_activity_content" />
-        
-        <!-- _______________ PROFILE ACTIVITY _______________ -->        
-        <activity
-            android:name=".ProfileActivity"
-            android:label="@string/title_activity_profile" />
-        
-        <!-- _______________ MENU ACTIVITY _______________ -->        
-        <activity
-            android:name=".MenuActivity"
-            android:label="@string/title_activity_menu" />
-        
+      
     </application>
 
 </manifest>
