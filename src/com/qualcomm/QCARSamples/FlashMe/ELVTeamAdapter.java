@@ -11,13 +11,13 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class ELVAdapter extends BaseExpandableListAdapter {
+public class ELVTeamAdapter extends BaseExpandableListAdapter {
 
 	private Context context;
 	private ArrayList<Team> teams;
 	private LayoutInflater inflater;
 	
-	public ELVAdapter(Context context, ArrayList<Team> teams){
+	public ELVTeamAdapter(Context context, ArrayList<Team> teams){
 		this.context = context;
 		this.teams = teams;
 		inflater = LayoutInflater.from(context);
@@ -94,10 +94,10 @@ public class ELVAdapter extends BaseExpandableListAdapter {
 
 		if (convertView == null) {
         	gholder = new GroupViewHolder();
-        	convertView = inflater.inflate(R.layout.team_row, null);
-        	gholder.state = (TextView)convertView.findViewById(R.id.team_state);
-			gholder.name = (TextView)convertView.findViewById(R.id.team_name);
-			gholder.creator = (TextView)convertView.findViewById(R.id.team_creator);        	
+        	convertView = inflater.inflate(R.layout.expandable_row, null);
+        	gholder.state = (TextView)convertView.findViewById(R.id.state);
+			gholder.name = (TextView)convertView.findViewById(R.id.name);
+			gholder.creator = (TextView)convertView.findViewById(R.id.creator);        	
 			convertView.setTag(gholder);
         } else {
         	gholder = (GroupViewHolder) convertView.getTag();

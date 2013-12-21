@@ -83,7 +83,7 @@
         <item name="android:textSize">@dimen/medium_tx</item>
     </style>    
     
-    <style name="team_completed">
+    <style name="completed">
         <item name="android:text">.</item>
         <item name="android:textColor">@color/blue</item>
         <item name="android:background">@color/blue</item>
@@ -91,7 +91,7 @@
         <item name="android:textSize">@dimen/medium_tx</item>
     </style>
     
-    <style name="team_waiting">
+    <style name="waiting">
         <item name="android:text">.</item>
         <item name="android:textColor">@color/gray</item>
         <item name="android:background">@color/gray</item>

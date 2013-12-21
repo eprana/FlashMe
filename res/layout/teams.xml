@@ -48,12 +48,4 @@
 	    android:layout_height="match_parent" >
 	</ExpandableListView>
      
-<!--      <ListView
-		android:id="@+id/teams_list"
-		android:layout_below="@id/create_team"
-		android:layout_marginTop="@dimen/medium_mg"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent">
-	</ListView> -->
-
 </RelativeLayout>

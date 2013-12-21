@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white" >
+    android:layout_height="match_parent" >
     
     <TextView
         android:id="@+id/name"
@@ -40,90 +39,13 @@
 	    android:text="@string/create"
 	    style="@style/buttonDarkBlue" />
      
-     <TextView 
-        android:id="@+id/game1_state"
-        android:layout_below="@id/create_game"
-        android:layout_height="@dimen/small_wd"
-        android:layout_width="wrap_content"
-        android:layout_marginTop="@dimen/medium_mg"
-        style="@style/team_completed" />
-     
-     <TextView 
-        android:id="@+id/game1_name"
-        android:layout_below="@id/create_game"
-        android:layout_toRightOf="@id/game1_state"
-        android:layout_height="wrap_content"
-        android:layout_width="@dimen/large_wd"
-        android:text="@string/game1_name"
-        android:layout_marginTop="@dimen/medium_mg"
-        android:layout_marginLeft="@dimen/small_mg"
-        android:textSize="@dimen/medium_tx" 
-        style="@style/blue" />
-     
-     <TextView 
-        android:id="@+id/game1_creator"
-        android:layout_below="@id/game1_name"
-        android:layout_toRightOf="@id/game1_state"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="@string/game1_creator"
-        android:layout_marginLeft="@dimen/medium_mg"
-        android:layout_marginTop="@dimen/verysmall_mg"
-        android:textSize="@dimen/small_tx" />
-     
-	<ImageButton 
-	    android:id="@+id/game1_delete"
-	    android:layout_below="@id/create_game"
-	    android:layout_toRightOf="@id/game1_name"
-	    android:layout_width="@dimen/small_wd"
-	    android:layout_height="@dimen/small_wd"
-		android:contentDescription="@string/delete"
-		android:src="@drawable/delete_bt"
+	<ExpandableListView 
+	    android:id="@+id/games_list" 
+	    android:groupIndicator="@drawable/group_indicator"
+   		android:layout_below="@id/create_game"
 		android:layout_marginTop="@dimen/medium_mg"
-		style="@style/translucide"/>
-     
-    <!-- team 2 -->
-	
-	<TextView 
-        android:id="@+id/game2_state"
-        android:layout_below="@id/game1_state"
-        android:layout_height="@dimen/small_wd"
-        android:layout_width="wrap_content"
-        android:layout_marginTop="@dimen/small_mg"
-        style="@style/team_waiting" />
-     
-     <TextView 
-        android:id="@+id/game2_name"
-        android:layout_below="@id/game1_state"
-        android:layout_toRightOf="@id/game2_state"
-        android:layout_height="wrap_content"
-        android:layout_width="@dimen/large_wd"
-        android:text="@string/game2_name"
-        android:layout_marginTop="@dimen/small_mg"
-        android:layout_marginLeft="@dimen/small_mg"
-        android:textSize="@dimen/medium_tx" 
-        style="@style/blue" />
-     
-     <TextView 
-        android:id="@+id/game2_creator"
-        android:layout_below="@id/game2_name"
-        android:layout_toRightOf="@id/game2_state"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="@string/game2_creator"
-        android:layout_marginLeft="@dimen/medium_mg"
-        android:layout_marginTop="@dimen/verysmall_mg"
-        android:textSize="@dimen/small_tx" />
-     
-	<ImageButton 
-	    android:id="@+id/game2_delete"
-	    android:layout_below="@id/game1_state"
-	    android:layout_toRightOf="@id/game2_name"
-	    android:layout_width="@dimen/small_wd"
-	    android:layout_height="@dimen/small_wd"
-		android:contentDescription="@string/delete"
-		android:src="@drawable/delete_bt"
-		android:layout_marginTop="@dimen/small_mg"
-		style="@style/translucide"/>
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent" >
+	</ExpandableListView>
 	
 </RelativeLayout>

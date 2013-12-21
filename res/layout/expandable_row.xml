@@ -4,14 +4,14 @@
     android:layout_height="match_parent" >
     
     <TextView 
-        android:id="@+id/team_state"
+        android:id="@+id/state"
         android:layout_height="@dimen/small_wd"
         android:layout_width="wrap_content"
         android:layout_marginTop="@dimen/medium_mg"
-        style="@style/team_waiting" />
+        style="@style/waiting" />
     
 	 <TextView 
-		android:id="@+id/team_name" 
+		android:id="@+id/name" 
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content" 
 		android:textSize="@dimen/medium_tx" 
@@ -21,8 +21,8 @@
 		android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft" />
 	
 	<TextView 
-		android:id="@+id/team_creator" 
-		android:layout_below="@id/team_name"
+		android:id="@+id/creator" 
+		android:layout_below="@id/name"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content" 
 		android:textSize="@dimen/small_tx"

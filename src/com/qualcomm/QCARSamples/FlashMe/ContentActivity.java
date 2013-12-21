@@ -15,6 +15,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 public class ContentActivity extends FragmentActivity {
@@ -61,13 +62,13 @@ public class ContentActivity extends FragmentActivity {
 			ArrayList<Team> teams = new ArrayList<Team>();
 
 			//Teams tests
-			Team team1 = createTeam("Anti-Heroes", "Zizi");
+			Team team1 = createTeam("Anti-Heroes", "Zizi", getResources().getDrawable(R.drawable.team_empty_mini));
 			team1.addPlayer(team1, "Zizi", getResources().getDrawable(R.drawable.pic_empty_mini));
 			team1.addPlayer(team1, "Flo", getResources().getDrawable(R.drawable.pic_flo));
 			team1.addPlayer(team1, "Xopi", getResources().getDrawable(R.drawable.pic_empty_mini));
 			team1.setReady(true);
 			
-			Team team2 = createTeam("Hydro-Gène", "Flo");
+			Team team2 = createTeam("Hydro-Gène", "Flo", getResources().getDrawable(R.drawable.team_empty_mini));
 			team2.addPlayer(team2, "Flo", getResources().getDrawable(R.drawable.pic_flo));
 			team2.addPlayer(team2, "Jiji", getResources().getDrawable(R.drawable.pic_empty_mini));
 			team2.addPlayer(team2, "Cédric", getResources().getDrawable(R.drawable.pic_empty_mini));
@@ -87,21 +88,26 @@ public class ContentActivity extends FragmentActivity {
 			teams.add(team1);
 			teams.add(team2);
 			
-			ELVAdapter adapter = new ELVAdapter(context, teams);
+			ELVTeamAdapter adapter = new ELVTeamAdapter(context, teams);
 			expandableList.setAdapter(adapter);
 
 			return mainView;
 		}
 				
-		public Team createTeam(String name, String creator){
-			return new Team(name, creator);
+		public Team createTeam(String name, String creator, Drawable picture){
+			return new Team(name, creator, picture);
 		}
 	}
 
 	public static class GamesFragment extends Fragment {
+		
+		private ExpandableListView expandableList = null;
+		
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-			View mainView = inflater.inflate(R.layout.games, container, false);		
+			View mainView = inflater.inflate(R.layout.games, container, false);
+			Context context = mainView.getContext();
+			
 			//	-------------------- TO CHANGE WITH THE BDD (setting the username on top of the page)
         	//Intent intent = getIntent();
         	TextView userName = (TextView) mainView.findViewById(R.id.name);
@@ -109,8 +115,39 @@ public class ContentActivity extends FragmentActivity {
 	        	//userName.setText(intent.getStringExtra(EXTRA_LOGIN));
         	userName.setText(EXTRA_LOGIN);
 	        //}
-	    // --------------------------------------------------------------------------------------
+        	// --------------------------------------------------------------------------------------
+        	
+        	expandableList = (ExpandableListView) mainView.findViewById(R.id.games_list);
+			ArrayList<Game> games = new ArrayList<Game>();
+
+			//Games tests
+			Game game1 = createGame("Remember, remember", "Zizi");
+			game1.addTeam("Anti-Heroes", "Zizi", getResources().getDrawable(R.drawable.pic_team1));
+			game1.addTeam("Heroes", "Fifoune", getResources().getDrawable(R.drawable.pic_team2));
+			game1.setReady(true);
+			
+			Game game2 = createGame("Blabla", "Xopi");
+			game2.addTeam("Ladyfense", "Xopi", getResources().getDrawable(R.drawable.pic_team1));
+			game2.addTeam("Hydro-Gène", "Flo", getResources().getDrawable(R.drawable.team_empty_mini));
+			game2.setReady(true);
+
+			//Teams are ready? tests
+			game1.getTeams().get(0).setReady(true);
+			game2.getTeams().get(0).setReady(true);
+			game2.getTeams().get(1).setReady(true);
+						
+			//Add teams to the game
+			games.add(game1);
+			games.add(game2);
+			
+			ELVGameAdapter adapter = new ELVGameAdapter(context, games);
+			expandableList.setAdapter(adapter);
+        	
 			return mainView;
+		}
+		
+		public Game createGame(String name, String creator){
+			return new Game(name, creator);
 		}
 	}
 	
@@ -189,37 +226,3 @@ public class ContentActivity extends FragmentActivity {
 		}
  	}
 }
-
-//OLD PROFILE ACTIVITY TO RE-USE
-//package com.qualcomm.QCARSamples.FlashMe;
-//
-//import android.app.Activity;
-//import android.content.Intent;
-//import android.os.Bundle;
-//import android.widget.TextView;
-//
-//public class ProfileActivity extends Activity {
-//
-//    // -------------------- TO CHANGE WITH THE BDD (setting the username on top of the page)
-//	// Data to get
-//	final String EXTRA_LOGIN = "user_login";
-//	final String EXTRA_PASSWORD = "user_password";
-//    // ------------------------------------------------------------------------------------
-//	
-//    @Override
-//    public void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//	 	setContentView(R.layout.profile_fragment);        
-//                
-//        // -------------------- TO CHANGE WITH THE BDD (setting the username on top of the page)
-//        	Intent intent = getIntent();
-//        	
-//        	TextView userName = (TextView) findViewById(R.id.name);
-//        
-//	        if(intent != null){
-//	        	userName.setText(intent.getStringExtra(EXTRA_LOGIN));
-//	        	//score_txt2.setText(intent.getStringExtra(EXTRA_PASSWORD));
-//	        }
-//	    // --------------------------------------------------------------------------------------
-//    } 
-//}

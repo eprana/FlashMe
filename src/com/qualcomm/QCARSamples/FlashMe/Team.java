@@ -10,13 +10,15 @@ public class Team {
 	private String name;
 	private String creator;
 	private ArrayList<Player> players;
+	private Drawable picture;
 	
-	public Team(String name, String creator){
+	public Team(String name, String creator, Drawable picture){
 		super();
 		this.ready = false;
 		this.name = name;
 		this.creator = creator;
 		this.players = new ArrayList<Player>();
+		this.picture = picture;
 	}
 	
 	public boolean getReady(){
@@ -33,6 +35,14 @@ public class Team {
 	
 	public String getCreator(){
 		return creator;
+	}
+	
+	public Drawable getPicture(){
+		return picture;
+	}
+	
+	public void setPicture(Drawable picture){
+		this.picture = picture;
 	}
 	
 	public ArrayList<Player> getPlayers(){
