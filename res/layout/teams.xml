@@ -5,7 +5,6 @@
     
     <TextView
         android:id="@+id/name"
-        android:text="#####"
         android:layout_marginTop="@dimen/line_mg"
         style="@style/topLine" />
 

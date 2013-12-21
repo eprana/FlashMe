@@ -19,9 +19,7 @@
 
 	<!-- activities -->
     <string name="title_activity_sign_up">SignUpActivity</string>
-    <string name="title_activity_profile">ProfileActivity</string>
     <string name="title_activity_content">ChangingContentActivity</string>
-    <string name="title_activity_menu">MenuActivity</string>
 	
 	<!-- sign up & log in -->
     <string name="mail">E-mail</string>
@@ -37,7 +35,7 @@
 	<string name="account_created">Your account has been successfully created ! Your marker will be sent to your mail address in a few minutes. Meanwhile, you can discover and edit your profile. Enjoy !</string>
 		
 	<!-- profile -->
-	<string name="name">Zizi</string>
+	<string name="my_profile">My profile</string>
     <string name="profile_bt">profile</string>
     <string name="team_bt">teams</string>
     <string name="game_bt">games</string>
