@@ -6,14 +6,24 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -45,10 +55,11 @@ public class ContentActivity extends FragmentActivity {
 	public static class TeamsFragment extends Fragment {
 
 		private ExpandableListView expandableList = null;
+		private View alertDialogView;
 	
-		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+		public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 			View mainView = inflater.inflate(R.layout.teams, container, false);
-			Context context = mainView.getContext();
+			final Context context = mainView.getContext();
 			
 			//	-------------------- TO CHANGE WITH THE BDD (setting the username on top of the page)
         	//Intent intent = getIntent();
@@ -90,6 +101,47 @@ public class ContentActivity extends FragmentActivity {
 			
 			ELVTeamAdapter adapter = new ELVTeamAdapter(context, teams);
 			expandableList.setAdapter(adapter);
+			expandableList.setOnItemLongClickListener(new OnItemLongClickListener() {
+	            
+				public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
+	            	           	
+	            	// Create an alert box
+					AlertDialog.Builder adb = new AlertDialog.Builder(context);
+					MessageAlert msg_a;
+					
+					if (alertDialogView == null) {
+						msg_a = new MessageAlert();
+						alertDialogView = inflater.inflate(R.layout.alert_dialog, null);
+						msg_a.msg = (TextView)alertDialogView.findViewById(R.id.text_alert);
+						alertDialogView.setTag(msg_a);
+					} else {
+						msg_a = (MessageAlert) alertDialogView.getTag();				
+					}
+					
+					// Choosing the type of message alert
+					msg_a.msg.setText(context.getResources().getString(R.string.quit_team));
+					
+					// Filling the alert box
+					adb.setView(alertDialogView);
+					adb.setTitle("What do you want to do ?");
+					adb.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+			            public void onClick(DialogInterface dialog, int which) {
+			            	ViewGroup adbParent = (ViewGroup) alertDialogView.getParent();
+							adbParent.removeView(alertDialogView);
+			        } });
+					adb.setPositiveButton("QUIT TEAM", new DialogInterface.OnClickListener() {
+			            public void onClick(DialogInterface dialog, int which) {
+			            	Intent intent = new Intent(context, ContentActivity.class);
+			            	startActivity(intent);
+			        } });
+					
+					// Showing the alert box
+			        adb.create();
+					adb.show();
+	            	
+	                return true;
+	            }
+	        }); 
 
 			return mainView;
 		}
@@ -97,6 +149,7 @@ public class ContentActivity extends FragmentActivity {
 		public Team createTeam(String name, String creator, Drawable picture){
 			return new Team(name, creator, picture);
 		}
+						
 	}
 
 	public static class GamesFragment extends Fragment {
