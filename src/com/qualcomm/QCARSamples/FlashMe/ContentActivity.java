@@ -1,6 +1,7 @@
 package com.qualcomm.QCARSamples.FlashMe;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -10,23 +11,16 @@ import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
@@ -35,9 +29,12 @@ public class ContentActivity extends FragmentActivity {
   // -------------------- TO CHANGE WITH THE BDD (setting the username on top of the page)
 	// Data to get
 	final static String EXTRA_LOGIN = "user_login";
+  // ------------------------------------------------------------------------------------
 	private static ArrayList<Game> games = null;
 	private static ArrayList<Team> teams = null;
-  // ------------------------------------------------------------------------------------
+	private static ELVTeamAdapter teamAdapter;
+	private static ELVGameAdapter gameAdapter;
+	private static ExpandableListView expandableList = null;
 	
 	public static class ProfileFragment extends Fragment {
 		@Override
@@ -58,9 +55,6 @@ public class ContentActivity extends FragmentActivity {
 	
 	public static class TeamsFragment extends Fragment {
 
-		private ExpandableListView expandableList = null;
-		private View alertDialogView;
-	
 		public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 			View mainView = inflater.inflate(R.layout.teams, container, false);
 			final Context context = mainView.getContext();
@@ -72,11 +66,11 @@ public class ContentActivity extends FragmentActivity {
 	        	//userName.setText(intent.getStringExtra(EXTRA_LOGIN));
         	userName.setText(EXTRA_LOGIN);
 	        //}
-	    // --------------------------------------------------------------------------------------
-			expandableList = (ExpandableListView) mainView.findViewById(R.id.teams_list);
+        	// --------------------------------------------------------------------------------------
+			ContentActivity.expandableList = (ExpandableListView) mainView.findViewById(R.id.teams_list);
 			teams = new ArrayList<Team>();
 
-			//Teams tests
+			// Teams tests
 			Team team1 = createTeam("Anti-Heroes", "Zizi", getResources().getDrawable(R.drawable.team_empty_mini));
 			team1.addPlayer(team1, "Zizi", getResources().getDrawable(R.drawable.pic_empty_mini));
 			team1.addPlayer(team1, "Flo", getResources().getDrawable(R.drawable.pic_flo));
@@ -89,67 +83,34 @@ public class ContentActivity extends FragmentActivity {
 			team2.addPlayer(team2, "Cédric", getResources().getDrawable(R.drawable.pic_empty_mini));
 			team2.setReady(true);
 
-			//Players are ready? tests
+			// Players are ready? tests
 			team1.getPlayers().get(0).setReady(true);
 			team1.getPlayers().get(2).setReady(true);
 			team2.getPlayers().get(0).setReady(true);
 			team2.getPlayers().get(1).setReady(true);
 			team2.getPlayers().get(2).setReady(true);
 			
-			//Changing picture tests
+			// Changing picture tests
 			team1.getPlayers().get(2).setPicture(getResources().getDrawable(R.drawable.pic_xopi));
 					
-			//Add players to team
+			// Add players to team
 			teams.add(team1);
 			teams.add(team2);
 			
-			ELVTeamAdapter adapter = new ELVTeamAdapter(context, teams);
-			expandableList.setAdapter(adapter);
+			teamAdapter = new ELVTeamAdapter(context, teams);
+			expandableList.setAdapter(teamAdapter);
 			
+			// Create a contextual menu to delete teams
 			registerForContextMenu(expandableList);
 			
 //			expandableList.setOnItemLongClickListener(new OnItemLongClickListener() {
-	            
-//				public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
-					
-//	            	// Create an alert box
-//					AlertDialog.Builder adb = new AlertDialog.Builder(context);
-//					MessageAlert msg_a;
-//					
-//					if (alertDialogView == null) {
-//						msg_a = new MessageAlert();
-//						alertDialogView = inflater.inflate(R.layout.alert_dialog, null);
-//						msg_a.msg = (TextView)alertDialogView.findViewById(R.id.text_alert);
-//						alertDialogView.setTag(msg_a);
-//					} else {
-//						msg_a = (MessageAlert) alertDialogView.getTag();				
-//					}
-//					
-//					// Choosing the type of message alert
-//					msg_a.msg.setText(context.getResources().getString(R.string.quit_team));
-//					
-//					// Filling the alert box
-//					adb.setView(alertDialogView);
-//					adb.setTitle("What do you want to do ?");
-//					adb.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-//			            public void onClick(DialogInterface dialog, int which) {
-//			            	ViewGroup adbParent = (ViewGroup) alertDialogView.getParent();
-//							adbParent.removeView(alertDialogView);
-//			        } });
-//					adb.setPositiveButton("QUIT TEAM", new DialogInterface.OnClickListener() {
-//			            public void onClick(DialogInterface dialog, int which) {
-//			            	Intent intent = new Intent(context, ContentActivity.class);
-//			            	startActivity(intent);
-//			        } });
-//					
-//					// Showing the alert box
-//			        adb.create();
-//					adb.show();
-//	            	
-//	                return true;
+//	            @Override
+//	            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+//	            	selectedTeam = (Team) parent.getItemAtPosition(position);
+//	            		                return true;
 //	            }
-//	        }); 
-
+//	        });
+			
 			return mainView;
 		}
 				
@@ -160,8 +121,6 @@ public class ContentActivity extends FragmentActivity {
 	}
 
 	public static class GamesFragment extends Fragment {
-		
-		private ExpandableListView expandableList = null;
 		
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -200,8 +159,8 @@ public class ContentActivity extends FragmentActivity {
 			games.add(game1);
 			games.add(game2);
 			
-			ELVGameAdapter adapter = new ELVGameAdapter(context, games);
-			expandableList.setAdapter(adapter);
+			gameAdapter = new ELVGameAdapter(context, games);
+			expandableList.setAdapter(gameAdapter);
 			
 			registerForContextMenu(expandableList);
         	
@@ -226,10 +185,12 @@ public class ContentActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
 	 	setContentView(R.layout.content);
 	 	
+	 	// Top menu
 	 	final ImageButton profile_bt = (ImageButton) findViewById(R.id.profile_bt);
 	 	final ImageButton teams_bt = (ImageButton) findViewById(R.id.team_bt);
 		final ImageButton games_bt = (ImageButton) findViewById(R.id.game_bt);
 	 	
+		// On profile icon click
 		profile_bt.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View arg0){
@@ -245,6 +206,7 @@ public class ContentActivity extends FragmentActivity {
 			}
 		});
 		
+		// On teams icon click
 		teams_bt.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View arg0){
@@ -260,6 +222,7 @@ public class ContentActivity extends FragmentActivity {
 			}
 		});
 		
+		// On games icon click
 		games_bt.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View arg0){
@@ -274,13 +237,13 @@ public class ContentActivity extends FragmentActivity {
 				}
 			}
 		});
-		
+				
 		myFragmentManager = getSupportFragmentManager();
 		profileFrag = new ProfileFragment();
 		teamsFrag = new TeamsFragment();
 		gamesFrag = new GamesFragment();
 
-		//if it is the first time created
+		// If it is created for the first time
 		if(savedInstanceState == null){
 			FragmentTransaction fragmentTransaction = myFragmentManager.beginTransaction();
 			fragmentTransaction.add(R.id.maincontainer, profileFrag, TAG_PROFILE);
@@ -288,31 +251,65 @@ public class ContentActivity extends FragmentActivity {
 		}
  	}
 	
+	// Contextual menu for quitting teams / games
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		if(v.getId() == R.id.teams_list){
-			super.onCreateContextMenu(menu, v, menuInfo);
-		    MenuInflater inflater = getMenuInflater();
-		    inflater.inflate(R.menu.context_menu_team, menu);
+		super.onCreateContextMenu(menu, v, menuInfo);
+		
+		ExpandableListView.ExpandableListContextMenuInfo info = (ExpandableListView.ExpandableListContextMenuInfo) menuInfo;
+		int type = ExpandableListView.getPackedPositionType(info.packedPosition);
+		
+		if(type == 0){
+			if(v.getId() == R.id.teams_list){
+			    MenuInflater inflater = getMenuInflater();
+			    inflater.inflate(R.menu.context_menu_team, menu);
+			}
+			else if(v.getId() == R.id.games_list){
+			    MenuInflater inflater = getMenuInflater();
+			    inflater.inflate(R.menu.context_menu_game, menu);
+		    }
 		}
-		else if(v.getId() == R.id.games_list){
-			super.onCreateContextMenu(menu, v, menuInfo);
-		    MenuInflater inflater = getMenuInflater();
-		    inflater.inflate(R.menu.context_menu_game, menu);
-	    }
 	}
 	
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
+		
+		ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) item.getMenuInfo();
+		
 	    switch (item.getItemId()) {
 	        case R.id.quit_team:
-	        	//teams.removeSelectedTeam();
+	        	if(teams.remove(info.packedPosition)) Log.v("ca marche ", " ");
+
+	            teamAdapter.notifyDataSetChanged();
 	            return true;
+	        case R.id.quit_game:
+
+	        	return true;
 	        case R.id.cancel:
 	            return true;
 	        default:
 	            return super.onContextItemSelected(item);
 	    }
+	}
+	
+	public Team getTeamByName(String name) {
+		for(Iterator<Team> it = teams.iterator(); it.hasNext();) {
+			Team team = it.next();
+			if(team.getName() == name) {
+				return team;
+			}
+		}
+		return null;
+	}
+	
+	public Game getGameByName(String name) {
+		for(Iterator<Game> it = games.iterator(); it.hasNext();) {
+			Game game = it.next();
+			if(game.getName() == name) {
+				return game;
+			}
+		}
+		return null;
 	}
 }
 
