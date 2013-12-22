@@ -57,6 +57,7 @@
 	<string name="quit_team">Quit team</string>
 	<string name="cancel">Cancel</string>
 	<string name="no_contextual_menu">no_contextual_menu</string>
+	<string name="play">PLAY</string>
 	
 	<!-- my games -->
 	<string name="my_games">My games</string>

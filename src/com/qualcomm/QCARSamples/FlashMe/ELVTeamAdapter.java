@@ -123,7 +123,7 @@ public class ELVTeamAdapter extends BaseExpandableListAdapter {
 
 	@Override
 	public boolean isChildSelectable(int teamPos, int playerPos) {
-		return true;
+		return false;
 	}
 	
 	class GroupViewHolder {
