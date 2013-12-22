@@ -16,10 +16,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
+import android.widget.ExpandableListView.OnGroupExpandListener;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -58,19 +61,16 @@ public class ContentActivity extends FragmentActivity {
 		public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 			View mainView = inflater.inflate(R.layout.teams, container, false);
 			final Context context = mainView.getContext();
-			
-			//	-------------------- TO CHANGE WITH THE BDD (setting the username on top of the page)
-        	//Intent intent = getIntent();
+
+			// TO CHANGE -- Setting the name of the user on top of the page
         	TextView userName = (TextView) mainView.findViewById(R.id.name);
-	        //if(intent != null){
-	        	//userName.setText(intent.getStringExtra(EXTRA_LOGIN));
         	userName.setText(EXTRA_LOGIN);
-	        //}
-        	// --------------------------------------------------------------------------------------
-			ContentActivity.expandableList = (ExpandableListView) mainView.findViewById(R.id.teams_list);
+        	
+        	// Getting the list of teams
+        	ContentActivity.expandableList = (ExpandableListView) mainView.findViewById(R.id.teams_list);
 			teams = new ArrayList<Team>();
 
-			// Teams tests
+			// TO CHANGE -- Teams tests
 			Team team1 = createTeam("Anti-Heroes", "Zizi", getResources().getDrawable(R.drawable.team_empty_mini));
 			team1.addPlayer(team1, "Zizi", getResources().getDrawable(R.drawable.pic_empty_mini));
 			team1.addPlayer(team1, "Flo", getResources().getDrawable(R.drawable.pic_flo));
@@ -83,33 +83,41 @@ public class ContentActivity extends FragmentActivity {
 			team2.addPlayer(team2, "Cédric", getResources().getDrawable(R.drawable.pic_empty_mini));
 			team2.setReady(true);
 
-			// Players are ready? tests
+			// TO CHANGE -- Players are ready? tests
 			team1.getPlayers().get(0).setReady(true);
 			team1.getPlayers().get(2).setReady(true);
 			team2.getPlayers().get(0).setReady(true);
 			team2.getPlayers().get(1).setReady(true);
 			team2.getPlayers().get(2).setReady(true);
 			
-			// Changing picture tests
+			// TO CHANGE -- Changing picture tests
 			team1.getPlayers().get(2).setPicture(getResources().getDrawable(R.drawable.pic_xopi));
 					
-			// Add players to team
+			// TO CHANGE -- Add players to team
 			teams.add(team1);
 			teams.add(team2);
 			
 			teamAdapter = new ELVTeamAdapter(context, teams);
 			expandableList.setAdapter(teamAdapter);
 			
+			// Play button
+			Button playButton = (Button) mainView.findViewById(R.id.play);
+			playButton.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					if(teamAdapter.getSelectedTeam() != null){
+						Toast.makeText(context, "selected team : "+ teamAdapter.getSelectedTeam().getName(), Toast.LENGTH_SHORT).show();
+					} 
+					// If no team has been selected
+					else {
+						Toast.makeText(context, "Ooops! You must select a team to play." , Toast.LENGTH_SHORT).show();
+					}
+				}
+			});
+				
 			// Create a contextual menu to delete teams
 			registerForContextMenu(expandableList);
-			
-//			expandableList.setOnItemLongClickListener(new OnItemLongClickListener() {
-//	            @Override
-//	            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-//	            	selectedTeam = (Team) parent.getItemAtPosition(position);
-//	            		                return true;
-//	            }
-//	        });
 			
 			return mainView;
 		}
@@ -125,7 +133,7 @@ public class ContentActivity extends FragmentActivity {
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 			View mainView = inflater.inflate(R.layout.games, container, false);
-			Context context = mainView.getContext();
+			final Context context = mainView.getContext();
 			
 			//	-------------------- TO CHANGE WITH THE BDD (setting the username on top of the page)
         	//Intent intent = getIntent();
@@ -161,6 +169,22 @@ public class ContentActivity extends FragmentActivity {
 			
 			gameAdapter = new ELVGameAdapter(context, games);
 			expandableList.setAdapter(gameAdapter);
+
+			// Play button
+			Button playButton = (Button) mainView.findViewById(R.id.play);
+			playButton.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					if(gameAdapter.getSelectedGame() != null){
+						Toast.makeText(context, "selected team : "+ gameAdapter.getSelectedGame().getName(), Toast.LENGTH_SHORT).show();
+					} 
+					// If no team has been selected
+					else {
+						Toast.makeText(context, "Ooops! You must select a team to play." , Toast.LENGTH_SHORT).show();
+					}
+				}
+			});
 			
 			registerForContextMenu(expandableList);
         	

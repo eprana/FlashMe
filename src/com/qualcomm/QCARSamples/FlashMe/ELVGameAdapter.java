@@ -8,19 +8,28 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 
 public class ELVGameAdapter extends BaseExpandableListAdapter {
 
 	private Context context;
 	private ArrayList<Game> games;
 	private LayoutInflater inflater;
+	private Game selectedGame;
+	private int lastSelectedPosition;
+	private CompoundButton lastSelectedButton;
 	
 	public ELVGameAdapter(Context context, ArrayList<Game> games){
 		this.context = context;
 		this.games = games;
-		inflater = LayoutInflater.from(context);
+		this.inflater = LayoutInflater.from(context);
+		this.selectedGame = null;
+		this.lastSelectedPosition = -1;
+		this.lastSelectedButton = null;
 	}
 	
 	@Override
@@ -90,6 +99,8 @@ public class ELVGameAdapter extends BaseExpandableListAdapter {
 	@Override
 	public View getGroupView(int gamePos, boolean isExpanded, View convertView, ViewGroup parent) {
 
+		final int gamePosition = gamePos;
+		
 		GroupViewHolder gholder;
 
 		if (convertView == null) {
@@ -97,7 +108,8 @@ public class ELVGameAdapter extends BaseExpandableListAdapter {
         	convertView = inflater.inflate(R.layout.expandable_row, null);
         	gholder.state = (TextView)convertView.findViewById(R.id.state);
 			gholder.name = (TextView)convertView.findViewById(R.id.name);
-			gholder.creator = (TextView)convertView.findViewById(R.id.creator);        	
+			gholder.creator = (TextView)convertView.findViewById(R.id.creator);
+			gholder.selected = (CheckBox)convertView.findViewById(R.id.select_team);
 			convertView.setTag(gholder);
         } else {
         	gholder = (GroupViewHolder) convertView.getTag();
@@ -112,7 +124,27 @@ public class ELVGameAdapter extends BaseExpandableListAdapter {
 		gholder.state.setBackgroundColor(state);
 		gholder.state.setTextColor(state);
 		gholder.name.setText(games.get(gamePos).getName());
-		gholder.creator.setText(games.get(gamePos).getCreator());
+		gholder.creator.setText(games.get(gamePos).getCreator());	
+		
+		// Choosing a team to play
+		gholder.selected.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				if(isChecked){
+					// Forbid to chose several teams to play
+					if(lastSelectedPosition != -1 && gamePosition != lastSelectedPosition) {
+						lastSelectedButton.setChecked(false);
+					}
+					lastSelectedPosition = gamePosition;
+					lastSelectedButton = buttonView;
+					selectedGame = games.get(gamePosition);
+				} else {
+					lastSelectedPosition = -1;
+					lastSelectedButton = null;
+					selectedGame = null;
+				}
+			}
+		}); 
 		return convertView;
 	}
 
@@ -126,10 +158,15 @@ public class ELVGameAdapter extends BaseExpandableListAdapter {
 		return false;
 	}
 	
+	public Game getSelectedGame(){
+		return selectedGame;
+	}
+	
 	class GroupViewHolder {
 		public TextView state;
 		public TextView name;
 		public TextView creator;
+		public CheckBox selected;
 	}
 
 	class ChildViewHolder {
