@@ -8,6 +8,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +30,8 @@ public class SignUpActivity extends Activity {
 
 	private Context context;
 	private View alertDialogView;
+    private static final int CAMERA_REQUEST = 1888; 
+    private ImageView imageView;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,6 +45,17 @@ public class SignUpActivity extends Activity {
 		final EditText mail = (EditText) findViewById(R.id.mail);
         
         final LayoutInflater inflater = LayoutInflater.from(context);
+        
+        this.imageView = (ImageView)this.findViewById(R.id.pic_empty);
+        Button photoButton = (Button) this.findViewById(R.id.take_pic);
+        photoButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE); 
+                startActivityForResult(cameraIntent, CAMERA_REQUEST); 
+            }
+        });
 
         final ImageButton backButton = (ImageButton) findViewById(R.id.back_bt);
         final Button signUpButton = (Button) findViewById(R.id.signup);
@@ -123,5 +138,12 @@ public class SignUpActivity extends Activity {
       			finish();
       		}
       	});      
+    } 
+    
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {  
+        if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {  
+            Bitmap photo = (Bitmap) data.getExtras().get("data"); 
+            imageView.setImageBitmap(photo);
+        }  
     } 
 }
