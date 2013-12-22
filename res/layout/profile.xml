@@ -5,7 +5,6 @@
     
     <TextView
         android:id="@+id/name"
-        android:layout_marginTop="@dimen/line_mg"
         style="@style/topLine" />
 
     <ImageButton
@@ -26,7 +25,7 @@
         android:layout_below="@id/my_profile"
 		android:layout_height="wrap_content" 
 		android:layout_width="wrap_content" 
-		android:background="@color/secondBlue"
+		android:background="@color/middle_blue"
 		android:src="@drawable/photo_zizi" 
 		android:contentDescription="@string/profile_picture"
 		android:layout_centerHorizontal="true" />
@@ -84,7 +83,7 @@
  	        android:layout_weight="1"
  	        android:text="@string/score_txt"
 	        android:textSize="@dimen/verylarge_tx"
-	        style="@style/blue" />
+	        style="@style/middle_blue" />
 
  	    <TextView
  	        android:id="@+id/vics_txt"
@@ -94,7 +93,7 @@
 			android:layout_weight="1"
 	        android:text="@string/vics_txt"
 	        android:textSize="@dimen/verylarge_tx"
-	        style="@style/blue" />
+	        style="@style/middle_blue" />
  	    
  	   <TextView
  	        android:id="@+id/deaths_txt"
@@ -104,7 +103,7 @@
  	        android:layout_height="wrap_content"
 	        android:text="@string/deaths_txt"
 	        android:textSize="@dimen/verylarge_tx"
-	        style="@style/blue" />
+	        style="@style/middle_blue" />
 	</LinearLayout>
     
  	<LinearLayout
@@ -160,7 +159,7 @@
  	        android:layout_weight="1"
  	        android:text="@string/score_txt"
 	        android:textSize="@dimen/verylarge_tx"
-	        style="@style/blue" />
+	        style="@style/middle_blue" />
 
  	    <TextView
  	        android:id="@+id/vics_txt2"
@@ -170,7 +169,7 @@
 			android:layout_weight="1"
 	        android:text="@string/vics_txt"
 	        android:textSize="@dimen/verylarge_tx"
-	        style="@style/blue" />
+	        style="@style/middle_blue" />
  	    
  	   <TextView
  	        android:id="@+id/deaths_txt2"
@@ -180,7 +179,7 @@
  	        android:layout_height="wrap_content"
 	        android:text="@string/deaths_txt"
 	        android:textSize="@dimen/verylarge_tx"
-	        style="@style/blue" />
+	        style="@style/middle_blue" />
 	</LinearLayout>
 		 
 </RelativeLayout>

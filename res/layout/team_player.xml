@@ -29,6 +29,6 @@
         android:layout_toRightOf="@id/player_pic"
         android:layout_marginLeft="@dimen/small_mg"
         android:textSize="@dimen/small_tx" 
-        style="@style/blue" />
+        style="@style/middle_blue" />
 
 </RelativeLayout>

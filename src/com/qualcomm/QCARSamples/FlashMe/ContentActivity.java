@@ -181,7 +181,7 @@ public class ContentActivity extends FragmentActivity {
 					} 
 					// If no team has been selected
 					else {
-						Toast.makeText(context, "Ooops! You must select a team to play." , Toast.LENGTH_SHORT).show();
+						Toast.makeText(context, "Ooops! You must select a game to play." , Toast.LENGTH_SHORT).show();
 					}
 				}
 			});

@@ -66,7 +66,7 @@ public class ELVGameAdapter extends BaseExpandableListAdapter {
 		
 		// finding out if the player is ready or not
 		int state = Color.GRAY;
-		if(team.getReady() == true) state = context.getResources().getColor(R.color.blue);
+		if(team.getReady() == true) state = context.getResources().getColor(R.color.middle_blue);
 		
 		childViewHolder.state.setBackgroundColor(state);
 		childViewHolder.state.setTextColor(state);
@@ -118,7 +118,7 @@ public class ELVGameAdapter extends BaseExpandableListAdapter {
 		// finding out if the team is ready or not
 		int state = Color.GRAY;
 		if(games.get(gamePos).getReady() == true){
-			state = context.getResources().getColor(R.color.blue);
+			state = context.getResources().getColor(R.color.middle_blue);
 		}
 		
 		gholder.state.setBackgroundColor(state);
