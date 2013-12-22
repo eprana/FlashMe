@@ -1,0 +1,34 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+	android:id="@+id/popup" 
+	android:layout_width="match_parent" 
+	android:layout_height="match_parent" 
+	android:orientation="vertical" 
+	android:padding="@dimen/small_mg" 
+	android:background="@color/white">
+	
+    <ImageButton 
+		android:id="@+id/close_popup" 
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content"
+		android:src="@drawable/close_bt" 
+		android:layout_gravity="right"
+		style="@style/translucide"
+		android:contentDescription="@string/close_popup" /> 
+    
+    <TextView 
+		android:id="@+id/popup_title" 
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content" 
+		android:layout_gravity="center"
+		style="@style/middle_blue"
+		android:text="@string/popup_title" />
+    
+	<TextView 
+		android:id="@+id/popup_description" 
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content" 
+		android:text="@string/popup_description"
+		style="@style/gray"
+		android:layout_margin="@dimen/medium_mg" />
+	
+</LinearLayout>

@@ -16,6 +16,9 @@
 	<string name="login">LOG IN</string>
 	<string name="or">Or</string>
 	<string name="signup">SIGN UP</string>
+	<string name="popup_title">FLASH ME \n if you can !</string>
+	<string name="popup_description">is an augmented reality mobile application created by Xochitl Florimont, Flora Jullien and Elisa Prana, three students of the IMAC engineering school located in Paris.</string>
+	<string name="close_popup">close_popup</string>
 
 	<!-- activities -->
     <string name="title_activity_sign_up">SignUpActivity</string>
