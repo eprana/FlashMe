@@ -178,7 +178,7 @@ public class SignUpActivity extends Activity {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-    	            	imageView.setImageBitmap(bm);
+    	            	imageView.setImageBitmap(Bitmap.createScaledBitmap(bm, 200, 200, false));
     	            } else {
     	                Toast.makeText(SignUpActivity.this, "Error getting Image",Toast.LENGTH_SHORT).show();
     	            }           
