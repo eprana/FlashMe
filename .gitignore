@@ -63,7 +63,7 @@ Desktop.ini
 ######################
 *.pydevproject
 .project
-.properties
+*.properties
 .metadata
 libs/
 tmp/**
