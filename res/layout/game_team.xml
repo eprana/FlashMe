@@ -5,28 +5,28 @@
   android:layout_height="wrap_content" >
 
     <TextView 
-        android:id="@+id/player_state"
+        android:id="@+id/team_state"
         android:layout_height="@dimen/small_wd"
         android:layout_width="wrap_content"
         android:layout_marginLeft="@dimen/medium_mg"
         style="@style/waiting" />
 
     <ImageView
-        android:id="@+id/player_pic"
+        android:id="@+id/team_pic"
         android:layout_width="@dimen/small_wd"
         android:layout_height="@dimen/small_wd"
-        android:layout_toRightOf="@id/player_state"
-        android:contentDescription="@string/player_pic"
+        android:layout_toRightOf="@id/team_state"
+        android:contentDescription="@string/team_pic"
         android:layout_marginLeft="@dimen/line_mg"
-        android:src="@drawable/pic_empty_mini"
+        android:src="@drawable/team_empty_mini"
         />
     
      <TextView 
-        android:id="@+id/player_name"
+        android:id="@+id/team_name"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_width="@dimen/large_wd"
-        android:layout_toRightOf="@id/player_pic"
+        android:layout_toRightOf="@id/team_pic"
         android:layout_marginLeft="@dimen/small_mg"
         android:textSize="@dimen/small_tx" 
         style="@style/middle_blue" />

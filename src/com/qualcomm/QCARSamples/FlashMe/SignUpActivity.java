@@ -1,5 +1,6 @@
 package com.qualcomm.QCARSamples.FlashMe;
 
+import java.io.FileNotFoundException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -8,14 +9,19 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +34,9 @@ public class SignUpActivity extends Activity {
 
 	private Context context;
 	private View alertDialogView;
+    private static final int CAMERA_REQUEST = 1888; 
+    private ImageView imageView;
+    private final int PICK_IMAGE = 1000;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,6 +50,31 @@ public class SignUpActivity extends Activity {
 		final EditText mail = (EditText) findViewById(R.id.mail);
         
         final LayoutInflater inflater = LayoutInflater.from(context);
+        this.imageView = (ImageView)this.findViewById(R.id.pic_empty);
+        
+        Button folderButton = (Button) this.findViewById(R.id.choose_pic);
+        folderButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+//            	Intent cameraIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//                startActivityForResult(cameraIntent, PICK_IMAGE);
+            	Intent intent = new Intent();
+            	intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
+            }
+        });
+        
+        Button photoButton = (Button) this.findViewById(R.id.take_pic);
+        photoButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE); 
+                startActivityForResult(cameraIntent, CAMERA_REQUEST); 
+            }
+        });
 
         final ImageButton backButton = (ImageButton) findViewById(R.id.back_bt);
         final Button signUpButton = (Button) findViewById(R.id.signup);
@@ -106,7 +140,7 @@ public class SignUpActivity extends Activity {
 				adb.setTitle("Success !");
 				adb.setPositiveButton("VIEW PROFILE", new DialogInterface.OnClickListener() {
 		            public void onClick(DialogInterface dialog, int which) {
-		            	Intent intent = new Intent(context, ProfileActivity.class);
+		            	Intent intent = new Intent(context, ContentActivity.class);
 		            	startActivity(intent);
 		        } });
 				
@@ -123,5 +157,60 @@ public class SignUpActivity extends Activity {
       			finish();
       		}
       	});      
+    } 
+    
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {  
+        super.onActivityResult(requestCode, resultCode, data);
+    	if(resultCode == RESULT_OK){
+    		switch(requestCode){
+    			case CAMERA_REQUEST:
+    				Bitmap photo = (Bitmap) data.getExtras().get("data"); 
+    	            imageView.setImageBitmap(photo);
+    	            break;
+    	            
+    			case PICK_IMAGE:
+    				Uri selectedImage = data.getData();
+    	            if (selectedImage != null) {
+    	            	Bitmap bm = null;
+						try {
+							bm = BitmapFactory.decodeStream(getContentResolver().openInputStream(selectedImage));
+						} catch (FileNotFoundException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+    	            	imageView.setImageBitmap(Bitmap.createScaledBitmap(bm, 200, 200, false));
+    	            } else {
+    	                Toast.makeText(SignUpActivity.this, "Error getting Image",Toast.LENGTH_SHORT).show();
+    	            }           
+
+    	            break;
+    	        
+    			default:
+    	        	break;
+    				
+    		}
+    	}else if(resultCode == Activity.RESULT_CANCELED) {
+    		Toast.makeText(SignUpActivity.this, "No Photo Selected", Toast.LENGTH_SHORT).show();
+    	}
+    	
+//        if (resultCode == Activity.RESULT_OK) {
+//                    } else if (resultCode == Activity.RESULT_CANCELED) {
+//            Toast.makeText(PhotoTake.this, "No Photo Selected",
+//                    Toast.LENGTH_SHORT).show();
+//        }
+//        
+//        if (requestCode == PICK_IMAGE && resultCode == RESULT_OK){
+//        	Bitmap photo = (Bitmap) data.getExtras().get("data"); 
+//            imageView.setImageBitmap(photo);
+//        }
+//        
+//        
+//        if (requestCode == SELECT_PICTURE) {
+//            Uri selectedImageUri = data.getData();
+//            selectedImagePath = getPath(selectedImageUri);
+//        }
+//        
+        
+        
     } 
 }

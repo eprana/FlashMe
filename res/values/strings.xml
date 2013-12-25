@@ -16,15 +16,21 @@
 	<string name="login">LOG IN</string>
 	<string name="or">Or</string>
 	<string name="signup">SIGN UP</string>
+	<string name="popup_title">FLASH ME \n if you can !</string>
+	<string name="popup_description">is an augmented reality mobile application created by Xochitl Florimont, Flora Jullien and Elisa Prana, three students of the IMAC engineering school located in Paris.</string>
+	<string name="close_popup">close_popup</string>
 
-	<!-- sign up & log in -->
+	<!-- activities -->
     <string name="title_activity_sign_up">SignUpActivity</string>
-    <string name="title_activity_log_in">LogInActivity</string>
+    <string name="title_activity_content">ChangingContentActivity</string>
+	
+	<!-- sign up & log in -->
     <string name="mail">E-mail</string>
     <string name="login_or_pass_empty">Ooops ! You must complete all the entries.</string>
     <string name="wrong_username_or_pass">Seems like you haven\'t created an account yet.</string>
     <string name="wrong_mail_pattern">Ooops! Invalid e-mail.</string>
     <string name="back_bt">back</string>
+    <string name="settings_bt">settings</string>
 	<string name="create_account">Create your account</string>
 	<string name="pic_empty">empty_picture</string>
 	<string name="choose_pic">CHOOSE PICTURE</string>
@@ -32,7 +38,7 @@
 	<string name="account_created">Your account has been successfully created ! Your marker will be sent to your mail address in a few minutes. Meanwhile, you can discover and edit your profile. Enjoy !</string>
 		
 	<!-- profile -->
-	<string name="name">Zizi</string>
+	<string name="my_profile">My profile</string>
     <string name="profile_bt">profile</string>
     <string name="team_bt">teams</string>
     <string name="game_bt">games</string>
@@ -50,13 +56,16 @@
 	<string name="create">CREATE</string>
 	<string name="player_pic">player_picture</string>
 	<string name="delete">delete</string>
+	<string name="quit_team_alert">Beware! If you decide to quit the team, you won\'t be able to re-join it unless the creator invites you.</string>
+	<string name="quit_team">Quit team</string>
+	<string name="cancel">Cancel</string>
+	<string name="no_contextual_menu">no_contextual_menu</string>
+	<string name="play">PLAY</string>
 	
 	<!-- my games -->
 	<string name="my_games">My games</string>
 	<string name="enter_game">New game name</string>
-	<string name="game1_name">Remember, remember</string>
-	<string name="game1_creator">Zizi</string>
-	<string name="game2_name">LXG</string>
-	<string name="game2_creator">Flo</string>
+	<string name="team_pic">team_picture</string>
+	<string name="quit_game">Quit game</string>
 	
 </resources>

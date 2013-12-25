@@ -6,7 +6,7 @@
     <TextView
         android:id="@+id/create_account"
         android:text="@string/create_account"
-        style="@style/topLine" />
+        style="@style/topMenu" />
  
     <ImageButton
 		android:id="@+id/back_bt"
@@ -30,6 +30,7 @@
         android:layout_width="@dimen/button_wd"
         android:layout_centerHorizontal="true"
         android:text="@string/choose_pic"
+        android:background="@drawable/light_button"
         style="@style/buttonLightBlue" />
 
     <TextView
@@ -40,7 +41,7 @@
         android:layout_marginTop="@dimen/small_mg"
         android:layout_centerHorizontal="true"
         android:text="@string/or" 
-        style="@style/blue" />
+        style="@style/dark_blue" />
         
    <Button
         android:id="@+id/take_pic"
@@ -49,6 +50,7 @@
         android:layout_marginTop="@dimen/small_mg"
         android:layout_centerHorizontal="true"
         android:text="@string/take_pic"
+        android:background="@drawable/light_button"
         style="@style/buttonLightBlue" />
    
    	<EditText
@@ -87,8 +89,8 @@
         android:layout_below="@id/password" 
         android:layout_width="@dimen/button_wd"
         android:layout_marginTop="@dimen/large_mg"
-        android:layout_centerHorizontal="true"
         android:text="@string/signup"
+        android:background="@drawable/dark_button"
         style="@style/buttonDarkBlue" />
 	
 </RelativeLayout>

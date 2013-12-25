@@ -1,89 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
     
-    <TextView
-        android:id="@+id/name"
-        android:text="@string/name"
-        style="@style/topLine" />
- 
-    <ImageButton
-		android:id="@+id/settings_bt"
-		android:contentDescription="@string/back_bt"
-		android:layout_alignRight="@id/name"
-		android:src="@drawable/settings_bt"
-		style="@style/topLineButton" />
-	
-    <LinearLayout
-        android:orientation="horizontal"
-        android:id="@+id/top_menu"
-        android:layout_below="@id/name"
-        android:layout_marginTop="@dimen/line_mg"
- 		style="@style/topLine" >
- 		
-	    <ImageButton
-			android:id="@+id/profile_bt"
-			android:layout_weight="1"
-			android:contentDescription="@string/profile_bt"
-			android:src="@drawable/profile_bt_in"
-			style="@style/topLineButton" />
-	    
-	    <ImageButton
-			android:id="@+id/team_bt"
-			android:contentDescription="@string/team_bt"
-			android:layout_weight="1" 
-			android:src="@drawable/team_bt"
-			style="@style/topLineButton" />
-	    
-	    <ImageButton
-			android:id="@+id/game_bt"
-			android:contentDescription="@string/game_bt"
-			android:layout_weight="1"
-			android:src="@drawable/game_bt_in"
-			style="@style/topLineButton" />
-	    
-	 </LinearLayout>
-	
-     <TextView
-        android:id="@+id/my_teams"
-        android:layout_below="@id/top_menu"
-        android:text="@string/my_teams"
-        style="@style/topLineLight" />
-     
-     <EditText
-	    android:id="@+id/enter_team"
-	    android:layout_below="@id/my_teams"
-	    android:layout_width="@dimen/button_wd"
-	    android:layout_height="wrap_content"
-	    android:layout_margin="@dimen/medium_mg"
-	    android:hint="@string/enter_team"
-	    android:inputType="text" />
-     
-     <Button
-	    android:id="@+id/create_team"
-	    android:layout_below="@id/my_teams"
-	    android:layout_toRightOf="@id/enter_team" 
-	    android:layout_width="@dimen/medium_wd"
-	    android:layout_marginTop="@dimen/medium_mg"
-	    android:text="@string/create"
-	    style="@style/buttonDarkBlue" />
-
-    <ExpandableListView 
-	    android:id="@+id/teams_list" 
-	    android:groupIndicator="@drawable/group_indicator"
-   		android:layout_below="@id/create_team"
-		android:layout_marginTop="@dimen/medium_mg"
+	<RelativeLayout
+	    android:id="@+id/parent_layout"
 	    android:layout_width="match_parent"
-	    android:layout_height="match_parent" >
-	</ExpandableListView>
-     
-<!--      <ListView
-		android:id="@+id/teams_list"
-		android:layout_below="@id/create_team"
-		android:layout_marginTop="@dimen/medium_mg"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent">
-	</ListView> -->
+	    android:layout_height="0dip" 
+	    android:layout_weight="20">
+	    
+	    <TextView
+	        android:id="@+id/name"
+	        style="@style/topLine" />
+	
+	    <ImageButton
+			android:id="@+id/settings_bt"
+			android:contentDescription="@string/settings_bt"
+			android:layout_alignRight="@id/name"
+			android:src="@drawable/settings_bt"
+			style="@style/topLineButton" />
+		
+	     <TextView
+	        android:id="@+id/my_teams"
+	        android:layout_below="@id/name"
+	        android:text="@string/my_teams"
+	        style="@style/topLineLight" />
+	     
+	     <EditText
+		    android:id="@+id/enter_team"
+		    android:layout_below="@id/my_teams"
+		    android:layout_width="@dimen/button_wd"
+		    android:layout_height="wrap_content"
+		    android:layout_margin="@dimen/medium_mg"
+		    android:hint="@string/enter_team"
+		    android:inputType="text" />
+	     
+	     <Button
+		    android:id="@+id/create_team"
+		    android:layout_below="@id/my_teams"
+		    android:layout_toRightOf="@id/enter_team" 
+		    android:layout_width="@dimen/medium_wd"
+		    android:layout_marginTop="@dimen/medium_mg"
+		    android:text="@string/create"
+		    android:background="@drawable/light_button"
+		    style="@style/buttonLightBlue" />
+	
+	    <ExpandableListView 
+		    android:id="@+id/teams_list" 
+		    android:groupIndicator="@drawable/group_indicator"
+	   		android:layout_below="@id/create_team"
+			android:layout_marginTop="@dimen/medium_mg"
+		    android:layout_width="match_parent"
+		    android:layout_height="match_parent" >
+		</ExpandableListView>
+	   
+	</RelativeLayout>
 
-</RelativeLayout>
+    <LinearLayout 
+        android:layout_width="wrap_content"
+        android:layout_height="0dip"
+        android:orientation="horizontal"
+        android:layout_gravity="center" 
+        android:layout_weight="1">
+        
+	    <Button
+		    android:id="@+id/play"    
+		    android:layout_width="@dimen/medium_wd"
+		    android:text="@string/play"
+		    android:background="@drawable/dark_button"
+		    style="@style/buttonDarkBlue" 
+		    android:layout_margin="@dimen/large_mg"/>
+	                
+    </LinearLayout>
+
+</LinearLayout>

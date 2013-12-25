@@ -12,7 +12,7 @@
         android:targetSdkVersion = application's targeted API level
     -->
     <uses-sdk
-        android:minSdkVersion="8"
+        android:minSdkVersion="11"
         android:targetSdkVersion="18" />
 
     <!--
@@ -107,12 +107,12 @@
         <activity
             android:name=".SignUpActivity"
             android:label="@string/title_activity_sign_up" />
-        
-        <!-- _______________ LOG IN ACTIVITY _______________ -->        
-        <activity
-            android:name=".ProfileActivity"
-            android:label="@string/title_activity_log_in" />
 
+        <!-- _______________ CONTENT ACTIVITY _______________ -->        
+        <activity
+            android:name=".ContentActivity"
+            android:label="@string/title_activity_content" />
+      
     </application>
 
 </manifest>
