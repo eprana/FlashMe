@@ -19,9 +19,13 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.LogInCallback;
 import com.parse.Parse;
 import com.parse.ParseAnalytics;
+import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 public class MainActivity extends Activity {
 
@@ -44,8 +48,8 @@ public class MainActivity extends Activity {
 		
 		// ------------> User tries to log in
 		
-		final EditText login = (EditText) findViewById(R.id.username);
-		final EditText pass = (EditText) findViewById(R.id.password);
+		final EditText username = (EditText) findViewById(R.id.username);
+		final EditText password = (EditText) findViewById(R.id.password);
 		final Button logInButton = (Button) findViewById(R.id.login);
      	
 		aboutButton = (ImageButton) findViewById(R.id.bobble_help);
@@ -63,61 +67,64 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				
 				// Testing the data entered in the fields
-				final String loginTxt = login.getText().toString();
-				final String passTxt = pass.getText().toString();
+				final String s_username = username.getText().toString();
+				final String s_password = password.getText().toString();
                 
+				ParseUser.logInInBackground(s_username, s_password, new LogInCallback() {
+					public void done(ParseUser user, ParseException e) {
+						if (user != null) {
+							
+							// The user is logged in.
+							Intent intent = new Intent(MainActivity.this, ContentActivity.class);
+							intent.putExtra(EXTRA_LOGIN,  s_username);
+							intent.putExtra(EXTRA_PASSWORD,  s_password);
+							startActivity(intent);
+							
+						} else {
+							
+							// Login failed, display alert box
+							AlertDialog.Builder adb = new AlertDialog.Builder(context);
+							MessageAlert msg_a;
+							
+							if (alertDialogView == null) {
+								msg_a = new MessageAlert();
+								alertDialogView = inflater.inflate(R.layout.alert_dialog, null);
+								msg_a.msg = (TextView)alertDialogView.findViewById(R.id.text_alert);
+								alertDialogView.setTag(msg_a);
+							} else {
+								msg_a = (MessageAlert) alertDialogView.getTag();	
+							}
+
+							// Choosing the type of message alert
+							msg_a.msg.setText(context.getResources().getString(R.string.wrong_username_or_pass));
+							
+							// Filling the alert box
+							adb.setView(alertDialogView);
+							adb.setTitle("Ooops !");
+							adb.setNegativeButton("RETRY", new DialogInterface.OnClickListener() {
+					            public void onClick(DialogInterface dialog, int which) {
+					            	// Going back to the front screen and deleting the alertDialogView
+					            	ViewGroup adbParent = (ViewGroup) alertDialogView.getParent();
+									adbParent.removeView(alertDialogView);
+					          } });
+							adb.setPositiveButton("SIGN UP", new DialogInterface.OnClickListener() {
+					            public void onClick(DialogInterface dialog, int which) {
+					            	Intent intent = new Intent(MainActivity.this, SignUpActivity.class);
+									startActivity(intent);
+					          } });
+							
+							// Showing the alert box
+					        adb.create();
+							adb.show();
+						}
+					}
+				});
+				
 				// If one field is empty
-				if(loginTxt.equals("") || passTxt.equals("")){
+				/*if(s_username.equals("") || s_password.equals("")){
 					Toast.makeText(MainActivity.this, R.string.login_or_pass_empty, Toast.LENGTH_SHORT).show();
 					return;
-				}
-				
-				// If one field is unknown
-				if(loginTxt.equals("Dam") || passTxt.equals("anus")){
-
-					// Create an alert box
-					AlertDialog.Builder adb = new AlertDialog.Builder(context);
-					MessageAlert msg_a;
-					
-					if (alertDialogView == null) {
-						msg_a = new MessageAlert();
-						alertDialogView = inflater.inflate(R.layout.alert_dialog, null);
-						msg_a.msg = (TextView)alertDialogView.findViewById(R.id.text_alert);
-						alertDialogView.setTag(msg_a);
-					} else {
-						msg_a = (MessageAlert) alertDialogView.getTag();	
-					}
-
-					// Choosing the type of message alert
-					msg_a.msg.setText(context.getResources().getString(R.string.wrong_username_or_pass));
-					
-					// Filling the alert box
-					adb.setView(alertDialogView);
-					adb.setTitle("Ooops !");
-					adb.setNegativeButton("RETRY", new DialogInterface.OnClickListener() {
-			            public void onClick(DialogInterface dialog, int which) {
-			            	// Going back to the front screen and deleting the alertDialogView
-			            	ViewGroup adbParent = (ViewGroup) alertDialogView.getParent();
-							adbParent.removeView(alertDialogView);
-			          } });
-					adb.setPositiveButton("SIGN UP", new DialogInterface.OnClickListener() {
-			            public void onClick(DialogInterface dialog, int which) {
-			            	Intent intent = new Intent(MainActivity.this, SignUpActivity.class);
-							startActivity(intent);
-			          } });
-					
-					// Showing the alert box
-			        adb.create();
-					adb.show();
-					
-					return;
-				}
-				
-				// If nothing is wrong, going to the profile page and sending data
-				Intent intent = new Intent(MainActivity.this, ContentActivity.class);
-				intent.putExtra(EXTRA_LOGIN,  login.getText().toString());
-				intent.putExtra(EXTRA_PASSWORD,  pass.getText().toString());
-				startActivity(intent);
+				}*/
 			}
 		});
 		
