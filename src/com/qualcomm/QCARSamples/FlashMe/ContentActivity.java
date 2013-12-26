@@ -3,6 +3,8 @@ package com.qualcomm.QCARSamples.FlashMe;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import com.parse.ParseUser;
+
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -30,8 +32,8 @@ import android.os.Bundle;
 public class ContentActivity extends FragmentActivity {
 
   // -------------------- TO CHANGE WITH THE BDD (setting the username on top of the page)
-	// Data to get
-	final static String EXTRA_LOGIN = "user_login";
+	static ParseUser currentUser = ParseUser.getCurrentUser();
+	final static String EXTRA_LOGIN = currentUser.getUsername();
   // ------------------------------------------------------------------------------------
 	private static ArrayList<Game> games = null;
 	private static ArrayList<Team> teams = null;
