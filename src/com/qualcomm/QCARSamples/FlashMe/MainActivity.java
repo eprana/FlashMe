@@ -17,14 +17,10 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.parse.LogInCallback;
 import com.parse.Parse;
 import com.parse.ParseAnalytics;
 import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 public class MainActivity extends Activity {
@@ -38,7 +34,7 @@ public class MainActivity extends Activity {
 	// Data to get
 	private final String EXTRA_LOGIN = "user_login";
 	private final String EXTRA_PASSWORD = "user_password";
-	
+ 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -61,6 +57,10 @@ public class MainActivity extends Activity {
 			} 
 		});
 		
+		 // Initialize Parse
+	 	Parse.initialize(this, "ysJVmuI4oJDEsyF7YOcQG12WVkLzwQlLrqzt15Fg", "YTTLp7GRoHYEMzLXa58T2zB7mcTTPWJuB19JcGnJ");
+	 	ParseAnalytics.trackAppOpened(getIntent());
+	 	
 		logInButton.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -76,8 +76,8 @@ public class MainActivity extends Activity {
 							
 							// The user is logged in.
 							Intent intent = new Intent(MainActivity.this, ContentActivity.class);
-							intent.putExtra(EXTRA_LOGIN,  s_username);
-							intent.putExtra(EXTRA_PASSWORD,  s_password);
+							intent.putExtra(EXTRA_LOGIN, s_username);
+							intent.putExtra(EXTRA_PASSWORD, s_password);
 							startActivity(intent);
 							
 						} else {

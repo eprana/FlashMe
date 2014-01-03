@@ -15,7 +15,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +24,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.parse.Parse;
 import com.parse.ParseAnalytics;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -80,10 +78,6 @@ public class SignUpActivity extends Activity {
 
         final ImageButton backButton = (ImageButton) findViewById(R.id.back_bt);
         final Button signUpButton = (Button) findViewById(R.id.signup);
-     	
-        // Initialize Parse
-     	Parse.initialize(this, "ysJVmuI4oJDEsyF7YOcQG12WVkLzwQlLrqzt15Fg", "YTTLp7GRoHYEMzLXa58T2zB7mcTTPWJuB19JcGnJ");
-     	ParseAnalytics.trackAppOpened(getIntent());
      	
         // Click on sign up button
         signUpButton.setOnClickListener(new View.OnClickListener() {
