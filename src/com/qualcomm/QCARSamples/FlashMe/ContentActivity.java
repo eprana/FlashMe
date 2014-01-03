@@ -2,8 +2,14 @@ package com.qualcomm.QCARSamples.FlashMe;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
+import com.parse.ParseException;
+import com.parse.FindCallback;
+import com.parse.ParseObject;
+import com.parse.ParseRelation;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -21,7 +27,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
-import android.widget.ExpandableListView.OnGroupExpandListener;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,10 +37,8 @@ import android.os.Bundle;
 
 public class ContentActivity extends FragmentActivity {
 
-  // -------------------- TO CHANGE WITH THE BDD (setting the username on top of the page)
 	static ParseUser currentUser = ParseUser.getCurrentUser();
 	final static String EXTRA_LOGIN = currentUser.getUsername();
-  // ------------------------------------------------------------------------------------
 	private static ArrayList<Game> games = null;
 	private static ArrayList<Team> teams = null;
 	private static ELVTeamAdapter teamAdapter;
@@ -45,15 +49,12 @@ public class ContentActivity extends FragmentActivity {
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 			View mainView = inflater.inflate(R.layout.profile, container, false);	
-			
-		//	-------------------- TO CHANGE WITH THE BDD (setting the username on top of the page)
-        	//Intent intent = getIntent();
+			//Intent intent = getIntent();
         	TextView userName = (TextView) mainView.findViewById(R.id.name);
 	        //if(intent != null){
 	        	//userName.setText(intent.getStringExtra(EXTRA_LOGIN));
         	userName.setText(EXTRA_LOGIN);
 	        //}
-	    // --------------------------------------------------------------------------------------
 			return mainView;
 		}
 	}
@@ -63,44 +64,68 @@ public class ContentActivity extends FragmentActivity {
 		public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 			View mainView = inflater.inflate(R.layout.teams, container, false);
 			final Context context = mainView.getContext();
-
-			// TO CHANGE -- Setting the name of the user on top of the page
         	TextView userName = (TextView) mainView.findViewById(R.id.name);
         	userName.setText(EXTRA_LOGIN);
-        	
-        	// Getting the list of teams
-        	ContentActivity.expandableList = (ExpandableListView) mainView.findViewById(R.id.teams_list);
-			teams = new ArrayList<Team>();
-
-			// TO CHANGE -- Teams tests
-			Team team1 = createTeam("Anti-Heroes", "Zizi", getResources().getDrawable(R.drawable.team_empty_mini));
-			team1.addPlayer(team1, "Zizi", getResources().getDrawable(R.drawable.pic_empty_mini));
-			team1.addPlayer(team1, "Flo", getResources().getDrawable(R.drawable.pic_flo));
-			team1.addPlayer(team1, "Xopi", getResources().getDrawable(R.drawable.pic_empty_mini));
-			team1.setReady(true);
 			
-			Team team2 = createTeam("Hydro-Gène", "Flo", getResources().getDrawable(R.drawable.team_empty_mini));
-			team2.addPlayer(team2, "Flo", getResources().getDrawable(R.drawable.pic_flo));
-			team2.addPlayer(team2, "Jiji", getResources().getDrawable(R.drawable.pic_empty_mini));
-			team2.addPlayer(team2, "Cédric", getResources().getDrawable(R.drawable.pic_empty_mini));
-			team2.setReady(true);
+			// Get list of teams
+        	teams = new ArrayList<Team>();
+			ParseRelation<ParseObject> teamsRelation = currentUser.getRelation("teams");
+			teamsRelation.getQuery().findInBackground(new FindCallback<ParseObject>() {
+			    public void done(List<ParseObject> results, ParseException e) {
+			        if (e == null) {
+			        	for (ParseObject result : results) {
+			        		 Team newTeam = new Team(result.getString("name"), currentUser.getUsername(), getResources().getDrawable(R.drawable.team_empty_mini));
+			        		 newTeam.addPlayer(new Player(currentUser.getUsername(), getResources().getDrawable(R.drawable.pic_empty_mini)));
+			        		 teams.add(newTeam);
+			        	}
+			        }
+			    }
+			});
+			
+			// Display teams
+			teamAdapter = new ELVTeamAdapter(context, teams);
+        	ContentActivity.expandableList = (ExpandableListView) mainView.findViewById(R.id.teams_list);
+			expandableList.setAdapter(teamAdapter);
 
 			// TO CHANGE -- Players are ready? tests
-			team1.getPlayers().get(0).setReady(true);
-			team1.getPlayers().get(2).setReady(true);
-			team2.getPlayers().get(0).setReady(true);
-			team2.getPlayers().get(1).setReady(true);
-			team2.getPlayers().get(2).setReady(true);
+			//team1.getPlayers().get(0).setReady(true);
+			//team1.getPlayers().get(2).setReady(true);
 			
 			// TO CHANGE -- Changing picture tests
-			team1.getPlayers().get(2).setPicture(getResources().getDrawable(R.drawable.pic_xopi));
-					
-			// TO CHANGE -- Add players to team
-			teams.add(team1);
-			teams.add(team2);
+			//team1.getPlayers().get(2).setPicture(getResources().getDrawable(R.drawable.pic_xopi));
 			
-			teamAdapter = new ELVTeamAdapter(context, teams);
-			expandableList.setAdapter(teamAdapter);
+			// Create team button
+			final EditText teamName = (EditText) mainView.findViewById(R.id.enter_team);
+			Button createButton = (Button) mainView.findViewById(R.id.create_team);
+			createButton.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					final String s_teamName = teamName.getText().toString();
+					if(s_teamName.equals("")){
+						// Invalid team name
+						Toast.makeText(context, R.string.empty_team_name, Toast.LENGTH_SHORT).show();
+						return;
+					}
+					else {
+						// Create team
+						final ParseObject team = new ParseObject("Team");
+						team.put("name", s_teamName);
+						team.saveInBackground(new SaveCallback() {
+							@Override
+							public void done(ParseException e) {
+								if (e == null) {
+									// Add relation with current user
+									ParseRelation<ParseObject> teamsRelation = currentUser.getRelation("teams");
+									teamsRelation.add(team);
+									currentUser.saveInBackground();
+									teams.add(new Team(team.getString("name"), currentUser.getUsername(), getResources().getDrawable(R.drawable.team_empty_mini)));
+								}
+							}
+						});
+					}
+				}
+			});
 			
 			// Play button
 			Button playButton = (Button) mainView.findViewById(R.id.play);
@@ -117,17 +142,12 @@ public class ContentActivity extends FragmentActivity {
 					}
 				}
 			});
-				
+			
 			// Create a contextual menu to delete teams
 			registerForContextMenu(expandableList);
 			
 			return mainView;
-		}
-				
-		public Team createTeam(String name, String creator, Drawable picture){
-			return new Team(name, creator, picture);
-		}
-						
+		}						
 	}
 
 	public static class GamesFragment extends Fragment {
