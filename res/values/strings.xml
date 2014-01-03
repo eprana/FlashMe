@@ -53,6 +53,7 @@
 	<!-- my teams -->
 	<string name="my_teams">My teams</string>
 	<string name="enter_team">New team name</string>
+	<string name="empty_team_name">You must enter a valid team name.</string>
 	<string name="create">CREATE</string>
 	<string name="player_pic">player_picture</string>
 	<string name="delete">delete</string>
