@@ -43,8 +43,7 @@ public class Game {
 		this.teams = teams;
 	}
 	
-	public void addTeam(String name, String creator, Drawable picture){
-		Team team = new Team(name, creator, picture);
+	public void addTeam(Team team){
 		teams.add(team);
 	}
 	

@@ -39,18 +39,13 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
-		final LayoutInflater inflater = LayoutInflater.from(context);
-		
-		// ------------> User tries to log in
-		
+		final LayoutInflater inflater = LayoutInflater.from(context);		
 		final EditText username = (EditText) findViewById(R.id.username);
 		final EditText password = (EditText) findViewById(R.id.password);
 		final Button logInButton = (Button) findViewById(R.id.login);
      	
 		aboutButton = (ImageButton) findViewById(R.id.bobble_help);
 		aboutButton.setOnClickListener(new OnClickListener() {
-
 			@Override 
 			public void onClick(View v) { 
 				initiatePopupWindow(aboutButton); 
@@ -62,7 +57,6 @@ public class MainActivity extends Activity {
 	 	ParseAnalytics.trackAppOpened(getIntent());
 	 	
 		logInButton.setOnClickListener(new OnClickListener() {
-
 			@Override
 			public void onClick(View v) {
 				
