@@ -44,7 +44,7 @@
 			android:layout_width="wrap_content"
         	android:layout_height="wrap_content"
 			android:contentDescription="@string/score_ic"
-			android:src="@drawable/score_ic"
+			android:src="@drawable/best_score_icon"
 			style="@style/translucide" />
 	    
 	    <ImageView
@@ -53,7 +53,7 @@
 			android:layout_width="wrap_content"
         	android:layout_height="wrap_content"
 			android:contentDescription="@string/vics_ic"
-			android:src="@drawable/vics_ic"
+			android:src="@drawable/victories_icon"
 			style="@style/translucide" />
 	    
 	    <ImageView
@@ -62,7 +62,7 @@
 			android:layout_width="wrap_content"
         	android:layout_height="wrap_content"
 			android:contentDescription="@string/deaths_ic"
-			android:src="@drawable/deaths_ic"
+			android:src="@drawable/defeats_icon"
 			style="@style/translucide" />
 	    
 	 </LinearLayout>
@@ -120,7 +120,7 @@
 			android:layout_width="wrap_content"
         	android:layout_height="wrap_content"
 			android:contentDescription="@string/score_ic"
-			android:src="@drawable/score_ic"
+			android:src="@drawable/best_score_icon"
 			style="@style/translucide" />
 	    
 	    <ImageView
@@ -129,7 +129,7 @@
 			android:layout_width="wrap_content"
         	android:layout_height="wrap_content"
 			android:contentDescription="@string/vics_ic"
-			android:src="@drawable/vics_ic"
+			android:src="@drawable/victories_icon"
 			style="@style/translucide" />
 	    
 	    <ImageView
@@ -138,7 +138,7 @@
 			android:layout_width="wrap_content"
         	android:layout_height="wrap_content"
 			android:contentDescription="@string/deaths_ic"
-			android:src="@drawable/deaths_ic"
+			android:src="@drawable/defeats_icon"
 			style="@style/translucide" />
 	    
 	 </LinearLayout>

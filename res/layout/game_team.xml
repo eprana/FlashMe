@@ -18,7 +18,7 @@
         android:layout_toRightOf="@id/team_state"
         android:contentDescription="@string/team_pic"
         android:layout_marginLeft="@dimen/line_mg"
-        android:src="@drawable/team_empty_mini"
+        android:src="@drawable/default_team_picture_thumb"
         />
     
      <TextView 

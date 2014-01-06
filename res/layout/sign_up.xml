@@ -20,7 +20,7 @@
 		android:layout_height="wrap_content" 
 		android:layout_width="wrap_content" 
 		android:layout_margin="@dimen/large_mg"
-		android:src="@drawable/pic_empty" 
+		android:src="@drawable/empty_picture_icon" 
 		android:contentDescription="@string/pic_empty"
 		android:layout_centerHorizontal="true" />
     

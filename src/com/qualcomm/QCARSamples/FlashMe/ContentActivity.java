@@ -94,8 +94,8 @@ public class ContentActivity extends FragmentActivity {
 			    public void done(List<ParseObject> results, ParseException e) {
 			        if (e == null) {
 			        	for (ParseObject result : results) {
-			        		 Team newTeam = new Team(result.getString("name"), currentUser.getUsername(), getResources().getDrawable(R.drawable.team_empty_mini));
-			        		 newTeam.addPlayer(new Player(EXTRA_LOGIN, getResources().getDrawable(R.drawable.pic_empty_mini)));
+			        		 Team newTeam = new Team(result.getString("name"), currentUser.getUsername(), getResources().getDrawable(R.drawable.default_team_picture_thumb));
+			        		 newTeam.addPlayer(new Player(EXTRA_LOGIN, getResources().getDrawable(R.drawable.default_profile_picture_thumb)));
 			        		 teams.add(newTeam);
 			        	}
 		        		 // Update adapter
@@ -132,7 +132,7 @@ public class ContentActivity extends FragmentActivity {
 									ParseRelation<ParseObject> teamsRelation = currentUser.getRelation("teams");
 									teamsRelation.add(newTeam);
 									currentUser.saveInBackground();
-									teams.add(new Team(newTeam.getString("name"), EXTRA_LOGIN, getResources().getDrawable(R.drawable.team_empty_mini)));
+									teams.add(new Team(newTeam.getString("name"), EXTRA_LOGIN, getResources().getDrawable(R.drawable.default_team_picture_thumb)));
 									expandableList.setAdapter(teamAdapter);
 								}
 							}
@@ -279,9 +279,9 @@ public class ContentActivity extends FragmentActivity {
 		profile_bt.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View arg0){
-				profile_bt.setImageResource(R.drawable.profile_bt);
-				teams_bt.setImageResource(R.drawable.team_bt_in);
-				games_bt.setImageResource(R.drawable.game_bt_in);
+				profile_bt.setImageResource(R.drawable.menu_profile_bt);
+				teams_bt.setImageResource(R.drawable.menu_teams_bt_in);
+				games_bt.setImageResource(R.drawable.menu_games_bt_in);
 				ProfileFragment fragment = (ProfileFragment)myFragmentManager.findFragmentByTag(TAG_PROFILE);
 				if(fragment==null){
 					FragmentTransaction fragmentTransaction = myFragmentManager.beginTransaction();
@@ -295,9 +295,9 @@ public class ContentActivity extends FragmentActivity {
 		teams_bt.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View arg0){
-				profile_bt.setImageResource(R.drawable.profile_bt_in);
-				teams_bt.setImageResource(R.drawable.team_bt);
-				games_bt.setImageResource(R.drawable.game_bt_in);
+				profile_bt.setImageResource(R.drawable.menu_profile_bt_in);
+				teams_bt.setImageResource(R.drawable.menu_teams_bt);
+				games_bt.setImageResource(R.drawable.menu_games_bt_in);
 				TeamsFragment fragment = (TeamsFragment)myFragmentManager.findFragmentByTag(TAG_TEAMS);
 				if(fragment==null){
 					FragmentTransaction fragmentTransaction = myFragmentManager.beginTransaction();
@@ -311,9 +311,9 @@ public class ContentActivity extends FragmentActivity {
 		games_bt.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View arg0){
-				profile_bt.setImageResource(R.drawable.profile_bt_in);
-				teams_bt.setImageResource(R.drawable.team_bt_in);
-				games_bt.setImageResource(R.drawable.game_bt);
+				profile_bt.setImageResource(R.drawable.menu_profile_bt_in);
+				teams_bt.setImageResource(R.drawable.menu_teams_bt_in);
+				games_bt.setImageResource(R.drawable.menu_games_bt);
 				GamesFragment fragment = (GamesFragment)myFragmentManager.findFragmentByTag(TAG_GAMES);
 				if(fragment==null){
 					FragmentTransaction fragmentTransaction = myFragmentManager.beginTransaction();

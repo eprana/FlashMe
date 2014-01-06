@@ -14,21 +14,21 @@
 			android:id="@+id/profile_bt"
 			android:layout_weight="1"
 			android:contentDescription="@string/profile_bt"
-			android:src="@drawable/profile_bt"
+			android:src="@drawable/menu_profile_bt"
 			style="@style/topLineButton" />
 	   
 	   <ImageButton
 			android:id="@+id/team_bt"
 			android:contentDescription="@string/team_bt"
 			android:layout_weight="1" 
-			android:src="@drawable/team_bt_in"
+			android:src="@drawable/menu_teams_bt_in"
 			style="@style/topLineButton" />
 	   
 	   <ImageButton
 			android:id="@+id/game_bt"
 			android:contentDescription="@string/game_bt"
 			android:layout_weight="1"
-			android:src="@drawable/game_bt_in"
+			android:src="@drawable/menu_games_bt_in"
 			style="@style/topLineButton" />
 	</LinearLayout>
 	

@@ -18,7 +18,7 @@
         android:layout_toRightOf="@id/player_state"
         android:contentDescription="@string/player_pic"
         android:layout_marginLeft="@dimen/line_mg"
-        android:src="@drawable/pic_empty_mini"
+        android:src="@drawable/default_profile_picture_thumb"
         />
     
      <TextView 

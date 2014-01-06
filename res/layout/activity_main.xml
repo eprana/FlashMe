@@ -9,7 +9,7 @@
 		android:layout_width="wrap_content" 
 		android:layout_marginTop="@dimen/medium_mg"
 		android:layout_marginLeft="@dimen/medium_mg"
-		android:src="@drawable/bobble"
+		android:src="@drawable/about_bt"
 		android:contentDescription="@string/bobble_help"
 		style="@style/translucide" />
     
@@ -29,7 +29,7 @@
 		android:layout_height="wrap_content" 
 		android:layout_width="wrap_content" 
 		android:layout_margin="@dimen/small_mg"
-		android:src="@drawable/logo" 
+		android:src="@drawable/flashme_logo" 
 		android:contentDescription="@string/logo"
 		android:layout_centerHorizontal="true" />
 

@@ -43,22 +43,21 @@ public class SignUpActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sign_up);
         context = SignUpActivity.this;
+        final LayoutInflater inflater = LayoutInflater.from(context);
         
         // Get activity elements
 		final EditText username = (EditText) findViewById(R.id.username);
 		final EditText password = (EditText) findViewById(R.id.password);
 		final EditText email = (EditText) findViewById(R.id.mail);
-        
-        final LayoutInflater inflater = LayoutInflater.from(context);
         this.imageView = (ImageView)this.findViewById(R.id.pic_empty);
         
+        // Choose picture button
         Button folderButton = (Button) this.findViewById(R.id.choose_pic);
         folderButton.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
-//            	Intent cameraIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//                startActivityForResult(cameraIntent, PICK_IMAGE);
+            	//Intent cameraIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            	//startActivityForResult(cameraIntent, PICK_IMAGE);
             	Intent intent = new Intent();
             	intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -66,9 +65,9 @@ public class SignUpActivity extends Activity {
             }
         });
         
+        // Take picture button
         Button photoButton = (Button) this.findViewById(R.id.take_pic);
         photoButton.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE); 
