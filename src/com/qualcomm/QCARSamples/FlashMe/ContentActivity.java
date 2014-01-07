@@ -88,8 +88,9 @@ public class ContentActivity extends FragmentActivity {
         	listView.setAdapter(adapter);*/
 
         	// Get current user's existing teams
-			ParseRelation<ParseObject> teamsRelation = currentUser.getRelation("teams");
-			teamsRelation.getQuery().findInBackground(new FindCallback<ParseObject>() {
+        	ParseQuery<ParseObject> teamsQuery = ParseQuery.getQuery("Team");
+        	teamsQuery.whereEqualTo("players", currentUser);
+        	teamsQuery.findInBackground(new FindCallback<ParseObject>() {
 				// Parse query
 			    public void done(List<ParseObject> results, ParseException e) {
 			        if (e == null) {
@@ -129,9 +130,9 @@ public class ContentActivity extends FragmentActivity {
 							public void done(ParseException e) {
 								if (e == null) {
 									// Add relation with current user
-									ParseRelation<ParseObject> teamsRelation = currentUser.getRelation("teams");
-									teamsRelation.add(newTeam);
-									currentUser.saveInBackground();
+									ParseRelation<ParseObject> teamsRelation = newTeam.getRelation("players");
+									teamsRelation.add(currentUser);
+									newTeam.saveInBackground();
 									teams.add(new Team(newTeam.getString("name"), EXTRA_LOGIN, getResources().getDrawable(R.drawable.default_team_picture_thumb)));
 									expandableList.setAdapter(teamAdapter);
 								}
@@ -142,13 +143,15 @@ public class ContentActivity extends FragmentActivity {
 			});
 			
 			// Delete player button
-			ImageButton deletePlayerButton = (ImageButton) mainView.findViewById(R.id.delete_player_bt);
+			/*View playersListView = inflater.inflate(R.layout.team_player, container, false);
+			ImageButton deletePlayerButton = (ImageButton) playersListView.findViewById(R.id.delete_player_bt);
 			
-			/*deletePlayerButton.setOnClickListener(new OnClickListener() {
+			deletePlayerButton.setOnClickListener(new OnClickListener() {
 				
 				@Override
 				public void onClick(View v) {
-					//Toast.makeText(getActivity(), "Player deleted", Toast.LENGTH_SHORT).show();
+					System.out.println("delete");
+					Toast.makeText(getActivity(), "Player deleted", Toast.LENGTH_SHORT).show();
 				}
 			});*/
 			
