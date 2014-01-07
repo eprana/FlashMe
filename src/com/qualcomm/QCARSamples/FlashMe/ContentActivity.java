@@ -143,6 +143,7 @@ public class ContentActivity extends FragmentActivity {
 			
 			// Delete player button
 			ImageButton deletePlayerButton = (ImageButton) mainView.findViewById(R.id.delete_player_bt);
+			
 			/*deletePlayerButton.setOnClickListener(new OnClickListener() {
 				
 				@Override

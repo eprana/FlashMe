@@ -2,17 +2,21 @@
 <RelativeLayout
     
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
     
     <LinearLayout 
 		android:orientation="horizontal"
 		android:id="@+id/top_menu"
+    	android:layout_height="wrap_content"
 		style="@style/topMenu" >
 		
 	   <ImageButton
 			android:id="@+id/profile_bt"
 			android:layout_weight="1"
+    		android:layout_height="wrap_content"
+    		android:layout_marginTop="@dimen/medium_mg"
+    		android:layout_marginBottom="@dimen/medium_mg"
 			android:contentDescription="@string/profile_bt"
 			android:src="@drawable/menu_profile_bt"
 			style="@style/topLineButton" />
@@ -20,7 +24,10 @@
 	   <ImageButton
 			android:id="@+id/team_bt"
 			android:contentDescription="@string/team_bt"
-			android:layout_weight="1" 
+			android:layout_weight="1"
+    		android:layout_height="wrap_content"
+    		android:layout_marginTop="@dimen/medium_mg"
+    		android:layout_marginBottom="@dimen/medium_mg"
 			android:src="@drawable/menu_teams_bt_in"
 			style="@style/topLineButton" />
 	   
@@ -28,6 +35,9 @@
 			android:id="@+id/game_bt"
 			android:contentDescription="@string/game_bt"
 			android:layout_weight="1"
+    		android:layout_height="wrap_content"
+    		android:layout_marginTop="@dimen/medium_mg"
+    		android:layout_marginBottom="@dimen/medium_mg"
 			android:src="@drawable/menu_games_bt_in"
 			style="@style/topLineButton" />
 	</LinearLayout>
