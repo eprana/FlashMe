@@ -94,23 +94,25 @@ public class ELVTeamAdapter extends BaseExpandableListAdapter {
 			public void onClick(View v) {
 				// Get concerned Team with Parse
 				ParseQuery<ParseObject> teamQuery = ParseQuery.getQuery("Team");
-				teamQuery.whereEqualTo("name",((Team) getGroup(teamPos)).getName());
+				teamQuery.whereEqualTo("name", ((Team) getGroup(teamPos)).getName());
 				teamQuery.getFirstInBackground(new GetCallback<ParseObject>() {
 					public void done(final ParseObject team, ParseException e) {
 						if (team == null) {
-							
+							// Display error message
 						} else {
 							// Get selected User with Parse
 							ParseQuery<ParseUser> playerQuery = ParseUser.getQuery();
 							playerQuery.whereEqualTo("username", player.getName());
 							playerQuery.findInBackground(new FindCallback<ParseUser>() {
 								public void done(List<ParseUser> users, ParseException e) {
-									// Remove Parse Relation
-									for(ParseUser user : users){
-										team.getRelation("players").remove(user);
+									if (e==null){
+										// Remove Parse Relation
+										for(ParseUser user : users){
+											team.getRelation("players").remove(user);
+										}
+										// Remove java object
+										((Team) getGroup(teamPos)).removePlayer(player);
 									}
-									// Remove java object
-									((Team) getGroup(teamPos)).removePlayer(player);
 								}
 							});
 						}
