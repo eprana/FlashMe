@@ -193,26 +193,6 @@ public class SignUpActivity extends Activity {
     		}
     	}else if(resultCode == Activity.RESULT_CANCELED) {
     		Toast.makeText(SignUpActivity.this, "No Photo Selected", Toast.LENGTH_SHORT).show();
-    	}
-    	
-//        if (resultCode == Activity.RESULT_OK) {
-//                    } else if (resultCode == Activity.RESULT_CANCELED) {
-//            Toast.makeText(PhotoTake.this, "No Photo Selected",
-//                    Toast.LENGTH_SHORT).show();
-//        }
-//        
-//        if (requestCode == PICK_IMAGE && resultCode == RESULT_OK){
-//        	Bitmap photo = (Bitmap) data.getExtras().get("data"); 
-//            imageView.setImageBitmap(photo);
-//        }
-//        
-//        
-//        if (requestCode == SELECT_PICTURE) {
-//            Uri selectedImageUri = data.getData();
-//            selectedImagePath = getPath(selectedImageUri);
-//        }
-//        
-        
-        
+    	}        
     } 
 }
