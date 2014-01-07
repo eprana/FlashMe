@@ -87,7 +87,7 @@ public class ContentActivity extends FragmentActivity {
         	ListView listView = (ListView) mainView.findViewById(R.id.teams_list);
         	listView.setAdapter(adapter);*/
 
-        	// Get current user's existing teams
+        	// Get teams where user is a player with Parse
         	ParseQuery<ParseObject> teamsQuery = ParseQuery.getQuery("Team");
         	teamsQuery.whereEqualTo("players", currentUser);
         	teamsQuery.findInBackground(new FindCallback<ParseObject>() {
@@ -125,6 +125,7 @@ public class ContentActivity extends FragmentActivity {
 						// Create team
 						final ParseObject newTeam = new ParseObject("Team");
 						newTeam.put("name", s_teamName);
+						newTeam.put("createdBy", currentUser);
 						newTeam.saveInBackground(new SaveCallback() {
 							@Override
 							public void done(ParseException e) {

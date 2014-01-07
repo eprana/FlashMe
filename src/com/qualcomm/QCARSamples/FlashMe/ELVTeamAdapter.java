@@ -106,12 +106,24 @@ public class ELVTeamAdapter extends BaseExpandableListAdapter {
 							playerQuery.findInBackground(new FindCallback<ParseUser>() {
 								public void done(List<ParseUser> users, ParseException e) {
 									if (e==null){
-										// Remove Parse Relation
 										for(ParseUser user : users){
-											team.getRelation("players").remove(user);
+											if(user.getUsername().equals(ParseUser.getCurrentUser().getUsername())){
+												// Display restriction message
+												Toast.makeText(context, "You can't delete yourself from the team.", Toast.LENGTH_SHORT).show();
+											}
+											else{
+												// Remove Parse Relation
+												team.getRelation("players").remove(user);
+												team.saveInBackground();
+												// Remove java object
+												((Team) getGroup(teamPos)).removePlayer(player);
+												// Display success message
+												Toast.makeText(context, "You just deleted "+user.getUsername()+" from the team.", Toast.LENGTH_SHORT).show();
+											}
 										}
-										// Remove java object
-										((Team) getGroup(teamPos)).removePlayer(player);
+									}
+									else {
+										Toast.makeText(context, "The user can't be deleted.", Toast.LENGTH_SHORT).show();
 									}
 								}
 							});
