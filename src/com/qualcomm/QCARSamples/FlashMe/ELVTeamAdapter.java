@@ -1,9 +1,16 @@
 package com.qualcomm.QCARSamples.FlashMe;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import javax.security.auth.callback.Callback;
+
+import com.parse.FindCallback;
+import com.parse.GetCallback;
+import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -55,7 +62,7 @@ public class ELVTeamAdapter extends BaseExpandableListAdapter {
 	}
 
 	@Override
-	public View getChildView(int teamPos, int playerPos, boolean isLastChild, View convertView, ViewGroup parent) {
+	public View getChildView(final int teamPos, int playerPos, boolean isLastChild, View convertView, ViewGroup parent) {
 
 		final Player player = (Player) getChild(teamPos, playerPos);
 		ChildViewHolder childViewHolder;
@@ -85,11 +92,30 @@ public class ELVTeamAdapter extends BaseExpandableListAdapter {
 		childViewHolder.delete_bt.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				System.out.println(player.getName());
-				
-				ParseQuery<ParseObject> query = ParseQuery.getQuery("User");
-				query.whereEqualTo("name", player.getName());
-				
+				// Get concerned Team with Parse
+				ParseQuery<ParseObject> teamQuery = ParseQuery.getQuery("Team");
+				teamQuery.whereEqualTo("name",((Team) getGroup(teamPos)).getName());
+				teamQuery.getFirstInBackground(new GetCallback<ParseObject>() {
+					public void done(final ParseObject team, ParseException e) {
+						if (team == null) {
+							
+						} else {
+							// Get selected User with Parse
+							ParseQuery<ParseUser> playerQuery = ParseUser.getQuery();
+							playerQuery.whereEqualTo("username", player.getName());
+							playerQuery.findInBackground(new FindCallback<ParseUser>() {
+								public void done(List<ParseUser> users, ParseException e) {
+									// Remove Parse Relation
+									for(ParseUser user : users){
+										team.getRelation("players").remove(user);
+									}
+									// Remove java object
+									((Team) getGroup(teamPos)).removePlayer(player);
+								}
+							});
+						}
+					}
+				});
 			}
 		});
 		
