@@ -170,6 +170,7 @@ public class ELVTeamAdapter extends BaseExpandableListAdapter {
 			gholder.name = (TextView)convertView.findViewById(R.id.name);
 			gholder.creator = (TextView)convertView.findViewById(R.id.creator);
 			gholder.selected = (CheckBox)convertView.findViewById(R.id.select_team);
+			gholder.delete_bt = (ImageButton)convertView.findViewById(R.id.delete_team_bt);
 			convertView.setTag(gholder);
         } else {
         	gholder = (GroupViewHolder) convertView.getTag();
@@ -186,7 +187,34 @@ public class ELVTeamAdapter extends BaseExpandableListAdapter {
 		gholder.name.setText(teams.get(teamPos).getName());
 		gholder.creator.setText(teams.get(teamPos).getCreator());
 		
-		// Choosing a team to play
+		// Delete a team
+		gholder.delete_bt.setFocusable(false);
+		gholder.delete_bt.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// Get concerned team with Parse
+				ParseQuery<ParseObject> teamQuery = ParseQuery.getQuery("Team");
+				teamQuery.whereEqualTo("name", ((Team) getGroup(teamPosition)).getName());
+				teamQuery.getFirstInBackground(new GetCallback<ParseObject>() {
+					public void done(final ParseObject team, ParseException e) {
+						if (e==null){
+							// Remove Team in Parse
+							team.deleteInBackground();
+							// Remove java object
+							teams.remove(teamPosition);
+							// Display success message
+							Toast.makeText(context, "You just deleted the team "+team.getString("name")+".", Toast.LENGTH_SHORT).show();
+						}
+						else {
+							Toast.makeText(context, "The team can't be deleted.", Toast.LENGTH_SHORT).show();
+						}
+						
+					}
+				});
+			}
+		});
+		
+		// Choose a team to start a game
 		gholder.selected.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -228,6 +256,7 @@ public class ELVTeamAdapter extends BaseExpandableListAdapter {
 		public TextView name;
 		public TextView creator;
 		public CheckBox selected;
+		public ImageButton delete_bt;
 	}
 
 	class ChildViewHolder {

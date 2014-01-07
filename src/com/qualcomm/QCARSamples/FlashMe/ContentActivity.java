@@ -143,7 +143,7 @@ public class ContentActivity extends FragmentActivity {
 					}
 				}
 			});
-			
+						
 			// Play button
 			Button playButton = (Button) mainView.findViewById(R.id.play);
 			playButton.setOnClickListener(new OnClickListener() {
