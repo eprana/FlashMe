@@ -60,7 +60,7 @@ public class ELVTeamAdapter extends BaseExpandableListAdapter {
             convertView = inflater.inflate(R.layout.team_player, null);
             childViewHolder.state = (TextView)convertView.findViewById(R.id.player_state);
             childViewHolder.name = (TextView)convertView.findViewById(R.id.player_name);
-            childViewHolder.picture = (ImageView)convertView.findViewById(R.id.player_pic);
+            childViewHolder.picture = (ImageView)convertView.findViewById(R.id.player_in_team_pic);
             convertView.setTag(childViewHolder);
 		} else {
 			childViewHolder = (ChildViewHolder) convertView.getTag();	

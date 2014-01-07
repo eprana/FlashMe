@@ -55,7 +55,10 @@
 	<string name="enter_team">New team name</string>
 	<string name="empty_team_name">You must enter a valid team name.</string>
 	<string name="create">CREATE</string>
-	<string name="player_pic">player_picture</string>
+	<string name="player_in_team_pic">player_picture</string>
+	<string name="delete_player_bt">Delete player</string>
+	<string name="team_in_list_picture">Team in list picture</string>
+	<string name="delete_team_bt">Delete team</string>
 	<string name="delete">delete</string>
 	<string name="quit_team_alert">Beware! If you decide to quit the team, you won\'t be able to re-join it unless the creator invites you.</string>
 	<string name="quit_team">Quit team</string>
@@ -66,6 +69,7 @@
 	<!-- my games -->
 	<string name="my_games">My games</string>
 	<string name="enter_game">New game name</string>
+	<string name="empty_game_name">You must enter a valid game name.</string>
 	<string name="team_pic">team_picture</string>
 	<string name="quit_game">Quit game</string>
 	

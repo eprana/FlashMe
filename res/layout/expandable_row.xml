@@ -5,50 +5,73 @@
     android:orientation="horizontal" 
     android:baselineAligned="false">
 
-	<RelativeLayout 
+	<RelativeLayout
 	    android:layout_width="0dip"
-	    android:layout_height="wrap_content" 
-	    android:layout_weight="10">
+	    android:layout_height="wrap_content"
+	    android:layout_weight="8" >
 	    
-	    <TextView 
+	    <TextView
 	        android:id="@+id/state"
-	        android:layout_height="@dimen/small_wd"
+	        style="@style/waiting"
 	        android:layout_width="wrap_content"
-	        android:layout_marginTop="@dimen/medium_mg"
-	        style="@style/waiting" />
-	    
-		 <TextView 
-			android:id="@+id/name" 
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content" 
-			android:textSize="@dimen/medium_tx" 
-	        style="@style/middle_blue"
-	        android:layout_marginTop="@dimen/medium_mg"
-	        android:groupIndicator="@null"
-			android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft" />
+	        android:layout_height="wrap_content"
+	        android:layout_alignBottom="@+id/item_picture"
+	        android:layout_alignParentTop="true" />
 		
-		<TextView 
-			android:id="@+id/creator" 
-			android:layout_below="@id/name"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content" 
-			android:textSize="@dimen/small_tx"
-			android:groupIndicator="@null"
-			android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft" />
-	
+		<ImageView
+		    android:id="@+id/item_picture"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_alignParentTop="true"
+		    android:layout_toRightOf="@+id/state"
+		    android:background="@null"
+		    android:contentDescription="@string/team_in_list_picture"
+		    android:src="@drawable/default_team_picture_thumb" />
+
+		<TextView
+		    android:id="@+id/name"
+		    style="@style/middle_blue"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_alignParentTop="true"
+		    android:layout_toRightOf="@+id/item_picture"
+		    android:groupIndicator="@null"
+		    android:paddingLeft="14.5sp"
+		    android:textSize="@dimen/medium_tx" />
+
+		<TextView
+		    android:id="@+id/creator"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_alignLeft="@+id/name"
+		    android:layout_below="@+id/name"
+		    android:groupIndicator="@null"
+		    android:paddingLeft="14.5sp"
+		    android:textSize="@dimen/small_tx" />
+
 	</RelativeLayout>
 
 	<RelativeLayout 
 	    android:layout_width="0dip"
 	    android:layout_height="wrap_content"
-	    android:layout_weight="1" >
-	    
-	    <CheckBox 
+	    android:layout_weight="2" >
+		
+	    <CheckBox
 	        android:id="@+id/select_team"
         	android:layout_width="wrap_content"
         	android:layout_height="wrap_content"
         	android:focusable="false" 
-        	android:layout_marginTop="@dimen/large_mg" />
+        	android:layout_marginTop="@dimen/medium_mg" />
+
+<!-- 	    <ImageButton
+	        android:id="@+id/delete_team_bt"
+	        android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+	        android:layout_alignParentRight="true"
+	        android:layout_alignParentTop="true"
+	        android:background="@null"
+	        android:contentDescription="@string/delete_team_bt"
+	        android:src="@drawable/delete_bt" /> -->
 	    
 	</RelativeLayout>
 </LinearLayout>

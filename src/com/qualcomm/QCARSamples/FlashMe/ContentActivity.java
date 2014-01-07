@@ -141,6 +141,16 @@ public class ContentActivity extends FragmentActivity {
 				}
 			});
 			
+			// Delete player button
+			ImageButton deletePlayerButton = (ImageButton) mainView.findViewById(R.id.delete_player_bt);
+			/*deletePlayerButton.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					//Toast.makeText(getActivity(), "Player deleted", Toast.LENGTH_SHORT).show();
+				}
+			});*/
+			
 			// Play button
 			Button playButton = (Button) mainView.findViewById(R.id.play);
 			playButton.setOnClickListener(new OnClickListener() {
