@@ -2,16 +2,21 @@ package com.qualcomm.QCARSamples.FlashMe;
 
 import java.util.ArrayList;
 
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.os.storage.OnObbStateChangeListener;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,6 +66,7 @@ public class ELVTeamAdapter extends BaseExpandableListAdapter {
             childViewHolder.state = (TextView)convertView.findViewById(R.id.player_state);
             childViewHolder.name = (TextView)convertView.findViewById(R.id.player_name);
             childViewHolder.picture = (ImageView)convertView.findViewById(R.id.player_in_team_pic);
+            childViewHolder.delete_bt = (ImageButton)convertView.findViewById(R.id.delete_player_bt);
             convertView.setTag(childViewHolder);
 		} else {
 			childViewHolder = (ChildViewHolder) convertView.getTag();	
@@ -74,7 +80,19 @@ public class ELVTeamAdapter extends BaseExpandableListAdapter {
 		childViewHolder.state.setTextColor(state);
 		childViewHolder.name.setText(player.getName());
 		childViewHolder.picture.setImageDrawable(player.getPicture());
-		      
+		
+		// Delete a player
+		childViewHolder.delete_bt.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				System.out.println(player.getName());
+				
+				ParseQuery<ParseObject> query = ParseQuery.getQuery("User");
+				query.whereEqualTo("name", player.getName());
+				
+			}
+		});
+		
 		return convertView;
 	}
 
@@ -146,7 +164,7 @@ public class ELVTeamAdapter extends BaseExpandableListAdapter {
 					selectedTeam = null;
 				}
 			}
-		}); 
+		});
 				
 		return convertView;
 	}
@@ -176,6 +194,7 @@ public class ELVTeamAdapter extends BaseExpandableListAdapter {
 		public TextView state;
 		public TextView name;
 		public ImageView picture;
+		public ImageButton delete_bt;
 	}
 
 }
