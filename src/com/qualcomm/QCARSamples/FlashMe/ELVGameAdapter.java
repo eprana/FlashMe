@@ -2,16 +2,24 @@ package com.qualcomm.QCARSamples.FlashMe;
 
 import java.util.ArrayList;
 
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
 public class ELVGameAdapter extends BaseExpandableListAdapter {
@@ -110,6 +118,7 @@ public class ELVGameAdapter extends BaseExpandableListAdapter {
 			gholder.name = (TextView)convertView.findViewById(R.id.name);
 			gholder.creator = (TextView)convertView.findViewById(R.id.creator);
 			gholder.selected = (CheckBox)convertView.findViewById(R.id.select_team);
+			gholder.delete_bt = (ImageButton)convertView.findViewById(R.id.delete_team_bt);
 			convertView.setTag(gholder);
         } else {
         	gholder = (GroupViewHolder) convertView.getTag();
@@ -126,7 +135,34 @@ public class ELVGameAdapter extends BaseExpandableListAdapter {
 		gholder.name.setText(games.get(gamePos).getName());
 		gholder.creator.setText(games.get(gamePos).getCreator());	
 		
-		// Choosing a team to play
+		// Delete a game
+		gholder.delete_bt.setFocusable(false);
+		gholder.delete_bt.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// Get concerned team with Parse
+				ParseQuery<ParseObject> teamQuery = ParseQuery.getQuery("Game");
+				teamQuery.whereEqualTo("name", ((Game) getGroup(gamePosition)).getName());
+				teamQuery.getFirstInBackground(new GetCallback<ParseObject>() {
+					public void done(final ParseObject game, ParseException e) {
+						if (e==null){
+							// Remove Team in Parse
+							game.deleteInBackground();
+							// Remove java object
+							games.remove(gamePosition);
+							// Display success message
+							Toast.makeText(context, "You just deleted the game "+game.getString("name")+".", Toast.LENGTH_SHORT).show();
+						}
+						else {
+							Toast.makeText(context, "The game can't be deleted.", Toast.LENGTH_SHORT).show();
+						}
+						
+					}
+				});
+			}
+		});
+		
+		// Choose a team to start a game
 		gholder.selected.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -167,6 +203,7 @@ public class ELVGameAdapter extends BaseExpandableListAdapter {
 		public TextView name;
 		public TextView creator;
 		public CheckBox selected;
+		public ImageButton delete_bt;
 	}
 
 	class ChildViewHolder {

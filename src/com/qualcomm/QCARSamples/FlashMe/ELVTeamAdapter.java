@@ -1,17 +1,29 @@
 package com.qualcomm.QCARSamples.FlashMe;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import javax.security.auth.callback.Callback;
+
+import com.parse.FindCallback;
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import android.content.Context;
 import android.graphics.Color;
 import android.os.storage.OnObbStateChangeListener;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,7 +62,7 @@ public class ELVTeamAdapter extends BaseExpandableListAdapter {
 	}
 
 	@Override
-	public View getChildView(int teamPos, int playerPos, boolean isLastChild, View convertView, ViewGroup parent) {
+	public View getChildView(final int teamPos, int playerPos, boolean isLastChild, View convertView, ViewGroup parent) {
 
 		final Player player = (Player) getChild(teamPos, playerPos);
 		ChildViewHolder childViewHolder;
@@ -61,6 +73,7 @@ public class ELVTeamAdapter extends BaseExpandableListAdapter {
             childViewHolder.state = (TextView)convertView.findViewById(R.id.player_state);
             childViewHolder.name = (TextView)convertView.findViewById(R.id.player_name);
             childViewHolder.picture = (ImageView)convertView.findViewById(R.id.player_in_team_pic);
+            childViewHolder.delete_bt = (ImageButton)convertView.findViewById(R.id.delete_player_bt);
             convertView.setTag(childViewHolder);
 		} else {
 			childViewHolder = (ChildViewHolder) convertView.getTag();	
@@ -74,7 +87,52 @@ public class ELVTeamAdapter extends BaseExpandableListAdapter {
 		childViewHolder.state.setTextColor(state);
 		childViewHolder.name.setText(player.getName());
 		childViewHolder.picture.setImageDrawable(player.getPicture());
-		      
+		
+		// Delete a player
+		childViewHolder.delete_bt.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// Get concerned Team with Parse
+				ParseQuery<ParseObject> teamQuery = ParseQuery.getQuery("Team");
+				teamQuery.whereEqualTo("name", ((Team) getGroup(teamPos)).getName());
+				teamQuery.getFirstInBackground(new GetCallback<ParseObject>() {
+					public void done(final ParseObject team, ParseException e) {
+						if (team == null) {
+							// Display error message
+						} else {
+							// Get selected User with Parse
+							ParseQuery<ParseUser> playerQuery = ParseUser.getQuery();
+							playerQuery.whereEqualTo("username", player.getName());
+							playerQuery.findInBackground(new FindCallback<ParseUser>() {
+								public void done(List<ParseUser> users, ParseException e) {
+									if (e==null){
+										for(ParseUser user : users){
+											if(user.getUsername().equals(ParseUser.getCurrentUser().getUsername())){
+												// Display restriction message
+												Toast.makeText(context, "You can't delete yourself from the team.", Toast.LENGTH_SHORT).show();
+											}
+											else{
+												// Remove Parse Relation
+												team.getRelation("players").remove(user);
+												team.saveInBackground();
+												// Remove java object
+												((Team) getGroup(teamPos)).removePlayer(player);
+												// Display success message
+												Toast.makeText(context, "You just deleted "+user.getUsername()+" from the team.", Toast.LENGTH_SHORT).show();
+											}
+										}
+									}
+									else {
+										Toast.makeText(context, "The user can't be deleted.", Toast.LENGTH_SHORT).show();
+									}
+								}
+							});
+						}
+					}
+				});
+			}
+		});
+		
 		return convertView;
 	}
 
@@ -112,6 +170,7 @@ public class ELVTeamAdapter extends BaseExpandableListAdapter {
 			gholder.name = (TextView)convertView.findViewById(R.id.name);
 			gholder.creator = (TextView)convertView.findViewById(R.id.creator);
 			gholder.selected = (CheckBox)convertView.findViewById(R.id.select_team);
+			gholder.delete_bt = (ImageButton)convertView.findViewById(R.id.delete_team_bt);
 			convertView.setTag(gholder);
         } else {
         	gholder = (GroupViewHolder) convertView.getTag();
@@ -128,7 +187,34 @@ public class ELVTeamAdapter extends BaseExpandableListAdapter {
 		gholder.name.setText(teams.get(teamPos).getName());
 		gholder.creator.setText(teams.get(teamPos).getCreator());
 		
-		// Choosing a team to play
+		// Delete a team
+		gholder.delete_bt.setFocusable(false);
+		gholder.delete_bt.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// Get concerned team with Parse
+				ParseQuery<ParseObject> teamQuery = ParseQuery.getQuery("Team");
+				teamQuery.whereEqualTo("name", ((Team) getGroup(teamPosition)).getName());
+				teamQuery.getFirstInBackground(new GetCallback<ParseObject>() {
+					public void done(final ParseObject team, ParseException e) {
+						if (e==null){
+							// Remove Team in Parse
+							team.deleteInBackground();
+							// Remove java object
+							teams.remove(teamPosition);
+							// Display success message
+							Toast.makeText(context, "You just deleted the team "+team.getString("name")+".", Toast.LENGTH_SHORT).show();
+						}
+						else {
+							Toast.makeText(context, "The team can't be deleted.", Toast.LENGTH_SHORT).show();
+						}
+						
+					}
+				});
+			}
+		});
+		
+		// Choose a team to start a game
 		gholder.selected.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -146,7 +232,7 @@ public class ELVTeamAdapter extends BaseExpandableListAdapter {
 					selectedTeam = null;
 				}
 			}
-		}); 
+		});
 				
 		return convertView;
 	}
@@ -170,12 +256,14 @@ public class ELVTeamAdapter extends BaseExpandableListAdapter {
 		public TextView name;
 		public TextView creator;
 		public CheckBox selected;
+		public ImageButton delete_bt;
 	}
 
 	class ChildViewHolder {
 		public TextView state;
 		public TextView name;
 		public ImageView picture;
+		public ImageButton delete_bt;
 	}
 
 }

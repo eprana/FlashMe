@@ -250,5 +250,5 @@ public class SignUpActivity extends Activity {
     	}else if(resultCode == Activity.RESULT_CANCELED) {
     		Toast.makeText(SignUpActivity.this, "No Photo Selected", Toast.LENGTH_SHORT).show();
     	}
-    } 
+    }
 }

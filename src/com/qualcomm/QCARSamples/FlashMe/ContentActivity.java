@@ -87,9 +87,10 @@ public class ContentActivity extends FragmentActivity {
         	ListView listView = (ListView) mainView.findViewById(R.id.teams_list);
         	listView.setAdapter(adapter);*/
 
-        	// Get current user's existing teams
-			ParseRelation<ParseObject> teamsRelation = currentUser.getRelation("teams");
-			teamsRelation.getQuery().findInBackground(new FindCallback<ParseObject>() {
+        	// Get teams where user is a player with Parse
+        	ParseQuery<ParseObject> teamsQuery = ParseQuery.getQuery("Team");
+        	teamsQuery.whereEqualTo("players", currentUser);
+        	teamsQuery.findInBackground(new FindCallback<ParseObject>() {
 				// Parse query
 			    public void done(List<ParseObject> results, ParseException e) {
 			        if (e == null) {
@@ -124,23 +125,25 @@ public class ContentActivity extends FragmentActivity {
 						// Create team
 						final ParseObject newTeam = new ParseObject("Team");
 						newTeam.put("name", s_teamName);
+						newTeam.put("createdBy", currentUser);
 						newTeam.saveInBackground(new SaveCallback() {
 							@Override
 							public void done(ParseException e) {
 								if (e == null) {
 									// Add relation with current user
-									ParseRelation<ParseObject> teamsRelation = currentUser.getRelation("teams");
-									teamsRelation.add(newTeam);
-									currentUser.saveInBackground();
+									ParseRelation<ParseObject> teamsRelation = newTeam.getRelation("players");
+									teamsRelation.add(currentUser);
+									newTeam.saveInBackground();
 									teams.add(new Team(newTeam.getString("name"), EXTRA_LOGIN, getResources().getDrawable(R.drawable.default_team_picture_thumb)));
 									expandableList.setAdapter(teamAdapter);
 								}
 							}
 						});
+						teamName.setText("");
 					}
 				}
 			});
-			
+
 			// Delete player button
 			View playerView = inflater.inflate(R.layout.team_player, container, false);
 			ImageButton deletePlayerButton = (ImageButton) playerView.findViewById(R.id.delete_player_bt);
@@ -243,6 +246,7 @@ public class ContentActivity extends FragmentActivity {
 								}
 							}
 						});
+						gameName.setText("");
 					}
 				}
 			});
