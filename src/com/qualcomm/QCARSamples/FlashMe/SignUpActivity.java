@@ -1,5 +1,6 @@
 package com.qualcomm.QCARSamples.FlashMe;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,6 +12,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Button;
@@ -26,7 +29,9 @@ import android.widget.Toast;
 
 import com.parse.ParseAnalytics;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
 import com.qualcomm.QCARSamples.FlashMe.MessageAlert;
 
@@ -35,7 +40,8 @@ public class SignUpActivity extends Activity {
 	private Context context;
 	private View alertDialogView;
     private static final int CAMERA_REQUEST = 1888; 
-    private ImageView imageView;
+    private ImageView avatarView;
+    private ParseFile avatarParseFile;
     private final int PICK_IMAGE = 1000;
 	
     @Override
@@ -49,15 +55,21 @@ public class SignUpActivity extends Activity {
 		final EditText username = (EditText) findViewById(R.id.username);
 		final EditText password = (EditText) findViewById(R.id.password);
 		final EditText email = (EditText) findViewById(R.id.mail);
-        this.imageView = (ImageView)this.findViewById(R.id.pic_empty);
+        this.avatarView = (ImageView)this.findViewById(R.id.empty_picture_icon);
+        
+        // filling the database with avatarParseFile
+        Drawable avatarDrawable = getResources().getDrawable(R.id.empty_picture_icon);
+        Bitmap bitmap = ((BitmapDrawable)avatarDrawable).getBitmap();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] bitmapdata = stream.toByteArray();
+        this.avatarParseFile = new ParseFile("pic_empty.png", bitmapdata);
         
         // Choose picture button
         Button folderButton = (Button) this.findViewById(R.id.choose_pic);
         folderButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            	//Intent cameraIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            	//startActivityForResult(cameraIntent, PICK_IMAGE);
             	Intent intent = new Intent();
             	intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -108,6 +120,7 @@ public class SignUpActivity extends Activity {
              	user.setUsername(s_username);
              	user.setPassword(s_password);
              	user.setEmail(s_email);
+             	user.put("avatar", avatarParseFile);
              	user.signUpInBackground(new SignUpCallback() {
              		public void done(ParseException e) {
              			if (e == null) {
@@ -167,7 +180,23 @@ public class SignUpActivity extends Activity {
     		switch(requestCode){
     			case CAMERA_REQUEST:
     				Bitmap photo = (Bitmap) data.getExtras().get("data"); 
-    	            imageView.setImageBitmap(photo);
+    				avatarView.setImageBitmap(photo);
+    				ByteArrayOutputStream stream = new ByteArrayOutputStream();
+    				photo.compress(Bitmap.CompressFormat.PNG, 100, stream);
+    				byte[] avatarByteArray = stream.toByteArray();
+    				
+    				avatarParseFile = new ParseFile("avatar.png", avatarByteArray);
+    				avatarParseFile.saveInBackground(new SaveCallback() {
+
+    					public void done(ParseException e) {
+    						if (e != null) {
+    							Toast.makeText(SignUpActivity.this, "Error saving: " + e.getMessage(), Toast.LENGTH_LONG).show();
+    						} else {
+    							Toast.makeText(SignUpActivity.this, "success!", Toast.LENGTH_LONG).show();
+    						}
+    					}
+    				});
+    						    				
     	            break;
     	            
     			case PICK_IMAGE:
@@ -177,10 +206,9 @@ public class SignUpActivity extends Activity {
 						try {
 							bm = BitmapFactory.decodeStream(getContentResolver().openInputStream(selectedImage));
 						} catch (FileNotFoundException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-    	            	imageView.setImageBitmap(Bitmap.createScaledBitmap(bm, 200, 200, false));
+						avatarView.setImageBitmap(Bitmap.createScaledBitmap(bm, 200, 200, false));
     	            } else {
     	                Toast.makeText(SignUpActivity.this, "Error getting Image",Toast.LENGTH_SHORT).show();
     	            }           
@@ -194,25 +222,5 @@ public class SignUpActivity extends Activity {
     	}else if(resultCode == Activity.RESULT_CANCELED) {
     		Toast.makeText(SignUpActivity.this, "No Photo Selected", Toast.LENGTH_SHORT).show();
     	}
-    	
-//        if (resultCode == Activity.RESULT_OK) {
-//                    } else if (resultCode == Activity.RESULT_CANCELED) {
-//            Toast.makeText(PhotoTake.this, "No Photo Selected",
-//                    Toast.LENGTH_SHORT).show();
-//        }
-//        
-//        if (requestCode == PICK_IMAGE && resultCode == RESULT_OK){
-//        	Bitmap photo = (Bitmap) data.getExtras().get("data"); 
-//            imageView.setImageBitmap(photo);
-//        }
-//        
-//        
-//        if (requestCode == SELECT_PICTURE) {
-//            Uri selectedImageUri = data.getData();
-//            selectedImagePath = getPath(selectedImageUri);
-//        }
-//        
-        
-        
     } 
 }

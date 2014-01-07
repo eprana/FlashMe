@@ -144,7 +144,7 @@ public class ELVGameAdapter extends BaseExpandableListAdapter {
 					selectedGame = null;
 				}
 			}
-		}); 
+		});
 		return convertView;
 	}
 
