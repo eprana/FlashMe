@@ -27,9 +27,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.GetCallback;
 import com.parse.ParseAnalytics;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
@@ -38,6 +41,7 @@ import com.qualcomm.QCARSamples.FlashMe.MessageAlert;
 public class SignUpActivity extends Activity {
 
 	private Context context;
+	private ParseUser newUser;
 	private View alertDialogView;
     private static final int CAMERA_REQUEST = 1888; 
     private ImageView avatarView;
@@ -55,15 +59,22 @@ public class SignUpActivity extends Activity {
 		final EditText username = (EditText) findViewById(R.id.username);
 		final EditText password = (EditText) findViewById(R.id.password);
 		final EditText email = (EditText) findViewById(R.id.mail);
-        this.avatarView = (ImageView)this.findViewById(R.id.empty_picture_icon);
+        this.avatarView = (ImageView)this.findViewById(R.id.pic_empty);
         
         // filling the database with avatarParseFile
-        Drawable avatarDrawable = getResources().getDrawable(R.id.empty_picture_icon);
+        Drawable avatarDrawable = avatarView.getDrawable();
         Bitmap bitmap = ((BitmapDrawable)avatarDrawable).getBitmap();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byte[] bitmapdata = stream.toByteArray();
-        this.avatarParseFile = new ParseFile("pic_empty.png", bitmapdata);
+        this.avatarParseFile = new ParseFile("avatar.png", bitmapdata);
+        avatarParseFile.saveInBackground(new SaveCallback() {
+			public void done(ParseException e) {
+				if (e != null) {
+					Toast.makeText(context, "Error saving: " + e.getMessage(), Toast.LENGTH_LONG).show();
+				}
+			}
+		}); 
         
         // Choose picture button
         Button folderButton = (Button) this.findViewById(R.id.choose_pic);
@@ -116,12 +127,12 @@ public class SignUpActivity extends Activity {
       	   		}
 				
       	   		// If nothing is wrong, add new User to DataBase
-             	ParseUser user = new ParseUser();
-             	user.setUsername(s_username);
-             	user.setPassword(s_password);
-             	user.setEmail(s_email);
-             	user.put("avatar", avatarParseFile);
-             	user.signUpInBackground(new SignUpCallback() {
+             	newUser = new ParseUser();
+             	newUser.setUsername(s_username);
+             	newUser.setPassword(s_password);
+             	newUser.setEmail(s_email);
+             	newUser.put("avatar", avatarParseFile);
+             	newUser.signUpInBackground(new SignUpCallback() {
              		public void done(ParseException e) {
              			if (e == null) {
              				// Notify the user his account has been created and that his marker will be sent by mail
@@ -157,8 +168,7 @@ public class SignUpActivity extends Activity {
             		        adb.create();
             				adb.show();
              			} else {
-             				// Sign up didn't succeed. Look at the ParseException
-             				// to figure out what went wrong
+							Toast.makeText(SignUpActivity.this, "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
              			}
              		}
              	});
@@ -178,28 +188,30 @@ public class SignUpActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
     	if(resultCode == RESULT_OK){
     		switch(requestCode){
+    			
     			case CAMERA_REQUEST:
+    				
+    				// Replacing the preview by the chosen image
     				Bitmap photo = (Bitmap) data.getExtras().get("data"); 
     				avatarView.setImageBitmap(photo);
+    				
+    				// Replacing the avatar in the database
     				ByteArrayOutputStream stream = new ByteArrayOutputStream();
     				photo.compress(Bitmap.CompressFormat.PNG, 100, stream);
     				byte[] avatarByteArray = stream.toByteArray();
     				
-    				avatarParseFile = new ParseFile("avatar.png", avatarByteArray);
-    				avatarParseFile.saveInBackground(new SaveCallback() {
-
+    				avatarParseFile = new ParseFile("avatar.png", avatarByteArray);    				
+                 	avatarParseFile.saveInBackground(new SaveCallback() {
     					public void done(ParseException e) {
     						if (e != null) {
-    							Toast.makeText(SignUpActivity.this, "Error saving: " + e.getMessage(), Toast.LENGTH_LONG).show();
-    						} else {
-    							Toast.makeText(SignUpActivity.this, "success!", Toast.LENGTH_LONG).show();
+    							Toast.makeText(context, "Error saving: " + e.getMessage(), Toast.LENGTH_LONG).show();
     						}
     					}
-    				});
-    						    				
+    				});    						    				
     	            break;
     	            
     			case PICK_IMAGE:
+    				
     				Uri selectedImage = data.getData();
     	            if (selectedImage != null) {
     	            	Bitmap bm = null;
@@ -208,10 +220,26 @@ public class SignUpActivity extends Activity {
 						} catch (FileNotFoundException e) {
 							e.printStackTrace();
 						}
-						avatarView.setImageBitmap(Bitmap.createScaledBitmap(bm, 200, 200, false));
+						// Replacing the preview image by the chosen image
+						Bitmap photoPicked = Bitmap.createScaledBitmap(bm, 200, 200, false);
+						avatarView.setImageBitmap(photoPicked);
+						
+						// Replacing the avatar in the database
+	    				ByteArrayOutputStream streamPicked = new ByteArrayOutputStream();
+	    				photoPicked.compress(Bitmap.CompressFormat.PNG, 100, streamPicked);
+	    				byte[] avatarByteArrayPicked = streamPicked.toByteArray();
+	    				
+	    				avatarParseFile = new ParseFile("avatar.png", avatarByteArrayPicked);
+	                 	avatarParseFile.saveInBackground(new SaveCallback() {
+	    					public void done(ParseException e) {
+	    						if (e != null) {
+	    							Toast.makeText(context, "Error saving: " + e.getMessage(), Toast.LENGTH_LONG).show();
+	    						}
+	    					}
+	    				});
     	            } else {
     	                Toast.makeText(SignUpActivity.this, "Error getting Image",Toast.LENGTH_SHORT).show();
-    	            }           
+    	            }
 
     	            break;
     	        
