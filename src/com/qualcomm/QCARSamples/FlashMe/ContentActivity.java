@@ -139,6 +139,7 @@ public class ContentActivity extends FragmentActivity {
 								}
 							}
 						});
+						teamName.setText("");
 					}
 				}
 			});
@@ -233,6 +234,7 @@ public class ContentActivity extends FragmentActivity {
 								}
 							}
 						});
+						gameName.setText("");
 					}
 				}
 			});
