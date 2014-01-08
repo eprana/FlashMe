@@ -17,7 +17,7 @@
         android:id="@+id/player_in_team_pic"
         android:background="@null"
         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_toRightOf="@id/player_state"
         android:contentDescription="@string/player_in_team_pic"
         android:src="@drawable/default_profile_picture_thumb"

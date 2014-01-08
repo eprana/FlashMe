@@ -71,6 +71,7 @@
 	<string name="enter_game">New game name</string>
 	<string name="empty_game_name">You must enter a valid game name.</string>
 	<string name="team_pic">team_picture</string>
+	<string name="delete_team_bt">Delete team</string>
 	<string name="quit_game">Quit game</string>
 	
 	<!-- expandable row -->

@@ -45,4 +45,8 @@ public class Game {
 		teams.add(team);
 	}
 	
+	public void removeTeam(Team team){
+		teams.remove(team);
+	}
+	
 }

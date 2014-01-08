@@ -65,6 +65,7 @@ public class ELVGameAdapter extends BaseExpandableListAdapter {
 	@Override
 	public View getChildView(int gamePos, int teamPos, boolean isLastChild, View convertView, ViewGroup parent) {
 
+		final Game game = (Game) getGroup(gamePos);
 		final Team team = (Team) getChild(gamePos, teamPos);
 		ChildViewHolder childViewHolder;
 		
@@ -74,6 +75,7 @@ public class ELVGameAdapter extends BaseExpandableListAdapter {
             childViewHolder.state = (TextView)convertView.findViewById(R.id.team_state);
             childViewHolder.name = (TextView)convertView.findViewById(R.id.team_name);
             childViewHolder.picture = (ImageView)convertView.findViewById(R.id.team_pic);
+            childViewHolder.delete_bt = (ImageButton)convertView.findViewById(R.id.delete_team_bt);
             convertView.setTag(childViewHolder);
 		} else {
 			childViewHolder = (ChildViewHolder) convertView.getTag();	
@@ -87,6 +89,45 @@ public class ELVGameAdapter extends BaseExpandableListAdapter {
 		childViewHolder.state.setTextColor(state);
 		childViewHolder.name.setText(team.getName());
 		childViewHolder.picture.setImageDrawable(team.getPicture());
+		
+		// Delete a team from a game
+		childViewHolder.delete_bt.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// Get concerned Game with Parse
+				ParseQuery<ParseObject> gameQuery = ParseQuery.getQuery("Game");
+				gameQuery.whereEqualTo("name", game.getName());
+				gameQuery.getFirstInBackground(new GetCallback<ParseObject>() {
+					public void done(final ParseObject gameParseObject, ParseException e) {
+						if (gameParseObject == null) {
+							// Display error message
+						} else {
+							// Get selected Team with Parse
+							ParseQuery<ParseObject> teamQuery = ParseQuery.getQuery("Team");
+							teamQuery.whereEqualTo("name", team.getName());
+							teamQuery.findInBackground(new FindCallback<ParseObject>() {
+								public void done(List<ParseObject> teamsList, ParseException e) {
+									if (e==null){
+										ParseObject teamParseObject = teamsList.get(0);
+										// Remove Parse Relation
+										gameParseObject.getRelation("teams").remove(teamParseObject);
+										gameParseObject.saveInBackground();
+										// Remove java object
+										game.removeTeam(team);
+										// Display success message
+										Toast.makeText(context, "You just deleted the team "+teamParseObject.getString("name")+" from the game "+gameParseObject.getString("name")+".", Toast.LENGTH_LONG).show();
+									}
+									else {
+										// Display error message
+										Toast.makeText(context, "The user can't be deleted.", Toast.LENGTH_SHORT).show();
+									}
+								}
+							});
+						}
+					}
+				});
+			}
+		});
 		      
 		return convertView;
 	}
@@ -115,6 +156,7 @@ public class ELVGameAdapter extends BaseExpandableListAdapter {
 	public View getGroupView(int gamePos, boolean isExpanded, View convertView, ViewGroup parent) {
 
 		final int gamePosition = gamePos;
+		final Game game = (Game) getGroup(gamePos);
 		
 		GroupViewHolder gholder;
 
@@ -150,16 +192,16 @@ public class ELVGameAdapter extends BaseExpandableListAdapter {
 			public void onClick(View v) {
 				// Get concerned team with Parse
 				ParseQuery<ParseObject> teamQuery = ParseQuery.getQuery("Game");
-				teamQuery.whereEqualTo("name", ((Game) getGroup(gamePosition)).getName());
+				teamQuery.whereEqualTo("name", game.getName());
 				teamQuery.getFirstInBackground(new GetCallback<ParseObject>() {
-					public void done(final ParseObject game, ParseException e) {
+					public void done(final ParseObject gameParseObject, ParseException e) {
 						if (e==null){
 							// Remove Team in Parse
-							game.deleteInBackground();
+							gameParseObject.deleteInBackground();
 							// Remove java object
 							games.remove(gamePosition);
 							// Display success message
-							Toast.makeText(context, "You just deleted the game "+game.getString("name")+".", Toast.LENGTH_SHORT).show();
+							Toast.makeText(context, "You just deleted the game "+gameParseObject.getString("name")+".", Toast.LENGTH_SHORT).show();
 						}
 						else {
 							Toast.makeText(context, "The game can't be deleted.", Toast.LENGTH_SHORT).show();
@@ -198,19 +240,19 @@ public class ELVGameAdapter extends BaseExpandableListAdapter {
 										Toast.makeText(context, "Sorry, this team doesn't exist.", Toast.LENGTH_SHORT).show();
 									}
 									else {
-										final ParseObject team = teamsList.get(0);
+										final ParseObject teamParseObject = teamsList.get(0);
 										// Get concerned team with Parse
 										ParseQuery<ParseObject> teamQuery = ParseQuery.getQuery("Game");
-										teamQuery.whereEqualTo("name", ((Game) getGroup(gamePosition)).getName());
+										teamQuery.whereEqualTo("name", game.getName());
 										teamQuery.getFirstInBackground(new GetCallback<ParseObject>() {
-											public void done(final ParseObject game, ParseException e) {
+											public void done(final ParseObject gameParseObject, ParseException e) {
 												if (e==null){
 													// Add user to the team in Parse
-													game.getRelation("teams").add(team);
-													game.saveInBackground();
+													gameParseObject.getRelation("teams").add(teamParseObject);
+													gameParseObject.saveInBackground();
 													// Create java Player
 													try {
-														((Game) getGroup(gamePosition)).addTeam(new Team(team.getString("name"), ((ParseUser) team.fetch().getParseObject("createdBy")).fetch().getUsername(), context.getResources().getDrawable(R.drawable.default_profile_picture_thumb)));
+														game.addTeam(new Team(teamParseObject.getString("name"), ((ParseUser) teamParseObject.fetch().getParseObject("createdBy")).fetch().getUsername(), context.getResources().getDrawable(R.drawable.default_profile_picture_thumb)));
 													} catch (NotFoundException e1) {
 														// TODO Auto-generated catch block
 														e1.printStackTrace();
@@ -219,10 +261,10 @@ public class ELVGameAdapter extends BaseExpandableListAdapter {
 														e1.printStackTrace();
 													}
 													// Display success message
-													Toast.makeText(context, "You just added the team "+team.getString("name")+" to the game "+game.getString("name")+".", Toast.LENGTH_LONG).show();
+													Toast.makeText(context, "You just added the team "+teamParseObject.getString("name")+" to the game "+gameParseObject.getString("name")+".", Toast.LENGTH_LONG).show();
 												}
 												else {
-													Toast.makeText(context, "The team "+team.getString("name")+" can't be added to the game "+game.getString("name")+".", Toast.LENGTH_LONG).show();
+													Toast.makeText(context, "The team "+teamParseObject.getString("name")+" can't be added to the game "+gameParseObject.getString("name")+".", Toast.LENGTH_LONG).show();
 												}
 												
 											}
@@ -295,6 +337,7 @@ public class ELVGameAdapter extends BaseExpandableListAdapter {
 		public TextView state;
 		public TextView name;
 		public ImageView picture;
+		public ImageButton delete_bt;
 	}
 
 }
