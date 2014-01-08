@@ -3,8 +3,6 @@ package com.qualcomm.QCARSamples.FlashMe;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.security.auth.callback.Callback;
-
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -14,7 +12,6 @@ import com.parse.ParseUser;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.os.storage.OnObbStateChangeListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -170,7 +167,8 @@ public class ELVTeamAdapter extends BaseExpandableListAdapter {
 			gholder.name = (TextView)convertView.findViewById(R.id.name);
 			gholder.creator = (TextView)convertView.findViewById(R.id.creator);
 			gholder.selected = (CheckBox)convertView.findViewById(R.id.select_team);
-			gholder.delete_bt = (ImageButton)convertView.findViewById(R.id.delete_team_bt);
+			gholder.delete_bt = (ImageButton)convertView.findViewById(R.id.delete_bt);
+			gholder.add_bt = (ImageButton)convertView.findViewById(R.id.add_bt);
 			convertView.setTag(gholder);
         } else {
         	gholder = (GroupViewHolder) convertView.getTag();
@@ -214,6 +212,9 @@ public class ELVTeamAdapter extends BaseExpandableListAdapter {
 			}
 		});
 		
+		// Add a player
+		gholder.add_bt.setFocusable(false);
+				
 		// Choose a team to start a game
 		gholder.selected.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
@@ -257,6 +258,7 @@ public class ELVTeamAdapter extends BaseExpandableListAdapter {
 		public TextView creator;
 		public CheckBox selected;
 		public ImageButton delete_bt;
+		public ImageButton add_bt;
 	}
 
 	class ChildViewHolder {

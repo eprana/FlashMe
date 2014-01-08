@@ -18,7 +18,7 @@
         android:layout_below="@id/bobble_help"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/large_tx"
+        android:textSize="@dimen/verylarge_tx"
         android:layout_centerHorizontal="true"
         android:text="@string/flash_me"
         style="@style/middle_blue" />

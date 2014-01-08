@@ -8,7 +8,7 @@
 	<RelativeLayout
 	    android:layout_width="0dip"
 	    android:layout_height="wrap_content"
-	    android:layout_weight="8" >
+	    android:layout_weight="7" >
 	    
 	    <TextView
 	        android:id="@+id/state"
@@ -54,27 +54,38 @@
 	<RelativeLayout 
 	    android:layout_width="0dip"
 	    android:layout_height="wrap_content"
-	    android:layout_weight="2" >
+	    android:layout_weight="3" >
 		
 	    <CheckBox
 	        android:id="@+id/select_team"
         	android:layout_width="wrap_content"
         	android:layout_height="wrap_content"
-        	android:layout_toLeftOf="@+id/delete_team_bt"
+        	android:layout_toLeftOf="@+id/add_bt"
         	android:layout_centerVertical="true"
         	android:focusable="false"
         	android:layout_marginTop="@dimen/medium_mg" />
 
+		<ImageButton
+	        android:id="@+id/add_bt"
+	        android:focusable="false"
+	        android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_toLeftOf="@+id/delete_bt"
+	        android:layout_alignParentTop="true"
+	        android:background="@null"
+	        android:contentDescription="@string/add_bt"
+	        android:src="@drawable/blue_add_bt" />
+	     	    
  	    <ImageButton
-	        android:id="@+id/delete_team_bt"
+	        android:id="@+id/delete_bt"
 	        android:focusable="false"
 	        android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 	        android:layout_alignParentRight="true"
 	        android:layout_alignParentTop="true"
 	        android:background="@null"
-	        android:contentDescription="@string/delete_team_bt"
-	        android:src="@drawable/delete_bt" />
+	        android:contentDescription="@string/delete_bt"
+	        android:src="@drawable/blue_delete_bt" />
 	    
 	</RelativeLayout>
 </LinearLayout>

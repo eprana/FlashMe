@@ -18,6 +18,10 @@
 			android:id="@+id/settings_bt"
 			android:contentDescription="@string/settings_bt"
 			android:layout_alignRight="@id/name"
+			android:layout_marginRight="@dimen/verylarge_mg"
+			android:layout_marginTop="@dimen/small_mg"
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
 			android:src="@drawable/settings_bt"
 			style="@style/topLineButton" />
 	    

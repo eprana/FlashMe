@@ -36,6 +36,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.content.Context;
@@ -54,8 +55,9 @@ public class ContentActivity extends FragmentActivity {
 	private static ELVGameAdapter gameAdapter;
 	private static ExpandableListView expandableList = null;
 	private static ImageView avatarView = null;
-	
+
 	public static class ProfileFragment extends Fragment {
+		
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 			View mainView = inflater.inflate(R.layout.profile, container, false);	
@@ -108,7 +110,8 @@ public class ContentActivity extends FragmentActivity {
         	// TODO : Use ParseQueryAdapter
         	/*ParseQueryAdapter<ParseObject> adapter =
     			new ParseQueryAdapter<ParseObject>(getActivity(), new ParseQueryAdapter.QueryFactory<ParseObject>() {
-    			    public ParseQuery<ParseObject> create() {
+    			    public ParseQuery<ParseO
+    			    bject> create() {
     			    	ParseQuery<ParseObject> teamsQuery = ParseQuery.getQuery("Team");
         				teamsQuery.whereEqualTo("players", currentUser);
         				return teamsQuery;
@@ -190,12 +193,23 @@ public class ContentActivity extends FragmentActivity {
 							@Override
 							public void done(ParseException e) {
 								if (e == null) {
+									// Create Java Object
+									final Team javaTeam = new Team(newTeam.getString("name"), EXTRA_LOGIN, getResources().getDrawable(R.drawable.default_team_picture_thumb));
+									teams.add(javaTeam);
 									// Add relation with current user
 									ParseRelation<ParseObject> teamsRelation = newTeam.getRelation("players");
 									teamsRelation.add(currentUser);
-									newTeam.saveInBackground();
-									teams.add(new Team(newTeam.getString("name"), EXTRA_LOGIN, getResources().getDrawable(R.drawable.default_team_picture_thumb)));
-									expandableList.setAdapter(teamAdapter);
+									newTeam.saveInBackground(new SaveCallback() {
+										@Override
+										public void done(ParseException e) {
+											if (e == null) {
+												// Add javaPlayer
+												javaTeam.addPlayer(new Player(EXTRA_LOGIN, getResources().getDrawable(R.drawable.default_profile_picture_thumb)));
+												// Update view
+												expandableList.setAdapter(teamAdapter);
+											}
+										}
+									});
 								}
 							}
 						});
@@ -203,18 +217,6 @@ public class ContentActivity extends FragmentActivity {
 					}
 				}
 			});
-
-			// Delete player button
-			View playerView = inflater.inflate(R.layout.team_player, container, false);
-			ImageButton deletePlayerButton = (ImageButton) playerView.findViewById(R.id.delete_player_bt);
-			
-//			deletePlayerButton.setOnClickListener(new OnClickListener() {
-//				
-//				@Override
-//				public void onClick(View v) {
-//					//Toast.makeText(getActivity(), "Player deleted", Toast.LENGTH_SHORT).show();
-//				}
-//			});
 			
 			// Play button
 			Button playButton = (Button) mainView.findViewById(R.id.play);

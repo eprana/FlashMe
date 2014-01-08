@@ -2,8 +2,6 @@ package com.qualcomm.QCARSamples.FlashMe;
 
 import java.util.ArrayList;
 
-import android.graphics.drawable.Drawable;
-
 public class Game {
 
 	private boolean ready;

@@ -118,7 +118,7 @@ public class ELVGameAdapter extends BaseExpandableListAdapter {
 			gholder.name = (TextView)convertView.findViewById(R.id.name);
 			gholder.creator = (TextView)convertView.findViewById(R.id.creator);
 			gholder.selected = (CheckBox)convertView.findViewById(R.id.select_team);
-			gholder.delete_bt = (ImageButton)convertView.findViewById(R.id.delete_team_bt);
+			gholder.delete_bt = (ImageButton)convertView.findViewById(R.id.delete_bt);
 			convertView.setTag(gholder);
         } else {
         	gholder = (GroupViewHolder) convertView.getTag();

@@ -41,6 +41,6 @@
          android:layout_alignParentRight="true"
          android:layout_alignParentTop="true"
          android:contentDescription="@string/delete_player_bt"
-         android:src="@drawable/delete_bt" />
+         android:src="@drawable/blue_delete_bt" />
 
 </RelativeLayout>
