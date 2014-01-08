@@ -158,9 +158,18 @@ public class ContentActivity extends FragmentActivity {
 			    public void done(List<ParseObject> results, ParseException e) {
 			        if (e == null) {
 			        	for (ParseObject result : results) {
-			        		 Team newTeam = new Team(result.getString("name"), currentUser.getUsername(), getResources().getDrawable(R.drawable.default_team_picture_thumb));
-			        		 newTeam.addPlayer(new Player(EXTRA_LOGIN, getResources().getDrawable(R.drawable.default_profile_picture_thumb)));
-			        		 teams.add(newTeam);
+			        		final Team newTeam = new Team(result.getString("name"), currentUser.getUsername(), getResources().getDrawable(R.drawable.default_team_picture_thumb));
+			        		// Get players in team with Parse
+			        		result.getRelation("players").getQuery().findInBackground(new FindCallback<ParseObject>() {
+			        			public void done(List<ParseObject> players, ParseException e) {
+			        				if (e == null) {
+			        					for (ParseObject player : players) {
+			        						newTeam.addPlayer(new Player(((ParseUser) player).getUsername(), getResources().getDrawable(R.drawable.default_profile_picture_thumb)));	
+			        					}
+			        				}
+			        			}
+			        		});
+			        		teams.add(newTeam);
 			        	}
 		        		 // Update adapter
 		        		 expandableList.setAdapter(teamAdapter);

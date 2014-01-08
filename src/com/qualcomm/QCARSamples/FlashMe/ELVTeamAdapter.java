@@ -10,7 +10,9 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +22,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -103,20 +106,19 @@ public class ELVTeamAdapter extends BaseExpandableListAdapter {
 							playerQuery.findInBackground(new FindCallback<ParseUser>() {
 								public void done(List<ParseUser> users, ParseException e) {
 									if (e==null){
-										for(ParseUser user : users){
-											if(user.getUsername().equals(ParseUser.getCurrentUser().getUsername())){
-												// Display restriction message
-												Toast.makeText(context, "You can't delete yourself from the team.", Toast.LENGTH_SHORT).show();
-											}
-											else{
-												// Remove Parse Relation
-												team.getRelation("players").remove(user);
-												team.saveInBackground();
-												// Remove java object
-												((Team) getGroup(teamPos)).removePlayer(player);
-												// Display success message
-												Toast.makeText(context, "You just deleted "+user.getUsername()+" from the team.", Toast.LENGTH_SHORT).show();
-											}
+										ParseUser user = users.get(0);
+										if(user.getUsername().equals(ParseUser.getCurrentUser().getUsername())){
+											// Display restriction message
+											Toast.makeText(context, "You can't delete yourself from the team.", Toast.LENGTH_SHORT).show();
+										}
+										else{
+											// Remove Parse Relation
+											team.getRelation("players").remove(user);
+											team.saveInBackground();
+											// Remove java object
+											((Team) getGroup(teamPos)).removePlayer(player);
+											// Display success message
+											Toast.makeText(context, "You just deleted "+user.getUsername()+" from the team.", Toast.LENGTH_SHORT).show();
 										}
 									}
 									else {
@@ -157,7 +159,6 @@ public class ELVTeamAdapter extends BaseExpandableListAdapter {
 	public View getGroupView(int teamPos, boolean isExpanded, View convertView, ViewGroup parent) {
 
 		final int teamPosition = teamPos;
-		
 		GroupViewHolder gholder;
 		
 		if (convertView == null) {
@@ -214,7 +215,73 @@ public class ELVTeamAdapter extends BaseExpandableListAdapter {
 		
 		// Add a player
 		gholder.add_bt.setFocusable(false);
+		gholder.add_bt.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
 				
+				// Display alertDialog to select player name
+			    final EditText input = new EditText(context);
+			    input.setHint("Player name");
+			    final AlertDialog.Builder alert = new AlertDialog.Builder(context);
+			    alert.setTitle("Enter a player's name");
+			    alert.setView(input);
+			    alert.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+			        public void onClick(DialogInterface dialog, int whichButton) {
+			        	// Get input value
+			            String playerName = input.getText().toString().trim();
+			            
+			            // Get matching user with Parse
+			            ParseQuery<ParseUser> playerQuery = ParseUser.getQuery();
+			            playerQuery.whereEqualTo("username", playerName);
+						playerQuery.findInBackground(new FindCallback<ParseUser>() {
+							public void done(List<ParseUser> users, ParseException e) {
+								if (e==null){
+									if (users.isEmpty()){
+										// If no matching user is found
+										Toast.makeText(context, "Sorry, this player doesn't exist.", Toast.LENGTH_SHORT).show();
+									}
+									else {
+										final ParseUser user = users.get(0);
+										// Get concerned team with Parse
+										ParseQuery<ParseObject> teamQuery = ParseQuery.getQuery("Team");
+										teamQuery.whereEqualTo("name", ((Team) getGroup(teamPosition)).getName());
+										teamQuery.getFirstInBackground(new GetCallback<ParseObject>() {
+											public void done(final ParseObject team, ParseException e) {
+												if (e==null){
+													// Add user to the team in Parse
+													team.getRelation("players").add(user);
+													team.saveInBackground();
+													// Create java Player
+													((Team) getGroup(teamPosition)).addPlayer(new Player(user.getUsername(), context.getResources().getDrawable(R.drawable.default_profile_picture_thumb)));
+													// Display success message
+													Toast.makeText(context, "You just added "+user.getUsername()+" to the team "+team.getString("name")+".", Toast.LENGTH_LONG).show();
+												}
+												else {
+													Toast.makeText(context, user.getUsername()+" can't be added to the team "+team.getString("name")+".", Toast.LENGTH_LONG).show();
+												}
+												
+											}
+										});
+									}
+								}
+								else {
+									Toast.makeText(context, "The player can't be added to the team.", Toast.LENGTH_SHORT).show();
+								}
+							}
+						});
+			        }
+			    });
+
+			    alert.setNegativeButton("Cancel",
+			            new DialogInterface.OnClickListener() {
+			                public void onClick(DialogInterface dialog, int whichButton) {
+			                    dialog.cancel();
+			                }
+			            });
+			    alert.show();
+			}
+		});
+		
 		// Choose a team to start a game
 		gholder.selected.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
