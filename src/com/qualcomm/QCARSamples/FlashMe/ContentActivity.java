@@ -80,12 +80,43 @@ public class ContentActivity extends FragmentActivity {
         	/*ParseQueryAdapter<ParseObject> adapter =
     			new ParseQueryAdapter<ParseObject>(getActivity(), new ParseQueryAdapter.QueryFactory<ParseObject>() {
     			    public ParseQuery<ParseObject> create() {
-    			    	return currentUser.getRelation("teams").getQuery();
+    			    	ParseQuery<ParseObject> teamsQuery = ParseQuery.getQuery("Team");
+        				teamsQuery.whereEqualTo("players", currentUser);
+        				return teamsQuery;
     			    }
     			});
         	adapter.setTextKey("name");
         	ListView listView = (ListView) mainView.findViewById(R.id.teams_list);
         	listView.setAdapter(adapter);*/
+        	
+        	/* DOC EXAMPLE
+			ParseQueryAdapter.QueryFactory<ParseObject> factory =
+			new ParseQueryAdapter.QueryFactory<ParseObject>() {
+				public ParseQuery create() {
+					ParseQuery<ParseObject> teamsQuery = ParseQuery.getQuery("Team");
+        			teamsQuery.whereEqualTo("players", currentUser);
+        			return teamsQuery;
+				}
+			};
+ 
+			// Pass the factory into the ParseQueryAdapter's constructor.
+			ParseQueryAdapter<ParseObject> adapter = new ParseQueryAdapter<ParseObject>(this, factory);
+			adapter.setTextKey("name");
+ 
+			// Perhaps set a callback to be fired upon successful loading of a new set of ParseObjects.
+			adapter.addOnQueryLoadListener(new OnQueryLoadListener<ParseObject>() {
+				public void onLoading() {
+					// Trigger any "loading" UI
+				}
+	 
+				public void onLoaded(List<ParseObject> objects, ParseException e) {
+					// Execute any post-loading logic, hide "loading" UI
+				}
+			});
+
+			// Attach it to your ListView, as in the example above
+			ListView listView = (ListView) mainView.findViewById(R.id.teams_list);
+			listView.setAdapter(adapter);*/
 
         	// Get teams where user is a player with Parse
         	ParseQuery<ParseObject> teamsQuery = ParseQuery.getQuery("Team");
