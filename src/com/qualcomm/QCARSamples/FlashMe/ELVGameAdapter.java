@@ -1,13 +1,19 @@
 package com.qualcomm.QCARSamples.FlashMe;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.res.Resources.NotFoundException;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +22,7 @@ import android.view.View.OnClickListener;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -119,6 +126,7 @@ public class ELVGameAdapter extends BaseExpandableListAdapter {
 			gholder.creator = (TextView)convertView.findViewById(R.id.creator);
 			gholder.selected = (CheckBox)convertView.findViewById(R.id.select_team);
 			gholder.delete_bt = (ImageButton)convertView.findViewById(R.id.delete_bt);
+			gholder.add_bt = (ImageButton)convertView.findViewById(R.id.add_bt);
 			convertView.setTag(gholder);
         } else {
         	gholder = (GroupViewHolder) convertView.getTag();
@@ -162,6 +170,82 @@ public class ELVGameAdapter extends BaseExpandableListAdapter {
 			}
 		});
 		
+		// Add a team
+		gholder.add_bt.setFocusable(false);
+		gholder.add_bt.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				
+				// Display alertDialog to select player name
+			    final EditText input = new EditText(context);
+			    input.setHint("Team name");
+			    final AlertDialog.Builder alert = new AlertDialog.Builder(context);
+			    alert.setTitle("Enter a team's name");
+			    alert.setView(input);
+			    alert.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+			        public void onClick(DialogInterface dialog, int whichButton) {
+			        	// Get input value
+			            String teamName = input.getText().toString().trim();
+			            
+			            // Get matching team with Parse
+			            ParseQuery<ParseObject> teamQuery = ParseQuery.getQuery("Team");
+			            teamQuery.whereEqualTo("name", teamName);
+			            teamQuery.findInBackground(new FindCallback<ParseObject>() {
+							public void done(List<ParseObject> teamsList, ParseException e) {
+								if (e==null){
+									if (teamsList.isEmpty()){
+										// If no matching user is found
+										Toast.makeText(context, "Sorry, this team doesn't exist.", Toast.LENGTH_SHORT).show();
+									}
+									else {
+										final ParseObject team = teamsList.get(0);
+										// Get concerned team with Parse
+										ParseQuery<ParseObject> teamQuery = ParseQuery.getQuery("Game");
+										teamQuery.whereEqualTo("name", ((Game) getGroup(gamePosition)).getName());
+										teamQuery.getFirstInBackground(new GetCallback<ParseObject>() {
+											public void done(final ParseObject game, ParseException e) {
+												if (e==null){
+													// Add user to the team in Parse
+													game.getRelation("teams").add(team);
+													game.saveInBackground();
+													// Create java Player
+													try {
+														((Game) getGroup(gamePosition)).addTeam(new Team(team.getString("name"), ((ParseUser) team.fetch().getParseObject("createdBy")).fetch().getUsername(), context.getResources().getDrawable(R.drawable.default_profile_picture_thumb)));
+													} catch (NotFoundException e1) {
+														// TODO Auto-generated catch block
+														e1.printStackTrace();
+													} catch (ParseException e1) {
+														// TODO Auto-generated catch block
+														e1.printStackTrace();
+													}
+													// Display success message
+													Toast.makeText(context, "You just added the team "+team.getString("name")+" to the game "+game.getString("name")+".", Toast.LENGTH_LONG).show();
+												}
+												else {
+													Toast.makeText(context, "The team "+team.getString("name")+" can't be added to the game "+game.getString("name")+".", Toast.LENGTH_LONG).show();
+												}
+												
+											}
+										});
+									}
+								}
+								else {
+									Toast.makeText(context, "The team can't be added to the game.", Toast.LENGTH_SHORT).show();
+								}
+							}
+						});
+			        }
+			    });
+
+			    alert.setNegativeButton("Cancel",
+			            new DialogInterface.OnClickListener() {
+			                public void onClick(DialogInterface dialog, int whichButton) {
+			                    dialog.cancel();
+			                }
+			            });
+			    alert.show();
+			}
+		});
 		// Choose a team to start a game
 		gholder.selected.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
@@ -204,6 +288,7 @@ public class ELVGameAdapter extends BaseExpandableListAdapter {
 		public TextView creator;
 		public CheckBox selected;
 		public ImageButton delete_bt;
+		public ImageButton add_bt;
 	}
 
 	class ChildViewHolder {

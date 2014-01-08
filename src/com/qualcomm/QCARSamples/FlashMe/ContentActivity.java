@@ -40,6 +40,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.content.Context;
+import android.content.res.Resources.NotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
@@ -158,12 +159,14 @@ public class ContentActivity extends FragmentActivity {
 			    public void done(List<ParseObject> results, ParseException e) {
 			        if (e == null) {
 			        	for (ParseObject result : results) {
+			        		// Create java Team
 			        		final Team newTeam = new Team(result.getString("name"), currentUser.getUsername(), getResources().getDrawable(R.drawable.default_team_picture_thumb));
 			        		// Get players in team with Parse
 			        		result.getRelation("players").getQuery().findInBackground(new FindCallback<ParseObject>() {
 			        			public void done(List<ParseObject> players, ParseException e) {
 			        				if (e == null) {
 			        					for (ParseObject player : players) {
+			        						// Add java Players
 			        						newTeam.addPlayer(new Player(((ParseUser) player).getUsername(), getResources().getDrawable(R.drawable.default_profile_picture_thumb)));	
 			        					}
 			        				}
@@ -267,20 +270,37 @@ public class ContentActivity extends FragmentActivity {
         	gameAdapter = new ELVGameAdapter(context, games);        	
         	ContentActivity.expandableList = (ExpandableListView) mainView.findViewById(R.id.games_list);
 
-        	// Get current user's existing games
+        	// Get current user's existing games with Parse
         	ParseQuery<ParseObject> gamesQuery = ParseQuery.getQuery("Game");
         	gamesQuery.findInBackground(new FindCallback<ParseObject>() {
-        		
         	    public void done(List<ParseObject> gameList, ParseException e) {
         	        if (e == null) {
         	        	for (final ParseObject game : gameList) {
-        	        		Game newGame = null;
+        	        		// Create java Game
 							try {
-								newGame = new Game(game.getString("name"), ((ParseUser) game.fetch().getParseObject("createdBy")).fetch().getUsername());
+								final Game newGame = new Game(game.getString("name"), ((ParseUser) game.fetch().getParseObject("createdBy")).fetch().getUsername());
+							
+								// Get teams in game with Parse
+				        		game.getRelation("teams").getQuery().findInBackground(new FindCallback<ParseObject>() {
+				        			public void done(List<ParseObject> teamsList, ParseException e) {
+				        				if (e == null) {
+				        					for (ParseObject team : teamsList) {
+				        						// Add java Teams
+				        						//((ParseUser) team.fetch().getParseObject("createdBy")).fetch().getUsername()
+												newGame.addTeam(new Team(team.getString("name"), "creator", getResources().getDrawable(R.drawable.default_team_picture_thumb)));
+				        					}
+				        				}
+			        				}
+			        			});
+				        		games.add(newGame);
+				        		
+							} catch (NotFoundException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
 							} catch (ParseException e1) {
+								// TODO Auto-generated catch block
 								e1.printStackTrace();
 							}
-        	        		games.add(newGame);
 			        	}
         	        	// Update adapter
         	        	expandableList.setAdapter(gameAdapter);
