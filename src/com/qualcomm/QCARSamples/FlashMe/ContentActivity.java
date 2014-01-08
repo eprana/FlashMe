@@ -5,8 +5,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.parse.GetCallback;
+import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.FindCallback;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
@@ -32,10 +34,13 @@ import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
@@ -48,17 +53,41 @@ public class ContentActivity extends FragmentActivity {
 	private static ELVTeamAdapter teamAdapter;
 	private static ELVGameAdapter gameAdapter;
 	private static ExpandableListView expandableList = null;
+	private static ImageView avatarView = null;
 	
 	public static class ProfileFragment extends Fragment {
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 			View mainView = inflater.inflate(R.layout.profile, container, false);	
-			//Intent intent = getIntent();
         	TextView userName = (TextView) mainView.findViewById(R.id.name);
-	        //if(intent != null){
-	        	//userName.setText(intent.getStringExtra(EXTRA_LOGIN));
+        	avatarView = (ImageView) mainView.findViewById(R.id.profile_picture);
+        	
+        	// Setting username on top of the page
         	userName.setText(EXTRA_LOGIN);
-	        //}
+        	
+        	// Setting profile picture
+        	ParseQuery<ParseObject> query = ParseQuery.getQuery("_User");
+        	query.getInBackground(currentUser.getObjectId(), new GetCallback<ParseObject>() {
+          	  public void done(ParseObject object, ParseException e) {
+          	    if (e == null) {
+          	    	// Getting the avatar form the database
+          	    	ParseUser userd = (ParseUser) object;
+          	    	ParseFile avatarFile = (ParseFile) userd.get("avatar");
+          	    	try {
+						byte[] avatarByteArray = avatarFile.getData();
+						Bitmap avatarBitmap = BitmapFactory.decodeByteArray(avatarByteArray, 0, avatarByteArray.length);
+						// Setting the imageView
+						avatarView.setImageBitmap(avatarBitmap);
+					} catch (ParseException e1) {
+						e1.printStackTrace();
+					}
+          	    	
+          	    } else{
+          	    	Toast.makeText(getActivity(), "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
+          	    }
+          	  }
+          	});
+        	
 			return mainView;
 		}
 	}
