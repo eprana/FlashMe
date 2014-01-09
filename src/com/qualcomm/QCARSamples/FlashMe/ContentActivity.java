@@ -392,8 +392,12 @@ public class ContentActivity extends FragmentActivity {
 				ProfileFragment fragment = (ProfileFragment)myFragmentManager.findFragmentByTag(TAG_PROFILE);
 				if(fragment==null){
 					FragmentTransaction fragmentTransaction = myFragmentManager.beginTransaction();
-					fragmentTransaction.replace(R.id.maincontainer, profileFrag, TAG_PROFILE);
-					fragmentTransaction.commit();
+					if(profileFrag.isAdded()){
+						fragmentTransaction.show(profileFrag);
+					} else {
+						fragmentTransaction.replace(R.id.maincontainer, profileFrag, TAG_PROFILE);
+						fragmentTransaction.commit();
+					}
 				}
 			}
 		});
@@ -408,8 +412,12 @@ public class ContentActivity extends FragmentActivity {
 				TeamsFragment fragment = (TeamsFragment)myFragmentManager.findFragmentByTag(TAG_TEAMS);
 				if(fragment==null){
 					FragmentTransaction fragmentTransaction = myFragmentManager.beginTransaction();
-					fragmentTransaction.replace(R.id.maincontainer, teamsFrag, TAG_TEAMS);
-					fragmentTransaction.commit();
+					if(teamsFrag.isAdded()){
+						fragmentTransaction.show(teamsFrag);
+					} else {
+						fragmentTransaction.replace(R.id.maincontainer, teamsFrag, TAG_TEAMS);
+						fragmentTransaction.commit();
+					}
 				}
 			}
 		});
@@ -424,8 +432,12 @@ public class ContentActivity extends FragmentActivity {
 				GamesFragment fragment = (GamesFragment)myFragmentManager.findFragmentByTag(TAG_GAMES);
 				if(fragment==null){
 					FragmentTransaction fragmentTransaction = myFragmentManager.beginTransaction();
-					fragmentTransaction.replace(R.id.maincontainer, gamesFrag, TAG_GAMES);
-					fragmentTransaction.commit();
+					if(gamesFrag.isAdded()){
+						fragmentTransaction.show(gamesFrag);
+					} else {
+						fragmentTransaction.replace(R.id.maincontainer, gamesFrag, TAG_GAMES);
+						fragmentTransaction.commit();
+					}
 				}
 			}
 		});
@@ -444,64 +456,64 @@ public class ContentActivity extends FragmentActivity {
  	}
 	
 	// Contextual menu for quitting teams / games
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		super.onCreateContextMenu(menu, v, menuInfo);
-		
-		ExpandableListView.ExpandableListContextMenuInfo info = (ExpandableListView.ExpandableListContextMenuInfo) menuInfo;
-		int type = ExpandableListView.getPackedPositionType(info.packedPosition);
-		
-		if(type == 0){
-			if(v.getId() == R.id.teams_list){
-			    MenuInflater inflater = getMenuInflater();
-			    inflater.inflate(R.menu.context_menu_team, menu);
-			}
-			else if(v.getId() == R.id.games_list){
-			    MenuInflater inflater = getMenuInflater();
-			    inflater.inflate(R.menu.context_menu_game, menu);
-		    }
-		}
-	}
+//	@Override
+//	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+//		super.onCreateContextMenu(menu, v, menuInfo);
+//		
+//		ExpandableListView.ExpandableListContextMenuInfo info = (ExpandableListView.ExpandableListContextMenuInfo) menuInfo;
+//		int type = ExpandableListView.getPackedPositionType(info.packedPosition);
+//		
+//		if(type == 0){
+//			if(v.getId() == R.id.teams_list){
+//			    MenuInflater inflater = getMenuInflater();
+//			    inflater.inflate(R.menu.context_menu_team, menu);
+//			}
+//			else if(v.getId() == R.id.games_list){
+//			    MenuInflater inflater = getMenuInflater();
+//			    inflater.inflate(R.menu.context_menu_game, menu);
+//		    }
+//		}
+//	}
 	
-	@Override
-	public boolean onContextItemSelected(MenuItem item) {
-		
-		ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) item.getMenuInfo();
-		
-	    switch (item.getItemId()) {
-	        case R.id.quit_team:
-	        	if(teams.remove(info.packedPosition)) Log.v("ca marche ", " ");
-
-	            teamAdapter.notifyDataSetChanged();
-	            return true;
-	        case R.id.quit_game:
-
-	        	return true;
-	        case R.id.cancel:
-	            return true;
-	        default:
-	            return super.onContextItemSelected(item);
-	    }
-	}
+//	@Override
+//	public boolean onContextItemSelected(MenuItem item) {
+//		
+//		ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) item.getMenuInfo();
+//		
+//	    switch (item.getItemId()) {
+//	        case R.id.quit_team:
+//	        	if(teams.remove(info.packedPosition)) Log.v("ca marche ", " ");
+//
+//	            teamAdapter.notifyDataSetChanged();
+//	            return true;
+//	        case R.id.quit_game:
+//
+//	        	return true;
+//	        case R.id.cancel:
+//	            return true;
+//	        default:
+//	            return super.onContextItemSelected(item);
+//	    }
+//	}
 	
-	public Team getTeamByName(String name) {
-		for(Iterator<Team> it = teams.iterator(); it.hasNext();) {
-			Team team = it.next();
-			if(team.getName() == name) {
-				return team;
-			}
-		}
-		return null;
-	}
-	
-	public Game getGameByName(String name) {
-		for(Iterator<Game> it = games.iterator(); it.hasNext();) {
-			Game game = it.next();
-			if(game.getName() == name) {
-				return game;
-			}
-		}
-		return null;
-	}
+//	public Team getTeamByName(String name) {
+//		for(Iterator<Team> it = teams.iterator(); it.hasNext();) {
+//			Team team = it.next();
+//			if(team.getName() == name) {
+//				return team;
+//			}
+//		}
+//		return null;
+//	}
+//	
+//	public Game getGameByName(String name) {
+//		for(Iterator<Game> it = games.iterator(); it.hasNext();) {
+//			Game game = it.next();
+//			if(game.getName() == name) {
+//				return game;
+//			}
+//		}
+//		return null;
+//	}
 }
 
