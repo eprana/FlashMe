@@ -3,6 +3,7 @@ package com.qualcomm.QCARSamples.FlashMe;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import com.parse.GetCallback;
 import com.parse.GetDataCallback;
@@ -44,6 +45,7 @@ import android.content.res.Resources.NotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 public class ContentActivity extends FragmentActivity {
@@ -372,11 +374,18 @@ public class ContentActivity extends FragmentActivity {
 	final static String TAG_PROFILE = "PROFILE_FRAGMENT";
 	final static String TAG_TEAMS = "TEAMS_FRAGMENT";
 	final static String TAG_GAMES = "GAMES_FRAGMENT";
+	private LoadFragment lf; 
+	private static int loadedFragment = 0;
+	private static int selectedFragment = 0;
 		
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 	 	setContentView(R.layout.content);
+	 	
+	 	//loadSelectedFrag();
+	 	//if le frag n'a pas fini de charger, alors on ne peut pas appeler la méthode une nouvelle fois
+	 	//
 	 	
 	 	// Top menu
 	 	final ImageButton profile_bt = (ImageButton) findViewById(R.id.profile_bt);
@@ -387,17 +396,28 @@ public class ContentActivity extends FragmentActivity {
 		profile_bt.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View arg0){
+
 				profile_bt.setImageResource(R.drawable.menu_profile_bt);
 				teams_bt.setImageResource(R.drawable.menu_teams_bt_in);
 				games_bt.setImageResource(R.drawable.menu_games_bt_in);
-				ProfileFragment fragment = (ProfileFragment)myFragmentManager.findFragmentByTag(TAG_PROFILE);
-				if(fragment==null){
-					FragmentTransaction fragmentTransaction = myFragmentManager.beginTransaction();
-					if(profileFrag.isAdded()){
-						fragmentTransaction.show(profileFrag);
-					} else {
-						fragmentTransaction.replace(R.id.maincontainer, profileFrag, TAG_PROFILE);
-						fragmentTransaction.commit();
+
+				if(selectedFragment == loadedFragment){
+					ProfileFragment fragment = (ProfileFragment)myFragmentManager.findFragmentByTag(TAG_PROFILE);
+					if(fragment==null){
+						FragmentTransaction fragmentTransaction = myFragmentManager.beginTransaction();
+						if(profileFrag.isAdded()){
+							fragmentTransaction.show(profileFrag);
+						} else {
+							selectedFragment++;
+							try {
+								Thread.sleep(1000);
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							lf = new LoadFragment(fragmentTransaction, profileFrag, TAG_PROFILE);
+							lf.execute();
+						}
 					}
 				}
 			}
@@ -407,37 +427,60 @@ public class ContentActivity extends FragmentActivity {
 		teams_bt.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View arg0){
+
 				profile_bt.setImageResource(R.drawable.menu_profile_bt_in);
 				teams_bt.setImageResource(R.drawable.menu_teams_bt);
 				games_bt.setImageResource(R.drawable.menu_games_bt_in);
-				TeamsFragment fragment = (TeamsFragment)myFragmentManager.findFragmentByTag(TAG_TEAMS);
-				if(fragment==null){
-					FragmentTransaction fragmentTransaction = myFragmentManager.beginTransaction();
-					if(teamsFrag.isAdded()){
-						fragmentTransaction.show(teamsFrag);
-					} else {
-						fragmentTransaction.replace(R.id.maincontainer, teamsFrag, TAG_TEAMS);
-						fragmentTransaction.commit();
+				
+				if(selectedFragment == loadedFragment){
+					TeamsFragment fragment = (TeamsFragment)myFragmentManager.findFragmentByTag(TAG_TEAMS);
+					if(fragment==null){
+						FragmentTransaction fragmentTransaction = myFragmentManager.beginTransaction();
+						if(teamsFrag.isAdded()){
+							fragmentTransaction.show(teamsFrag);
+						} else {
+							selectedFragment++;
+							try {
+								Thread.sleep(1000);
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							lf = new LoadFragment(fragmentTransaction, teamsFrag, TAG_TEAMS);
+							lf.execute();
+						}
 					}
 				}
 			}
 		});
 		
 		// On games icon click
+		
 		games_bt.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View arg0){
+			
 				profile_bt.setImageResource(R.drawable.menu_profile_bt_in);
 				teams_bt.setImageResource(R.drawable.menu_teams_bt_in);
 				games_bt.setImageResource(R.drawable.menu_games_bt);
-				GamesFragment fragment = (GamesFragment)myFragmentManager.findFragmentByTag(TAG_GAMES);
-				if(fragment==null){
-					FragmentTransaction fragmentTransaction = myFragmentManager.beginTransaction();
-					if(gamesFrag.isAdded()){
-						fragmentTransaction.show(gamesFrag);
-					} else {
-						fragmentTransaction.replace(R.id.maincontainer, gamesFrag, TAG_GAMES);
-						fragmentTransaction.commit();
+				
+				if(selectedFragment == loadedFragment){
+					GamesFragment fragment = (GamesFragment)myFragmentManager.findFragmentByTag(TAG_GAMES);
+					if(fragment==null){
+						FragmentTransaction fragmentTransaction = myFragmentManager.beginTransaction();
+						if(gamesFrag.isAdded()){
+							fragmentTransaction.show(gamesFrag);
+						} else {
+							selectedFragment++;
+							try {
+								Thread.sleep(1000);
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							lf = new LoadFragment(fragmentTransaction, gamesFrag, TAG_GAMES);
+							lf.execute();
+						}
 					}
 				}
 			}
@@ -455,6 +498,46 @@ public class ContentActivity extends FragmentActivity {
 			fragmentTransaction.commit();
 		}
  	}
+	
+	private class LoadFragment extends AsyncTask<Void, Integer, Void> {
+
+		public FragmentTransaction fragmentTransaction;
+		public Fragment fragToLoad;
+		public String tag;
+		
+		
+		public LoadFragment(FragmentTransaction lf, Fragment ftl, String t){
+			fragmentTransaction = lf;
+			fragToLoad = ftl;
+			tag = t;
+		}
+		
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			//Toast.makeText(getApplicationContext(), "Début du traitement asynchrone", Toast.LENGTH_SHORT).show();
+		}
+
+		@Override
+		protected void onProgressUpdate(Integer... values){
+			super.onProgressUpdate(values);
+		}
+
+		@Override
+		protected Void doInBackground(Void... arg0) {
+
+			fragmentTransaction.replace(R.id.maincontainer, fragToLoad, tag);
+			fragmentTransaction.commit();
+			
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			//Toast.makeText(getApplicationContext(), "Le traitement asynchrone est terminé", Toast.LENGTH_SHORT).show();
+			loadedFragment+=1;
+		}
+	}
 	
 	// Contextual menu for quitting teams / games
 //	@Override
