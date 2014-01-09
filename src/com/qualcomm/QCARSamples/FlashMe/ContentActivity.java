@@ -69,12 +69,13 @@ public class ContentActivity extends FragmentActivity {
         	userName.setText(EXTRA_LOGIN);
         	
         	// Setting profile picture
-        	ParseQuery<ParseObject> query = ParseQuery.getQuery("_User");
-        	query.getInBackground(currentUser.getObjectId(), new GetCallback<ParseObject>() {
-          	  public void done(ParseObject object, ParseException e) {
+        	ParseQuery<ParseUser> query = ParseUser.getQuery();
+        	query.whereEqualTo("username", currentUser.getUsername());
+        	query.findInBackground(new FindCallback<ParseUser>() {
+          	  public void done(List<ParseUser> objects, ParseException e) {
           	    if (e == null) {
           	    	// Getting the avatar form the database
-          	    	ParseUser userd = (ParseUser) object;
+          	    	ParseUser userd = (ParseUser) objects.get(0);
           	    	ParseFile avatarFile = (ParseFile) userd.get("avatar");
           	    	try {
 						byte[] avatarByteArray = avatarFile.getData();
