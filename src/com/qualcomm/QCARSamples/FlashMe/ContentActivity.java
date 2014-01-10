@@ -183,12 +183,8 @@ public class ContentActivity extends FragmentActivity{
 		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 			View mainView = inflater.inflate(R.layout.profile, container, false);
 			final Context context = mainView.getContext();
-        	TextView userName = (TextView) mainView.findViewById(R.id.name);
         	avatarView = (ImageView) mainView.findViewById(R.id.profile_picture);
-        	
-        	// Setting username on top of the page
-        	userName.setText(EXTRA_LOGIN);
-        	
+
         	// Setting profile picture
         	LoadProfile lp = new LoadProfile(context);
         	lp.execute();
@@ -263,8 +259,6 @@ public class ContentActivity extends FragmentActivity{
 		public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 			View mainView = inflater.inflate(R.layout.teams, container, false);
 			final Context context = mainView.getContext();
-        	TextView userName = (TextView) mainView.findViewById(R.id.name);
-        	userName.setText(EXTRA_LOGIN);
 			
 			// Display teams
         	teams = new ArrayList<Team>();
@@ -464,8 +458,6 @@ public class ContentActivity extends FragmentActivity{
 		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 			View mainView = inflater.inflate(R.layout.games, container, false);
 			final Context context = mainView.getContext();
-        	TextView userName = (TextView) mainView.findViewById(R.id.name);
-        	userName.setText(EXTRA_LOGIN);
         	
         	// Display games
         	games = new ArrayList<Game>();
@@ -534,6 +526,10 @@ public class ContentActivity extends FragmentActivity{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 	 	setContentView(R.layout.content);
+	 	
+    	// Setting username on top of the page
+    	TextView userName = (TextView) findViewById(R.id.name);
+    	userName.setText(EXTRA_LOGIN);
 		
 		myFragmentManager = getSupportFragmentManager();
 		profileFrag = new ProfileFragment();
@@ -545,6 +541,8 @@ public class ContentActivity extends FragmentActivity{
 	 	final ImageButton teams_bt = (ImageButton) findViewById(R.id.team_bt);
 		final ImageButton games_bt = (ImageButton) findViewById(R.id.game_bt);
 				
+		profile_bt.setImageResource(R.drawable.menu_profile_bt);
+		
 		// On profile icon click
 		profile_bt.setOnClickListener(new OnClickListener(){
 			@Override

@@ -9,25 +9,9 @@
 	    android:layout_width="match_parent"
 	    android:layout_height="0dip" 
 	    android:layout_weight="20">
-    
-	    <TextView
-	        android:id="@+id/name"
-	        style="@style/topLine" />
-	
-	    <ImageButton
-			android:id="@+id/settings_bt"
-			android:contentDescription="@string/settings_bt"
-			android:layout_alignRight="@id/name"
-			android:layout_marginRight="@dimen/verylarge_mg"
-			android:layout_marginTop="@dimen/small_mg"
-			android:layout_height="wrap_content"
-			android:layout_width="wrap_content"
-			android:src="@drawable/settings_bt"
-			style="@style/topLineButton" />
-	    
+    	    
 	     <TextView
 	        android:id="@+id/my_games"
-	        android:layout_below="@id/name"
 	        android:text="@string/my_games"
 	        style="@style/topLineLight" />
 	     
