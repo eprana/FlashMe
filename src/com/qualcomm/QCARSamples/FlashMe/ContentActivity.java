@@ -30,9 +30,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
+import android.widget.BaseExpandableListAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -68,6 +70,8 @@ public class ContentActivity extends FragmentActivity{
 	private static String TAG_PROFILE = "PROFILE_FRAGMENT";
 	private static String TAG_TEAMS = "TEAMS_FRAGMENT";
 	private static String TAG_GAMES = "GAMES_FRAGMENT";
+	private ExpandableListView sList;
+	private SettingsAdapter sAdapter;
 
 	public static void updateMenu(){
 		
@@ -531,6 +535,20 @@ public class ContentActivity extends FragmentActivity{
     	TextView userName = (TextView) findViewById(R.id.name);
     	userName.setText(EXTRA_LOGIN);
 		
+    	// Settings button expandable list
+    	sList = (ExpandableListView)findViewById(R.id.s_list);
+    	ArrayList<Settings> settings_bt = new ArrayList<Settings>();
+		Settings setting = new Settings(getResources().getDrawable(R.drawable.settings_bt));
+		ArrayList<SettingsButton> buttons = new ArrayList<SettingsButton>();
+		buttons.add(new SettingsButton(setting, getResources().getDrawable(R.drawable.edit_bt), "Edit profile"));
+		buttons.add(new SettingsButton(setting, getResources().getDrawable(R.drawable.logout_bt), "Log out"));
+		setting.setSettingsButtons(buttons);
+		settings_bt.add(setting);
+		sAdapter = new SettingsAdapter(this, settings_bt);
+		sList.setAdapter(sAdapter);
+    	
+		
+		// Content fragments
 		myFragmentManager = getSupportFragmentManager();
 		profileFrag = new ProfileFragment();
 		teamsFrag = new TeamsFragment();
@@ -593,5 +611,115 @@ public class ContentActivity extends FragmentActivity{
 			fragmentTransaction.commit();
 		}	
  	}
+	
+	
+	public class Settings {
+		private Drawable settingsBt;
+		private ArrayList<SettingsButton> sButtons;
+
+		public Settings(Drawable bt) {
+			super();
+			this.settingsBt = bt;
+			this.sButtons = new ArrayList<SettingsButton>();
+		}
+
+		//Getters & Setters
+		public Drawable getDrawable() {	return settingsBt; }
+		public ArrayList<SettingsButton> getSettingsButtons() { return sButtons; }
+		public void setSettingsButtons(ArrayList<SettingsButton> buttons) { this.sButtons = buttons; }
+	}
+	
+	
+	public class SettingsButton {
+
+		private Settings settingsBt;
+		private Drawable picto;
+		private String picto_tx;
+
+		public SettingsButton(Settings bt, Drawable picto, String picto_tx) {
+			super();
+			this.settingsBt = bt;
+			this.picto = picto;
+			this.picto_tx = picto_tx;
+		}
+
+		//Getters & Setters
+//		public Settings getSettings() { return settingsBt; }
+//		public void setSettings(Settings bt) { this.settingsBt = bt; }
+		public Drawable getDrawable(){ return this.picto; }
+		public void setDrawable(Drawable picto){ this.picto = picto; }
+		public String getTextPicto() { return picto_tx;	}
+		public void setTextPicto(String picto_tx) { this.picto_tx = picto_tx; }
+
+	}
+	
+	public class SettingsAdapter extends BaseExpandableListAdapter {
+
+		private Context context;
+		private ArrayList<Settings> settings;
+		private LayoutInflater inflater;
+
+		public SettingsAdapter(Context context, ArrayList<Settings> button) {
+			this.context = context;
+			this.settings = button;
+			inflater = LayoutInflater.from(context);
+		}
+
+		@Override
+		public boolean areAllItemsEnabled() { return true; }
+		public Object getChild(int gPosition, int cPosition) { return settings.get(gPosition).getSettingsButtons().get(cPosition); }
+		public long getChildId(int gPosition, int cPosition) { return cPosition; }
+
+		public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+			final SettingsButton sButton = (SettingsButton) getChild(groupPosition, childPosition);
+			BViewHolder bViewHolder;
+
+	        if (convertView == null) {
+	        	bViewHolder = new BViewHolder();
+	            convertView = inflater.inflate(R.layout.settings_buttons, null);
+	            bViewHolder.picto = (ImageView) convertView.findViewById(R.id.picto);
+	            bViewHolder.picto_tx = (TextView) convertView.findViewById(R.id.picto_tx);
+	            convertView.setTag(bViewHolder);
+	        } else bViewHolder = (BViewHolder) convertView.getTag();
+
+	        bViewHolder.picto.setImageDrawable(sButton.getDrawable());
+	        bViewHolder.picto_tx.setText(sButton.getTextPicto());
+
+	        return convertView;
+		}
+
+		public int getChildrenCount(int gPosition) { return settings.get(gPosition).getSettingsButtons().size(); }
+		public Object getGroup(int gPosition) { return settings.get(gPosition); }
+		public int getGroupCount() { return settings.size(); }
+		public long getGroupId(int gPosition) { return gPosition; }
+
+		public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
+			GViewHolder gholder;
+			Settings settings_bt = (Settings) getGroup(groupPosition);
+
+	        if (convertView == null) {
+	        	gholder = new GViewHolder();
+	        	convertView = inflater.inflate(R.layout.settings_row, null);
+	        	gholder.settings_bt = (ImageView) convertView.findViewById(R.id.settings_bt);
+	        	convertView.setTag(gholder);
+	        } else gholder = (GViewHolder) convertView.getTag();
+
+	        gholder.settings_bt.setImageDrawable(settings_bt.getDrawable());
+	        return convertView;
+		}
+
+		public boolean hasStableIds() {	return true; }
+
+		public boolean isChildSelectable(int arg0, int arg1) { 	return true; }
+
+		class GViewHolder {
+			public ImageView settings_bt;
+		}
+
+		class BViewHolder {
+			public ImageView picto;
+			public TextView picto_tx;
+		}
+	}
 }
 

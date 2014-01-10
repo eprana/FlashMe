@@ -51,7 +51,7 @@
 	        android:layout_below="@id/top_menu"
 	        style="@style/topLine" />
     	    
-    <ImageButton
+    <!-- <ImageButton
 			android:id="@+id/settings_bt"
 			android:contentDescription="@string/settings_bt"
 			android:layout_below="@id/top_menu"
@@ -61,7 +61,16 @@
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
 			android:src="@drawable/settings_bt"
-			style="@style/topLineButton" />
+			style="@style/topLineButton" /> -->
+    
+	<ExpandableListView 
+    	android:id="@+id/s_list" 
+    	android:layout_width="150dip"
+    	android:layout_alignRight="@id/name"
+    	android:layout_below="@id/top_menu"
+    	android:layout_height="match_parent"
+    	android:groupIndicator="@drawable/group_indicator" >
+	</ExpandableListView>
 	
     <FrameLayout 
         android:id="@+id/maincontainer"

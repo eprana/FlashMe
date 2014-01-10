@@ -4,6 +4,7 @@
     <string name="app_name">Flash me (if you can!)</string>
     <string name="app_description">descritpion de l\'appli</string>
     <string name="action_settings">Settings</string>
+    <string name="empty_string"></string>
     
     
     <!-- connect -->
