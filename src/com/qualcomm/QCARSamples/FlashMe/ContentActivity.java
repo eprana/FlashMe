@@ -51,6 +51,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
+import android.widget.ExpandableListView.OnChildClickListener;
 
 public class ContentActivity extends FragmentActivity{
 
@@ -537,6 +538,7 @@ public class ContentActivity extends FragmentActivity{
 		
     	// Settings button expandable list
     	sList = (ExpandableListView)findViewById(R.id.s_list);
+    	sList.setDivider(null);
     	ArrayList<Settings> settings_bt = new ArrayList<Settings>();
 		Settings setting = new Settings(getResources().getDrawable(R.drawable.settings_bt));
 		ArrayList<SettingsButton> buttons = new ArrayList<SettingsButton>();
@@ -545,8 +547,21 @@ public class ContentActivity extends FragmentActivity{
 		setting.setSettingsButtons(buttons);
 		settings_bt.add(setting);
 		sAdapter = new SettingsAdapter(this, settings_bt);
+
+		sList.setOnChildClickListener(new OnChildClickListener() {
+			
+			@Override
+			public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+				if(groupPosition == 0 && childPosition == 1){
+					ParseUser.logOut();
+					finish();
+				}
+				
+				return false;
+			}
+		});
+		
 		sList.setAdapter(sAdapter);
-    	
 		
 		// Content fragments
 		myFragmentManager = getSupportFragmentManager();
@@ -558,8 +573,10 @@ public class ContentActivity extends FragmentActivity{
 	 	final ImageButton profile_bt = (ImageButton) findViewById(R.id.profile_bt);
 	 	final ImageButton teams_bt = (ImageButton) findViewById(R.id.team_bt);
 		final ImageButton games_bt = (ImageButton) findViewById(R.id.game_bt);
+		final TextView top_line = (TextView) findViewById(R.id.top_line_light);
 				
 		profile_bt.setImageResource(R.drawable.menu_profile_bt);
+		top_line.setText(R.string.my_profile);
 		
 		// On profile icon click
 		profile_bt.setOnClickListener(new OnClickListener(){
@@ -570,6 +587,7 @@ public class ContentActivity extends FragmentActivity{
 				profile_bt.setImageResource(R.drawable.menu_profile_bt);
 				teams_bt.setImageResource(R.drawable.menu_teams_bt_in);
 				games_bt.setImageResource(R.drawable.menu_games_bt_in);
+				top_line.setText(R.string.my_profile);
 				
 				updateMenu();
 			}
@@ -584,6 +602,7 @@ public class ContentActivity extends FragmentActivity{
 				profile_bt.setImageResource(R.drawable.menu_profile_bt_in);
 				teams_bt.setImageResource(R.drawable.menu_teams_bt);
 				games_bt.setImageResource(R.drawable.menu_games_bt_in);
+				top_line.setText(R.string.my_teams);
 				
 				updateMenu();
 			}
@@ -599,6 +618,7 @@ public class ContentActivity extends FragmentActivity{
 				profile_bt.setImageResource(R.drawable.menu_profile_bt_in);
 				teams_bt.setImageResource(R.drawable.menu_teams_bt_in);
 				games_bt.setImageResource(R.drawable.menu_games_bt);
+				top_line.setText(R.string.my_games);
 				
 				updateMenu();
 			}
@@ -644,8 +664,6 @@ public class ContentActivity extends FragmentActivity{
 		}
 
 		//Getters & Setters
-//		public Settings getSettings() { return settingsBt; }
-//		public void setSettings(Settings bt) { this.settingsBt = bt; }
 		public Drawable getDrawable(){ return this.picto; }
 		public void setDrawable(Drawable picto){ this.picto = picto; }
 		public String getTextPicto() { return picto_tx;	}
@@ -711,7 +729,7 @@ public class ContentActivity extends FragmentActivity{
 		public boolean hasStableIds() {	return true; }
 
 		public boolean isChildSelectable(int arg0, int arg1) { 	return true; }
-
+		
 		class GViewHolder {
 			public ImageView settings_bt;
 		}

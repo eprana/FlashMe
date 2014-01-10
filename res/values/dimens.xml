@@ -16,6 +16,7 @@
     <dimen name="verysmall_wd">30dip</dimen>
     <dimen name="small_wd">50dip</dimen>
     <dimen name="medium_wd">100dip</dimen>
+    <dimen name="settings_wd">120dip</dimen>
     <dimen name="button_wd">180dip</dimen>
     <dimen name="large_wd">250dip</dimen>
     

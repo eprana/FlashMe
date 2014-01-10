@@ -4,7 +4,8 @@
     android:layout_height="match_parent"
     android:orientation="horizontal" 
     android:baselineAligned="false"
-    android:gravity="right">
+    android:gravity="right"
+    android:background="@color/dark_blue">
     
     <ImageView
 		android:id="@+id/settings_bt"
@@ -13,6 +14,6 @@
 		android:layout_height="match_parent"
 		android:layout_width="wrap_content"
 		android:src="@drawable/settings_bt"
-		style="@style/topLineButton" />
+		style="@style/translucide" />
 
 </LinearLayout>
