@@ -12,7 +12,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -265,4 +269,17 @@ public class SignUpActivity extends Activity {
     		Toast.makeText(SignUpActivity.this, "No Photo Selected", Toast.LENGTH_SHORT).show();
     	}
     }
+	
+	private Bitmap cropBitmap(Bitmap bitmap, int width, int height){
+		
+	    Bitmap bmOverlay = Bitmap.createBitmap(320, 480, Bitmap.Config.ARGB_8888);
+
+	    Paint p = new Paint();
+	    p.setXfermode(new PorterDuffXfermode(Mode.CLEAR));              
+	    Canvas c = new Canvas(bmOverlay); 
+	    c.drawBitmap(bitmap, 0, 0, null); 
+	    c.drawRect(0, 0, width, height, p);
+
+	    return bmOverlay;
+	}
 }
