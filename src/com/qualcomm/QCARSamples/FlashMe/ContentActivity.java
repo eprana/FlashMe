@@ -343,24 +343,22 @@ public class ContentActivity extends FragmentActivity{
 							public void done(ParseException e) {
 								if (e == null) {
 									// Create Java Object
-									if(!isDetached()){
-										final Team javaTeam = new Team(newTeam.getString("name"), EXTRA_LOGIN, getResources().getDrawable(R.drawable.default_team_picture_thumb));
-										teams.add(javaTeam);
-										// Add relation with current user
-										ParseRelation<ParseObject> teamsRelation = newTeam.getRelation("players");
-										teamsRelation.add(currentUser);
-										newTeam.saveInBackground(new SaveCallback() {
-											@Override
-											public void done(ParseException e) {
-												if (e == null) {
-													// Add javaPlayer
-													javaTeam.addPlayer(new Player(EXTRA_LOGIN, getResources().getDrawable(R.drawable.default_profile_picture_thumb)));
-													// Update view
-													expandableList.setAdapter(teamAdapter);
-												}
+									final Team javaTeam = new Team(newTeam.getString("name"), EXTRA_LOGIN, getResources().getDrawable(R.drawable.default_team_picture_thumb));
+									teams.add(javaTeam);
+									// Add relation with current user
+									ParseRelation<ParseObject> teamsRelation = newTeam.getRelation("players");
+									teamsRelation.add(currentUser);
+									newTeam.saveInBackground(new SaveCallback() {
+										@Override
+										public void done(ParseException e) {
+											if (e == null) {
+												// Add javaPlayer
+												javaTeam.addPlayer(new Player(EXTRA_LOGIN, getResources().getDrawable(R.drawable.default_profile_picture_thumb)));
+												// Update view
+												expandableList.setAdapter(teamAdapter);
 											}
-										});
-									}
+										}
+									});
 								}
 							}
 						});

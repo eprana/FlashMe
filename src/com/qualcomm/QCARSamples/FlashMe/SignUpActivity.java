@@ -12,12 +12,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -192,12 +194,18 @@ public class SignUpActivity extends Activity {
     			case CAMERA_REQUEST:
     				
     				// Replacing the preview by the chosen image
-    				Bitmap photo = (Bitmap) data.getExtras().get("data"); 
+    				Bitmap photo = (Bitmap) data.getExtras().get("data");
+    				Display display = getWindowManager().getDefaultDisplay();
+    				Point size = new Point();
+    				display.getSize(size);
+    				int width = size.x;
+    				Bitmap avatar = Bitmap.createScaledBitmap((Bitmap) data.getExtras().get("data"), size.x, 300, false);
+    				
     				avatarView.setImageBitmap(photo);
     				
     				// Replacing the avatar in the database
     				ByteArrayOutputStream stream = new ByteArrayOutputStream();
-    				photo.compress(Bitmap.CompressFormat.PNG, 100, stream);
+    				avatar.compress(Bitmap.CompressFormat.PNG, 100, stream);
     				byte[] avatarByteArray = stream.toByteArray();
     				
     				avatarParseFile = new ParseFile("avatar.png", avatarByteArray);    				
@@ -221,12 +229,18 @@ public class SignUpActivity extends Activity {
 							e.printStackTrace();
 						}
 						// Replacing the preview image by the chosen image
+						
+						Display displayPicked = getWindowManager().getDefaultDisplay();
+	    				Point sizePicked = new Point();
+	    				displayPicked.getSize(sizePicked);
+	    				Bitmap avatarPicked = Bitmap.createScaledBitmap(bm, sizePicked.x, 300, false);
+						
 						Bitmap photoPicked = Bitmap.createScaledBitmap(bm, 200, 200, false);
 						avatarView.setImageBitmap(photoPicked);
 						
 						// Replacing the avatar in the database
 	    				ByteArrayOutputStream streamPicked = new ByteArrayOutputStream();
-	    				photoPicked.compress(Bitmap.CompressFormat.PNG, 100, streamPicked);
+	    				avatarPicked.compress(Bitmap.CompressFormat.PNG, 100, streamPicked);
 	    				byte[] avatarByteArrayPicked = streamPicked.toByteArray();
 	    				
 	    				avatarParseFile = new ParseFile("avatar.png", avatarByteArrayPicked);
