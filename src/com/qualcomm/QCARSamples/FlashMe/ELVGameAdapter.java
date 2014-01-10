@@ -15,6 +15,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources.NotFoundException;
 import android.graphics.Color;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +38,7 @@ public class ELVGameAdapter extends BaseExpandableListAdapter {
 	private Game selectedGame;
 	private int lastSelectedPosition;
 	private CompoundButton lastSelectedButton;
+	private View alertDialogView;
 	
 	public ELVGameAdapter(Context context, ArrayList<Game> games){
 		this.context = context;
@@ -94,38 +96,75 @@ public class ELVGameAdapter extends BaseExpandableListAdapter {
 		childViewHolder.delete_bt.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// Get concerned Game with Parse
-				ParseQuery<ParseObject> gameQuery = ParseQuery.getQuery("Game");
-				gameQuery.whereEqualTo("name", game.getName());
-				gameQuery.getFirstInBackground(new GetCallback<ParseObject>() {
-					public void done(final ParseObject gameParseObject, ParseException e) {
-						if (gameParseObject == null) {
-							// Display error message
-						} else {
-							// Get selected Team with Parse
-							ParseQuery<ParseObject> teamQuery = ParseQuery.getQuery("Team");
-							teamQuery.whereEqualTo("name", team.getName());
-							teamQuery.findInBackground(new FindCallback<ParseObject>() {
-								public void done(List<ParseObject> teamsList, ParseException e) {
-									if (e==null){
-										ParseObject teamParseObject = teamsList.get(0);
-										// Remove Parse Relation
-										gameParseObject.getRelation("teams").remove(teamParseObject);
-										gameParseObject.saveInBackground();
-										// Remove java object
-										game.removeTeam(team);
-										// Display success message
-										Toast.makeText(context, "You just deleted the team "+teamParseObject.getString("name")+" from the game "+gameParseObject.getString("name")+".", Toast.LENGTH_LONG).show();
-									}
-									else {
-										// Display error message
-										Toast.makeText(context, "The user can't be deleted.", Toast.LENGTH_SHORT).show();
-									}
+				
+				// Show a confirm message
+      	   		// Create an alert box
+				AlertDialog.Builder adb = new AlertDialog.Builder(context);
+				MessageAlert msg_a;
+				
+				if (alertDialogView == null) {
+					msg_a = new MessageAlert();
+					alertDialogView = inflater.inflate(R.layout.alert_dialog, null);
+					msg_a.msg = (TextView)alertDialogView.findViewById(R.id.text_alert);
+					alertDialogView.setTag(msg_a);
+				} else {
+					msg_a = (MessageAlert) alertDialogView.getTag();
+	            	ViewGroup adbParent = (ViewGroup) alertDialogView.getParent();
+					adbParent.removeView(alertDialogView);
+				}
+				
+				// Choosing the type of message alert
+				msg_a.msg.setText(Html.fromHtml(context.getResources().getString(R.string.delete_team_from_game_confirm, team.getName(), game.getName())));
+								
+				// Filling the alert box
+				adb.setView(alertDialogView);
+				adb.setTitle("Are you sure ?");
+				adb.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+		            public void onClick(DialogInterface dialog, int which) {
+		            	// Go back to the screen and delete the alertDialogView
+		            	ViewGroup adbParent = (ViewGroup) alertDialogView.getParent();
+						adbParent.removeView(alertDialogView);
+		          } });
+				adb.setPositiveButton("CONFIRM", new DialogInterface.OnClickListener() {
+		            public void onClick(DialogInterface dialog, int which) {
+		            	// Get concerned Game with Parse
+						ParseQuery<ParseObject> gameQuery = ParseQuery.getQuery("Game");
+						gameQuery.whereEqualTo("name", game.getName());
+						gameQuery.getFirstInBackground(new GetCallback<ParseObject>() {
+							public void done(final ParseObject gameParseObject, ParseException e) {
+								if (gameParseObject == null) {
+									// Display error message
+								} else {
+									// Get selected Team with Parse
+									ParseQuery<ParseObject> teamQuery = ParseQuery.getQuery("Team");
+									teamQuery.whereEqualTo("name", team.getName());
+									teamQuery.findInBackground(new FindCallback<ParseObject>() {
+										public void done(List<ParseObject> teamsList, ParseException e) {
+											if (e==null){
+												ParseObject teamParseObject = teamsList.get(0);
+												// Remove Parse Relation
+												gameParseObject.getRelation("teams").remove(teamParseObject);
+												gameParseObject.saveInBackground();
+												// Remove java object
+												game.removeTeam(team);
+												// Display success message
+												Toast.makeText(context, "You just deleted the team "+teamParseObject.getString("name")+" from the game "+gameParseObject.getString("name")+".", Toast.LENGTH_LONG).show();
+											}
+											else {
+												// Display error message
+												Toast.makeText(context, "The user can't be deleted.", Toast.LENGTH_SHORT).show();
+											}
+										}
+									});
 								}
-							});
-						}
-					}
-				});
+							}
+						});
+		        } });
+				
+				// Showing the alert box
+		        adb.create();
+				adb.show();
+
 			}
 		});
 		      
@@ -190,25 +229,61 @@ public class ELVGameAdapter extends BaseExpandableListAdapter {
 		gholder.delete_bt.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// Get concerned team with Parse
-				ParseQuery<ParseObject> teamQuery = ParseQuery.getQuery("Game");
-				teamQuery.whereEqualTo("name", game.getName());
-				teamQuery.getFirstInBackground(new GetCallback<ParseObject>() {
-					public void done(final ParseObject gameParseObject, ParseException e) {
-						if (e==null){
-							// Remove Team in Parse
-							gameParseObject.deleteInBackground();
-							// Remove java object
-							games.remove(gamePosition);
-							// Display success message
-							Toast.makeText(context, "You just deleted the game "+gameParseObject.getString("name")+".", Toast.LENGTH_SHORT).show();
-						}
-						else {
-							Toast.makeText(context, "The game can't be deleted.", Toast.LENGTH_SHORT).show();
-						}
-						
-					}
-				});
+				
+				// Show a confirm message
+      	   		// Create an alert box
+				AlertDialog.Builder adb = new AlertDialog.Builder(context);
+				MessageAlert msg_a;
+				
+				if (alertDialogView == null) {
+					msg_a = new MessageAlert();
+					alertDialogView = inflater.inflate(R.layout.alert_dialog, null);
+					msg_a.msg = (TextView)alertDialogView.findViewById(R.id.text_alert);
+					alertDialogView.setTag(msg_a);
+				} else {
+					msg_a = (MessageAlert) alertDialogView.getTag();
+	            	ViewGroup adbParent = (ViewGroup) alertDialogView.getParent();
+					adbParent.removeView(alertDialogView);
+				}
+				
+				// Choosing the type of message alert
+				msg_a.msg.setText(Html.fromHtml(context.getResources().getString(R.string.delete_game_confirm, game.getName())));
+								
+				// Filling the alert box
+				adb.setView(alertDialogView);
+				adb.setTitle("Are you sure ?");
+				adb.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+		            public void onClick(DialogInterface dialog, int which) {
+		            	// Go back to the screen and delete the alertDialogView
+		            	ViewGroup adbParent = (ViewGroup) alertDialogView.getParent();
+						adbParent.removeView(alertDialogView);
+		          } });
+				adb.setPositiveButton("CONFIRM", new DialogInterface.OnClickListener() {
+		            public void onClick(DialogInterface dialog, int which) {
+		            	// Get concerned team with Parse
+						ParseQuery<ParseObject> teamQuery = ParseQuery.getQuery("Game");
+						teamQuery.whereEqualTo("name", game.getName());
+						teamQuery.getFirstInBackground(new GetCallback<ParseObject>() {
+							public void done(final ParseObject gameParseObject, ParseException e) {
+								if (e==null){
+									// Remove Team in Parse
+									gameParseObject.deleteInBackground();
+									// Remove java object
+									games.remove(gamePosition);
+									// Display success message
+									Toast.makeText(context, "You just deleted the game "+gameParseObject.getString("name")+".", Toast.LENGTH_SHORT).show();
+								}
+								else {
+									Toast.makeText(context, "The game can't be deleted.", Toast.LENGTH_SHORT).show();
+								}
+								
+							}
+						});
+		        } });
+				
+				// Showing the alert box
+		        adb.create();
+				adb.show();
 			}
 		});
 		

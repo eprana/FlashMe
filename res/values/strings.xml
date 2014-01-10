@@ -60,6 +60,9 @@
 	<string name="delete_player_bt">Delete player</string>
 	<string name="team_in_list_picture">Team in list picture</string>
 	<string name="delete">delete</string>
+	<string name="delete_team_confirm"><Data><![CDATA[Are you sure you want to delete the team <b>%1$s</b> ?]]> </Data></string>
+	<string name="delete_player_from_team_confirm"><Data><![CDATA[Are you sure you want to delete <b>%1$s</b> from the team <b>%2$s</b> ?]]> </Data></string>
+	<string name="delete_team_from_game_confirm"><Data><![CDATA[Are you sure you want to delete the team <b>%1$s</b> from the game <b>%2$s</b> ?]]> </Data></string>
 	<string name="quit_team_alert">Beware! If you decide to quit the team, you won\'t be able to re-join it unless the creator invites you.</string>
 	<string name="quit_team">Quit team</string>
 	<string name="cancel">Cancel</string>
@@ -70,6 +73,7 @@
 	<string name="my_games">My games</string>
 	<string name="enter_game">New game name</string>
 	<string name="empty_game_name">You must enter a valid game name.</string>
+	<string name="delete_game_confirm"><Data><![CDATA[Are you sure you want to delete the game <b>%1$s</b> ?]]> </Data></string>
 	<string name="team_pic">team_picture</string>
 	<string name="delete_team_bt">Delete team</string>
 	<string name="quit_game">Quit game</string>

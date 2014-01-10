@@ -13,7 +13,9 @@ import com.parse.ParseUser;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -36,6 +38,7 @@ public class ELVTeamAdapter extends BaseExpandableListAdapter {
 	private Team selectedTeam;
 	private int lastSelectedPosition;
 	private CompoundButton lastSelectedButton;
+	private View alertDialogView;
 	
 	public ELVTeamAdapter(Context context, ArrayList<Team> teams){
 		this.context = context;
@@ -93,43 +96,81 @@ public class ELVTeamAdapter extends BaseExpandableListAdapter {
 		childViewHolder.delete_bt.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// Get concerned Team with Parse
-				ParseQuery<ParseObject> teamQuery = ParseQuery.getQuery("Team");
-				teamQuery.whereEqualTo("name", team.getName());
-				teamQuery.getFirstInBackground(new GetCallback<ParseObject>() {
-					public void done(final ParseObject teamParseObject, ParseException e) {
-						if (teamParseObject == null) {
-							// Display error message
-						} else {
-							// Get selected User with Parse
-							ParseQuery<ParseUser> playerQuery = ParseUser.getQuery();
-							playerQuery.whereEqualTo("username", player.getName());
-							playerQuery.findInBackground(new FindCallback<ParseUser>() {
-								public void done(List<ParseUser> usersList, ParseException e) {
-									if (e==null){
-										ParseUser userParseObject = usersList.get(0);
-										if(userParseObject.getUsername().equals(ParseUser.getCurrentUser().getUsername())){
-											// Display restriction message
-											Toast.makeText(context, "You can't delete yourself from the team.", Toast.LENGTH_SHORT).show();
+				
+				// Show a confirm message
+      	   		// Create an alert box
+				AlertDialog.Builder adb = new AlertDialog.Builder(context);
+				MessageAlert msg_a;
+				
+				if (alertDialogView == null) {
+					msg_a = new MessageAlert();
+					alertDialogView = inflater.inflate(R.layout.alert_dialog, null);
+					msg_a.msg = (TextView)alertDialogView.findViewById(R.id.text_alert);
+					alertDialogView.setTag(msg_a);
+				} else {
+					msg_a = (MessageAlert) alertDialogView.getTag();
+	            	ViewGroup adbParent = (ViewGroup) alertDialogView.getParent();
+					adbParent.removeView(alertDialogView);
+				}
+				
+				// Choosing the type of message alert
+				msg_a.msg.setText(Html.fromHtml(context.getResources().getString(R.string.delete_player_from_team_confirm, player.getName(), team.getName())));
+								
+				// Filling the alert box
+				adb.setView(alertDialogView);
+				adb.setTitle("Are you sure ?");
+				adb.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+		            public void onClick(DialogInterface dialog, int which) {
+		            	// Go back to the screen and delete the alertDialogView
+		            	ViewGroup adbParent = (ViewGroup) alertDialogView.getParent();
+						adbParent.removeView(alertDialogView);
+		          } });
+				adb.setPositiveButton("CONFIRM", new DialogInterface.OnClickListener() {
+		            public void onClick(DialogInterface dialog, int which) {
+						// Get concerned Team with Parse
+						ParseQuery<ParseObject> teamQuery = ParseQuery.getQuery("Team");
+						teamQuery.whereEqualTo("name", team.getName());
+						teamQuery.getFirstInBackground(new GetCallback<ParseObject>() {
+							public void done(final ParseObject teamParseObject, ParseException e) {
+								if (teamParseObject == null) {
+									// Display error message
+								} else {
+									// Get selected User with Parse
+									ParseQuery<ParseUser> playerQuery = ParseUser.getQuery();
+									playerQuery.whereEqualTo("username", player.getName());
+									playerQuery.findInBackground(new FindCallback<ParseUser>() {
+										public void done(List<ParseUser> usersList, ParseException e) {
+											if (e==null){
+												ParseUser userParseObject = usersList.get(0);
+												if(userParseObject.getUsername().equals(ParseUser.getCurrentUser().getUsername())){
+													// Display restriction message
+													Toast.makeText(context, "You can't delete yourself from the team.", Toast.LENGTH_SHORT).show();
+												}
+												else{
+													// Remove Parse Relation
+													teamParseObject.getRelation("players").remove(userParseObject);
+													teamParseObject.saveInBackground();
+													// Remove java object
+													((Team) getGroup(teamPos)).removePlayer(player);
+													// Display success message
+													Toast.makeText(context, "You just deleted "+userParseObject.getUsername()+" from the team.", Toast.LENGTH_SHORT).show();
+												}
+											}
+											else {
+												Toast.makeText(context, "The user can't be deleted.", Toast.LENGTH_SHORT).show();
+											}
 										}
-										else{
-											// Remove Parse Relation
-											teamParseObject.getRelation("players").remove(userParseObject);
-											teamParseObject.saveInBackground();
-											// Remove java object
-											((Team) getGroup(teamPos)).removePlayer(player);
-											// Display success message
-											Toast.makeText(context, "You just deleted "+userParseObject.getUsername()+" from the team.", Toast.LENGTH_SHORT).show();
-										}
-									}
-									else {
-										Toast.makeText(context, "The user can't be deleted.", Toast.LENGTH_SHORT).show();
-									}
+									});
 								}
-							});
-						}
-					}
-				});
+							}
+						});
+
+		        } });
+				
+				// Showing the alert box
+		        adb.create();
+				adb.show();
+			
 			}
 		});
 		
@@ -192,26 +233,60 @@ public class ELVTeamAdapter extends BaseExpandableListAdapter {
 		gholder.delete_bt.setFocusable(false);
 		gholder.delete_bt.setOnClickListener(new OnClickListener() {
 			@Override
-			public void onClick(View v) {
-				// Get concerned team with Parse
-				ParseQuery<ParseObject> teamQuery = ParseQuery.getQuery("Team");
-				teamQuery.whereEqualTo("name", team.getName());
-				teamQuery.getFirstInBackground(new GetCallback<ParseObject>() {
-					public void done(final ParseObject teamParseObject, ParseException e) {
-						if (e==null){
-							// Remove Team in Parse
-							teamParseObject.deleteInBackground();
-							// Remove java object
-							teams.remove(teamPosition);
-							// Display success message
-							Toast.makeText(context, "You just deleted the team "+teamParseObject.getString("name")+".", Toast.LENGTH_SHORT).show();
-						}
-						else {
-							Toast.makeText(context, "The team can't be deleted.", Toast.LENGTH_SHORT).show();
-						}
-						
-					}
-				});
+			public void onClick(View v) {	
+				// Show a confirm message
+      	   		// Create an alert box
+				AlertDialog.Builder adb = new AlertDialog.Builder(context);
+				MessageAlert msg_a;
+				
+				if (alertDialogView == null) {
+					msg_a = new MessageAlert();
+					alertDialogView = inflater.inflate(R.layout.alert_dialog, null);
+					msg_a.msg = (TextView)alertDialogView.findViewById(R.id.text_alert);
+					alertDialogView.setTag(msg_a);
+				} else {
+					msg_a = (MessageAlert) alertDialogView.getTag();
+	            	ViewGroup adbParent = (ViewGroup) alertDialogView.getParent();
+					adbParent.removeView(alertDialogView);
+				}
+				
+				// Choosing the type of message alert
+				msg_a.msg.setText(Html.fromHtml(context.getResources().getString(R.string.delete_team_confirm, team.getName())));
+								
+				// Filling the alert box
+				adb.setView(alertDialogView);
+				adb.setTitle("Are you sure ?");
+				adb.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+		            public void onClick(DialogInterface dialog, int which) {
+		            	// Go back to the screen and delete the alertDialogView
+		            	ViewGroup adbParent = (ViewGroup) alertDialogView.getParent();
+						adbParent.removeView(alertDialogView);
+		          } });
+				adb.setPositiveButton("CONFIRM", new DialogInterface.OnClickListener() {
+		            public void onClick(DialogInterface dialog, int which) {
+		            	// Get concerned team with Parse
+						ParseQuery<ParseObject> teamQuery = ParseQuery.getQuery("Team");
+						teamQuery.whereEqualTo("name", team.getName());
+						teamQuery.getFirstInBackground(new GetCallback<ParseObject>() {
+							public void done(final ParseObject teamParseObject, ParseException e) {
+								if (e==null){
+									// Remove Team in Parse
+									teamParseObject.deleteInBackground();
+									// Remove java object
+									teams.remove(teamPosition);
+									// Display success message
+									Toast.makeText(context, "You just deleted the team "+teamParseObject.getString("name")+".", Toast.LENGTH_SHORT).show();
+								}
+								else {
+									Toast.makeText(context, "The team can't be deleted.", Toast.LENGTH_SHORT).show();
+								}
+							}
+						});
+		        } });
+				
+				// Showing the alert box
+		        adb.create();
+				adb.show();
 			}
 		});
 		

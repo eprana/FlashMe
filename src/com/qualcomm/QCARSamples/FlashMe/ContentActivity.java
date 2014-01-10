@@ -386,9 +386,6 @@ public class ContentActivity extends FragmentActivity{
 				}
 			});
 			
-			// Create a contextual menu to delete teams
-			registerForContextMenu(expandableList);
-			
 			return mainView;
 		}						
 	}
