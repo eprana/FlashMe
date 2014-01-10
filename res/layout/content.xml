@@ -19,7 +19,8 @@
     		android:layout_marginTop="@dimen/medium_mg"
     		android:layout_marginBottom="@dimen/medium_mg"
 			android:contentDescription="@string/profile_bt"
-			android:src="@drawable/menu_profile_bt"
+			android:src="@drawable/menu_profile_bt_in"
+			
 			style="@style/topLineButton" />
 	   
 	   <ImageButton

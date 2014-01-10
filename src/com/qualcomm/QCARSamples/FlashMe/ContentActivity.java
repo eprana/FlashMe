@@ -47,8 +47,10 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.app.ActionBar;
+import android.app.ActionBar.Tab;
 
-public class ContentActivity extends FragmentActivity {
+public class ContentActivity extends FragmentActivity{
 
 	static ParseUser currentUser = ParseUser.getCurrentUser();
 	final static String EXTRA_LOGIN = currentUser.getUsername();
@@ -58,12 +60,129 @@ public class ContentActivity extends FragmentActivity {
 	private static ELVGameAdapter gameAdapter;
 	private static ExpandableListView expandableList = null;
 	private static ImageView avatarView = null;
+	private static int itemSelected = 0;
+	private static FragmentManager myFragmentManager;
+	private static ProfileFragment profileFrag;
+	private static TeamsFragment teamsFrag;
+	private static GamesFragment gamesFrag;
+	private static String TAG_PROFILE = "PROFILE_FRAGMENT";
+	private static String TAG_TEAMS = "TEAMS_FRAGMENT";
+	private static String TAG_GAMES = "GAMES_FRAGMENT";
 
+	public static void updateMenu(){
+		
+		switch(itemSelected){
+			case 0 : // profile selected
+				ProfileFragment profileFragment = (ProfileFragment)myFragmentManager.findFragmentByTag(TAG_PROFILE);
+				if(profileFragment==null){
+					FragmentTransaction fragmentTransaction = myFragmentManager.beginTransaction();
+					if(profileFrag.isAdded()){
+						fragmentTransaction.show(profileFrag);
+					} else {
+						fragmentTransaction.add(R.id.maincontainer, profileFrag, TAG_PROFILE);
+						fragmentTransaction.commit();
+					}
+					if(teamsFrag != null) fragmentTransaction.remove(teamsFrag);
+					if(gamesFrag != null) fragmentTransaction.remove(gamesFrag);
+				}
+				break;
+				
+			case 1 : // teams selected
+				TeamsFragment teamFragment = (TeamsFragment)myFragmentManager.findFragmentByTag(TAG_TEAMS);
+				if(teamFragment==null){
+					FragmentTransaction fragmentTransaction = myFragmentManager.beginTransaction();
+					if(teamsFrag.isAdded()){
+						fragmentTransaction.show(teamsFrag);
+					} else {
+						fragmentTransaction.add(R.id.maincontainer, teamsFrag, TAG_TEAMS);
+						fragmentTransaction.commit();
+					}
+					if(profileFrag != null) fragmentTransaction.remove(profileFrag);
+					if(gamesFrag != null) fragmentTransaction.remove(gamesFrag);
+				}
+				break;
+				
+			case 2 : // games selected
+				GamesFragment gameFragment = (GamesFragment)myFragmentManager.findFragmentByTag(TAG_GAMES);
+				if(gameFragment==null){
+					FragmentTransaction fragmentTransaction = myFragmentManager.beginTransaction();
+					if(gamesFrag.isAdded()){
+						fragmentTransaction.show(gamesFrag);
+					} else {
+						fragmentTransaction.add(R.id.maincontainer, gamesFrag, TAG_GAMES);
+						fragmentTransaction.commit();
+					}
+					if(teamsFrag != null) fragmentTransaction.remove(teamsFrag);
+					if(profileFrag != null) fragmentTransaction.remove(profileFrag);
+				}
+				break;
+				
+			default :
+				break;
+		}
+	}
+	 
+	private static class LoadProfile extends AsyncTask<Void, Integer, Void> {
+
+		private Context context;
+		
+		public LoadProfile(Context ctxt){
+			context = ctxt;
+		}
+		
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+//			Toast.makeText(context, "Début du traitement asynchrone", Toast.LENGTH_SHORT).show();
+		}
+
+		@Override
+		protected void onProgressUpdate(Integer... values){
+			super.onProgressUpdate(values);
+		}
+
+		@Override
+		protected Void doInBackground(Void... arg0) {
+
+    	ParseQuery<ParseUser> query = ParseUser.getQuery();
+    	query.whereEqualTo("username", currentUser.getUsername());
+    	query.findInBackground(new FindCallback<ParseUser>() {
+      	  public void done(List<ParseUser> objects, ParseException e) {
+      	    if (e == null) {
+      	    	// Getting the avatar form the database
+      	    	ParseUser userd = (ParseUser) objects.get(0);
+      	    	ParseFile avatarFile = (ParseFile) userd.get("avatar");
+      	    	try {
+					byte[] avatarByteArray = avatarFile.getData();
+					Bitmap avatarBitmap = BitmapFactory.decodeByteArray(avatarByteArray, 0, avatarByteArray.length);
+					// Setting the imageView
+					avatarView.setImageBitmap(avatarBitmap);
+				} catch (ParseException e1) {
+					e1.printStackTrace();
+				}
+      	    	
+      	    } else{
+      	    	Toast.makeText(context, "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
+      	    }
+      	  }
+      	});
+			
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+//			Toast.makeText(context, "Le traitement asynchrone est terminé", Toast.LENGTH_SHORT).show();
+			updateMenu();
+		}
+	}
+	
 	public static class ProfileFragment extends Fragment {
 		
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-			View mainView = inflater.inflate(R.layout.profile, container, false);	
+			View mainView = inflater.inflate(R.layout.profile, container, false);
+			final Context context = mainView.getContext();
         	TextView userName = (TextView) mainView.findViewById(R.id.name);
         	avatarView = (ImageView) mainView.findViewById(R.id.profile_picture);
         	
@@ -71,35 +190,76 @@ public class ContentActivity extends FragmentActivity {
         	userName.setText(EXTRA_LOGIN);
         	
         	// Setting profile picture
-        	ParseQuery<ParseUser> query = ParseUser.getQuery();
-        	query.whereEqualTo("username", currentUser.getUsername());
-        	query.findInBackground(new FindCallback<ParseUser>() {
-          	  public void done(List<ParseUser> objects, ParseException e) {
-          	    if (e == null) {
-          	    	// Getting the avatar form the database
-          	    	ParseUser userd = (ParseUser) objects.get(0);
-          	    	ParseFile avatarFile = (ParseFile) userd.get("avatar");
-          	    	try {
-						byte[] avatarByteArray = avatarFile.getData();
-						Bitmap avatarBitmap = BitmapFactory.decodeByteArray(avatarByteArray, 0, avatarByteArray.length);
-						// Setting the imageView
-						avatarView.setImageBitmap(avatarBitmap);
-					} catch (ParseException e1) {
-						e1.printStackTrace();
-					}
-          	    	
-          	    } else{
-          	    	Toast.makeText(getActivity(), "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
-          	    }
-          	  }
-          	});
-        	
+        	LoadProfile lp = new LoadProfile(context);
+        	lp.execute();
+
 			return mainView;
 		}
 	}
 	
-	public static class TeamsFragment extends Fragment {
+	private static class LoadTeams extends AsyncTask<Void, Integer, Void> {
 
+		private Context context;
+		
+		public LoadTeams(Context ctxt){
+			context = ctxt;
+		}
+		
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+//			Toast.makeText(context, "Début du traitement asynchrone", Toast.LENGTH_SHORT).show();
+		}
+
+		@Override
+		protected void onProgressUpdate(Integer... values){
+			super.onProgressUpdate(values);
+		}
+
+		@Override
+		protected Void doInBackground(Void... arg0) {
+
+			// Get teams where user is a player with Parse
+        	ParseQuery<ParseObject> teamsQuery = ParseQuery.getQuery("Team");
+        	teamsQuery.whereEqualTo("players", currentUser);
+        	teamsQuery.findInBackground(new FindCallback<ParseObject>() {
+				// Parse query
+			    public void done(List<ParseObject> results, ParseException e) {
+			        if (e == null) {
+			        	for (ParseObject result : results) {
+			        		// Create java Team
+			        		final Team newTeam = new Team(result.getString("name"), currentUser.getUsername(), context.getResources().getDrawable(R.drawable.default_team_picture_thumb));
+			        		// Get players in team with Parse
+			        		result.getRelation("players").getQuery().findInBackground(new FindCallback<ParseObject>() {
+			        			public void done(List<ParseObject> players, ParseException e) {
+			        				if (e == null) {
+			        					for (ParseObject player : players) {
+			        						// Add java Players
+			        						newTeam.addPlayer(new Player(((ParseUser) player).getUsername(),  context.getResources().getDrawable(R.drawable.default_profile_picture_thumb)));	
+			        					}
+			        				}
+			        			}
+			        		});
+			        		teams.add(newTeam);
+			        	}
+		        		 // Update adapter
+		        		 expandableList.setAdapter(teamAdapter);
+			        }
+			    }
+			});
+			
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+//			Toast.makeText(context, "Le traitement asynchrone est terminé", Toast.LENGTH_SHORT).show();
+			updateMenu();
+		}
+	}
+	
+	public static class TeamsFragment extends Fragment {
+		
 		public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 			View mainView = inflater.inflate(R.layout.teams, container, false);
 			final Context context = mainView.getContext();
@@ -155,34 +315,9 @@ public class ContentActivity extends FragmentActivity {
 			listView.setAdapter(adapter);*/
 
         	// Get teams where user is a player with Parse
-        	ParseQuery<ParseObject> teamsQuery = ParseQuery.getQuery("Team");
-        	teamsQuery.whereEqualTo("players", currentUser);
-        	teamsQuery.findInBackground(new FindCallback<ParseObject>() {
-				// Parse query
-			    public void done(List<ParseObject> results, ParseException e) {
-			        if (e == null) {
-			        	for (ParseObject result : results) {
-			        		// Create java Team
-			        		final Team newTeam = new Team(result.getString("name"), currentUser.getUsername(), getResources().getDrawable(R.drawable.default_team_picture_thumb));
-			        		// Get players in team with Parse
-			        		result.getRelation("players").getQuery().findInBackground(new FindCallback<ParseObject>() {
-			        			public void done(List<ParseObject> players, ParseException e) {
-			        				if (e == null) {
-			        					for (ParseObject player : players) {
-			        						// Add java Players
-			        						newTeam.addPlayer(new Player(((ParseUser) player).getUsername(), getResources().getDrawable(R.drawable.default_profile_picture_thumb)));	
-			        					}
-			        				}
-			        			}
-			        		});
-			        		teams.add(newTeam);
-			        	}
-		        		 // Update adapter
-		        		 expandableList.setAdapter(teamAdapter);
-			        }
-			    }
-			});
-
+        	LoadTeams lt = new LoadTeams(context);
+        	lt.execute();
+        	
 			// TESTS
 			//team1.getPlayers().get(0).setReady(true);
 			//team1.getPlayers().get(2).setPicture(getResources().getDrawable(R.drawable.pic_xopi));
@@ -209,22 +344,24 @@ public class ContentActivity extends FragmentActivity {
 							public void done(ParseException e) {
 								if (e == null) {
 									// Create Java Object
-									final Team javaTeam = new Team(newTeam.getString("name"), EXTRA_LOGIN, getResources().getDrawable(R.drawable.default_team_picture_thumb));
-									teams.add(javaTeam);
-									// Add relation with current user
-									ParseRelation<ParseObject> teamsRelation = newTeam.getRelation("players");
-									teamsRelation.add(currentUser);
-									newTeam.saveInBackground(new SaveCallback() {
-										@Override
-										public void done(ParseException e) {
-											if (e == null) {
-												// Add javaPlayer
-												javaTeam.addPlayer(new Player(EXTRA_LOGIN, getResources().getDrawable(R.drawable.default_profile_picture_thumb)));
-												// Update view
-												expandableList.setAdapter(teamAdapter);
+									if(!isDetached()){
+										final Team javaTeam = new Team(newTeam.getString("name"), EXTRA_LOGIN, getResources().getDrawable(R.drawable.default_team_picture_thumb));
+										teams.add(javaTeam);
+										// Add relation with current user
+										ParseRelation<ParseObject> teamsRelation = newTeam.getRelation("players");
+										teamsRelation.add(currentUser);
+										newTeam.saveInBackground(new SaveCallback() {
+											@Override
+											public void done(ParseException e) {
+												if (e == null) {
+													// Add javaPlayer
+													javaTeam.addPlayer(new Player(EXTRA_LOGIN, getResources().getDrawable(R.drawable.default_profile_picture_thumb)));
+													// Update view
+													expandableList.setAdapter(teamAdapter);
+												}
 											}
-										}
-									});
+										});
+									}
 								}
 							}
 						});
@@ -255,26 +392,30 @@ public class ContentActivity extends FragmentActivity {
 			return mainView;
 		}						
 	}
+	
+	private static class LoadGames extends AsyncTask<Void, Integer, Void> {
 
-	public static class GamesFragment extends Fragment {
+		private Context context;
+		
+		public LoadGames(Context ctxt){
+			context = ctxt;
+		}
 		
 		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-			View mainView = inflater.inflate(R.layout.games, container, false);
-			final Context context = mainView.getContext();
-        	//Intent intent = getIntent();
-        	TextView userName = (TextView) mainView.findViewById(R.id.name);
-	        //if(intent != null){
-	        	//userName.setText(intent.getStringExtra(EXTRA_LOGIN));
-        	userName.setText(EXTRA_LOGIN);
-        	
-        	// Display games
-        	games = new ArrayList<Game>();
-        	gameAdapter = new ELVGameAdapter(context, games);        	
-        	ContentActivity.expandableList = (ExpandableListView) mainView.findViewById(R.id.games_list);
+		protected void onPreExecute() {
+			super.onPreExecute();
+			//Toast.makeText(getApplicationContext(), "Début du traitement asynchrone", Toast.LENGTH_SHORT).show();
+		}
 
-        	// Get current user's existing games with Parse
-        	ParseQuery<ParseObject> gamesQuery = ParseQuery.getQuery("Game");
+		@Override
+		protected void onProgressUpdate(Integer... values){
+			super.onProgressUpdate(values);
+		}
+
+		@Override
+		protected Void doInBackground(Void... arg0) {
+
+			ParseQuery<ParseObject> gamesQuery = ParseQuery.getQuery("Game");
         	gamesQuery.findInBackground(new FindCallback<ParseObject>() {
         	    public void done(List<ParseObject> gameList, ParseException e) {
         	        if (e == null) {
@@ -282,7 +423,7 @@ public class ContentActivity extends FragmentActivity {
         	        		// Create java Game
 							try {
 								final Game newGame = new Game(game.getString("name"), ((ParseUser) game.fetch().getParseObject("createdBy")).fetch().getUsername());
-							
+								
 								// Get teams in game with Parse
 				        		game.getRelation("teams").getQuery().findInBackground(new FindCallback<ParseObject>() {
 				        			public void done(List<ParseObject> teamsList, ParseException e) {
@@ -290,13 +431,12 @@ public class ContentActivity extends FragmentActivity {
 				        					for (ParseObject team : teamsList) {
 				        						// Add java Teams
 				        						//((ParseUser) team.fetch().getParseObject("createdBy")).fetch().getUsername()
-												newGame.addTeam(new Team(team.getString("name"), "creator", getResources().getDrawable(R.drawable.default_team_picture_thumb)));
+												newGame.addTeam(new Team(team.getString("name"), "creator", context.getResources().getDrawable(R.drawable.default_team_picture_thumb)));
 				        					}
 				        				}
 			        				}
 			        			});
 				        		games.add(newGame);
-				        		
 							} catch (NotFoundException e1) {
 								// TODO Auto-generated catch block
 								e1.printStackTrace();
@@ -310,6 +450,34 @@ public class ContentActivity extends FragmentActivity {
         	        }
         	    }
         	});
+			
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			//Toast.makeText(getApplicationContext(), "Le traitement asynchrone est terminé", Toast.LENGTH_SHORT).show();
+			updateMenu();
+		}
+	}
+
+	public static class GamesFragment extends Fragment {
+		
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+			View mainView = inflater.inflate(R.layout.games, container, false);
+			final Context context = mainView.getContext();
+        	TextView userName = (TextView) mainView.findViewById(R.id.name);
+        	userName.setText(EXTRA_LOGIN);
+        	
+        	// Display games
+        	games = new ArrayList<Game>();
+        	gameAdapter = new ELVGameAdapter(context, games);        	
+        	ContentActivity.expandableList = (ExpandableListView) mainView.findViewById(R.id.games_list);
+
+        	// Get current user's existing games with Parse
+        	LoadGames lg = new LoadGames(context);
+        	lg.execute();
 			
 			//TESTS
 			//game1.getTeams().get(0).setReady(true);
@@ -360,66 +528,37 @@ public class ContentActivity extends FragmentActivity {
 					}
 				}
 			});
-			
-			registerForContextMenu(expandableList);
-        	
+     	
 			return mainView;
 		}
 	}
-	
-	private FragmentManager myFragmentManager;
-	private ProfileFragment profileFrag;
-	private TeamsFragment teamsFrag;
-	private GamesFragment gamesFrag;
-	final static String TAG_PROFILE = "PROFILE_FRAGMENT";
-	final static String TAG_TEAMS = "TEAMS_FRAGMENT";
-	final static String TAG_GAMES = "GAMES_FRAGMENT";
-	private LoadFragment lf; 
-	private static int loadedFragment = 0;
-	private static int selectedFragment = 0;
-		
+			
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 	 	setContentView(R.layout.content);
-	 	
-	 	//loadSelectedFrag();
-	 	//if le frag n'a pas fini de charger, alors on ne peut pas appeler la méthode une nouvelle fois
-	 	//
-	 	
-	 	// Top menu
+		
+		myFragmentManager = getSupportFragmentManager();
+		profileFrag = new ProfileFragment();
+		teamsFrag = new TeamsFragment();
+		gamesFrag = new GamesFragment();
+		
+		// Top menu
 	 	final ImageButton profile_bt = (ImageButton) findViewById(R.id.profile_bt);
 	 	final ImageButton teams_bt = (ImageButton) findViewById(R.id.team_bt);
 		final ImageButton games_bt = (ImageButton) findViewById(R.id.game_bt);
-	 	
+				
 		// On profile icon click
 		profile_bt.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View arg0){
-
+				
+				itemSelected = 0;
 				profile_bt.setImageResource(R.drawable.menu_profile_bt);
 				teams_bt.setImageResource(R.drawable.menu_teams_bt_in);
 				games_bt.setImageResource(R.drawable.menu_games_bt_in);
-
-				if(selectedFragment == loadedFragment){
-					ProfileFragment fragment = (ProfileFragment)myFragmentManager.findFragmentByTag(TAG_PROFILE);
-					if(fragment==null){
-						FragmentTransaction fragmentTransaction = myFragmentManager.beginTransaction();
-						if(profileFrag.isAdded()){
-							fragmentTransaction.show(profileFrag);
-						} else {
-							selectedFragment++;
-							try {
-								Thread.sleep(1000);
-							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-							lf = new LoadFragment(fragmentTransaction, profileFrag, TAG_PROFILE);
-							lf.execute();
-						}
-					}
-				}
+				
+				updateMenu();
 			}
 		});
 		
@@ -428,29 +567,12 @@ public class ContentActivity extends FragmentActivity {
 			@Override
 			public void onClick(View arg0){
 
+				itemSelected = 1;
 				profile_bt.setImageResource(R.drawable.menu_profile_bt_in);
 				teams_bt.setImageResource(R.drawable.menu_teams_bt);
 				games_bt.setImageResource(R.drawable.menu_games_bt_in);
 				
-				if(selectedFragment == loadedFragment){
-					TeamsFragment fragment = (TeamsFragment)myFragmentManager.findFragmentByTag(TAG_TEAMS);
-					if(fragment==null){
-						FragmentTransaction fragmentTransaction = myFragmentManager.beginTransaction();
-						if(teamsFrag.isAdded()){
-							fragmentTransaction.show(teamsFrag);
-						} else {
-							selectedFragment++;
-							try {
-								Thread.sleep(1000);
-							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-							lf = new LoadFragment(fragmentTransaction, teamsFrag, TAG_TEAMS);
-							lf.execute();
-						}
-					}
-				}
+				updateMenu();
 			}
 		});
 		
@@ -459,145 +581,22 @@ public class ContentActivity extends FragmentActivity {
 		games_bt.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View arg0){
-			
+
+				itemSelected = 2;
 				profile_bt.setImageResource(R.drawable.menu_profile_bt_in);
 				teams_bt.setImageResource(R.drawable.menu_teams_bt_in);
 				games_bt.setImageResource(R.drawable.menu_games_bt);
 				
-				if(selectedFragment == loadedFragment){
-					GamesFragment fragment = (GamesFragment)myFragmentManager.findFragmentByTag(TAG_GAMES);
-					if(fragment==null){
-						FragmentTransaction fragmentTransaction = myFragmentManager.beginTransaction();
-						if(gamesFrag.isAdded()){
-							fragmentTransaction.show(gamesFrag);
-						} else {
-							selectedFragment++;
-							try {
-								Thread.sleep(1000);
-							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-							lf = new LoadFragment(fragmentTransaction, gamesFrag, TAG_GAMES);
-							lf.execute();
-						}
-					}
-				}
+				updateMenu();
 			}
 		});
-				
-		myFragmentManager = getSupportFragmentManager();
-		profileFrag = new ProfileFragment();
-		teamsFrag = new TeamsFragment();
-		gamesFrag = new GamesFragment();
-
+		
 		// If it is created for the first time
 		if(savedInstanceState == null){
 			FragmentTransaction fragmentTransaction = myFragmentManager.beginTransaction();
 			fragmentTransaction.add(R.id.maincontainer, profileFrag, TAG_PROFILE);
 			fragmentTransaction.commit();
-		}
+		}	
  	}
-	
-	private class LoadFragment extends AsyncTask<Void, Integer, Void> {
-
-		public FragmentTransaction fragmentTransaction;
-		public Fragment fragToLoad;
-		public String tag;
-		
-		
-		public LoadFragment(FragmentTransaction lf, Fragment ftl, String t){
-			fragmentTransaction = lf;
-			fragToLoad = ftl;
-			tag = t;
-		}
-		
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			//Toast.makeText(getApplicationContext(), "Début du traitement asynchrone", Toast.LENGTH_SHORT).show();
-		}
-
-		@Override
-		protected void onProgressUpdate(Integer... values){
-			super.onProgressUpdate(values);
-		}
-
-		@Override
-		protected Void doInBackground(Void... arg0) {
-
-			fragmentTransaction.replace(R.id.maincontainer, fragToLoad, tag);
-			fragmentTransaction.commit();
-			
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(Void result) {
-			//Toast.makeText(getApplicationContext(), "Le traitement asynchrone est terminé", Toast.LENGTH_SHORT).show();
-			loadedFragment+=1;
-		}
-	}
-	
-	// Contextual menu for quitting teams / games
-//	@Override
-//	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-//		super.onCreateContextMenu(menu, v, menuInfo);
-//		
-//		ExpandableListView.ExpandableListContextMenuInfo info = (ExpandableListView.ExpandableListContextMenuInfo) menuInfo;
-//		int type = ExpandableListView.getPackedPositionType(info.packedPosition);
-//		
-//		if(type == 0){
-//			if(v.getId() == R.id.teams_list){
-//			    MenuInflater inflater = getMenuInflater();
-//			    inflater.inflate(R.menu.context_menu_team, menu);
-//			}
-//			else if(v.getId() == R.id.games_list){
-//			    MenuInflater inflater = getMenuInflater();
-//			    inflater.inflate(R.menu.context_menu_game, menu);
-//		    }
-//		}
-//	}
-	
-//	@Override
-//	public boolean onContextItemSelected(MenuItem item) {
-//		
-//		ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) item.getMenuInfo();
-//		
-//	    switch (item.getItemId()) {
-//	        case R.id.quit_team:
-//	        	if(teams.remove(info.packedPosition)) Log.v("ca marche ", " ");
-//
-//	            teamAdapter.notifyDataSetChanged();
-//	            return true;
-//	        case R.id.quit_game:
-//
-//	        	return true;
-//	        case R.id.cancel:
-//	            return true;
-//	        default:
-//	            return super.onContextItemSelected(item);
-//	    }
-//	}
-	
-//	public Team getTeamByName(String name) {
-//		for(Iterator<Team> it = teams.iterator(); it.hasNext();) {
-//			Team team = it.next();
-//			if(team.getName() == name) {
-//				return team;
-//			}
-//		}
-//		return null;
-//	}
-//	
-//	public Game getGameByName(String name) {
-//		for(Iterator<Game> it = games.iterator(); it.hasNext();) {
-//			Game game = it.next();
-//			if(game.getName() == name) {
-//				return game;
-//			}
-//		}
-//		return null;
-//	}
 }
 
