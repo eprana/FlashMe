@@ -100,11 +100,19 @@ public class ContentActivity extends FragmentActivity{
 		if (fragment == null){
 			return;
 		}
+
 		final FragmentManager fm = getSupportFragmentManager();
 		final FragmentTransaction ft = fm.beginTransaction();
+		
 		// Animate the changing of fragment
 		ft.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-		ft.replace(R.id.maincontainer, fragment);
+		
+		try {
+			ft.replace(R.id.maincontainer, fragment, fragment.getTag());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		ft.commit();
 	}
 	
@@ -552,12 +560,14 @@ public class ContentActivity extends FragmentActivity{
 	 	}
 	 	
 		setupFragments();
-		if (mFragment.equals("ProfileFragment")) {
-			showFragment(this.mProfileFragment);
-		} else if (mFragment.equals("TeamsFragment")) {
-			showFragment(this.mTeamsFragment);
-		} else if (mFragment.equals("GamesFragment")) {
-			showFragment(this.mGamesFragment);
+		if(mFragment != null) {
+			if (mFragment.equals("ProfileFragment")) {
+				showFragment(this.mProfileFragment);
+			} else if (mFragment.equals("TeamsFragment")) {
+				showFragment(this.mTeamsFragment);
+			} else if (mFragment.equals("GamesFragment")) {
+				showFragment(this.mGamesFragment);
+			}
 		}
 		
     	// Setting username on top of the page
@@ -597,60 +607,9 @@ public class ContentActivity extends FragmentActivity{
 		
 		sList.setAdapter(sAdapter);
 		
-		// Top menu
-	 	/*final ImageButton profile_bt = (ImageButton) findViewById(R.id.profile_bt);
-	 	final ImageButton teams_bt = (ImageButton) findViewById(R.id.team_bt);
-		final ImageButton games_bt = (ImageButton) findViewById(R.id.game_bt);*/
 		final TextView top_line = (TextView) findViewById(R.id.top_line_light);
-				
-		/*profile_bt.setImageResource(R.drawable.menu_profile_bt);
 		top_line.setText(R.string.my_profile);
 		
-		// On profile icon click
-		profile_bt.setOnClickListener(new OnClickListener(){
-			@Override
-			public void onClick(View arg0){
-				
-				itemSelected = 0;
-				profile_bt.setImageResource(R.drawable.menu_profile_bt);
-				teams_bt.setImageResource(R.drawable.menu_teams_bt_in);
-				games_bt.setImageResource(R.drawable.menu_games_bt_in);
-				top_line.setText(R.string.my_profile);
-				
-				updateMenu();
-			}
-		});
-		
-		// On teams icon click
-		teams_bt.setOnClickListener(new OnClickListener(){
-			@Override
-			public void onClick(View arg0){
-
-				itemSelected = 1;
-				profile_bt.setImageResource(R.drawable.menu_profile_bt_in);
-				teams_bt.setImageResource(R.drawable.menu_teams_bt);
-				games_bt.setImageResource(R.drawable.menu_games_bt_in);
-				top_line.setText(R.string.my_teams);
-				
-				updateMenu();
-			}
-		});
-		
-		// On games icon click
-		
-		games_bt.setOnClickListener(new OnClickListener(){
-			@Override
-			public void onClick(View arg0){
-
-				itemSelected = 2;
-				profile_bt.setImageResource(R.drawable.menu_profile_bt_in);
-				teams_bt.setImageResource(R.drawable.menu_teams_bt_in);
-				games_bt.setImageResource(R.drawable.menu_games_bt);
-				top_line.setText(R.string.my_games);
-				
-				updateMenu();
-			}
-		});*/
  	}
 	
 	@Override
