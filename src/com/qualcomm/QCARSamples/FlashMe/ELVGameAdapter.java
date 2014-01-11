@@ -315,6 +315,7 @@ public class ELVGameAdapter extends BaseExpandableListAdapter {
 										// Get concerned team with Parse
 										ParseQuery<ParseObject> teamQuery = ParseQuery.getQuery("Game");
 										teamQuery.whereEqualTo("name", game.getName());
+										teamQuery.whereNotEqualTo("teams", teamParseObject);
 										teamQuery.getFirstInBackground(new GetCallback<ParseObject>() {
 											public void done(final ParseObject gameParseObject, ParseException e) {
 												if (e==null){
@@ -335,7 +336,8 @@ public class ELVGameAdapter extends BaseExpandableListAdapter {
 													Toast.makeText(context, "You just added the team "+teamParseObject.getString("name")+" to the game "+gameParseObject.getString("name")+".", Toast.LENGTH_LONG).show();
 												}
 												else {
-													Toast.makeText(context, "The team "+teamParseObject.getString("name")+" can't be added to the game "+gameParseObject.getString("name")+".", Toast.LENGTH_LONG).show();
+													if(e.getCode() == 101) Toast.makeText(context, teamParseObject.getString("name")+" is already in the game.", Toast.LENGTH_SHORT).show();
+													else Toast.makeText(context, teamParseObject.getString("name")+" can't be added to the team. ", Toast.LENGTH_SHORT).show();
 												}
 												
 											}

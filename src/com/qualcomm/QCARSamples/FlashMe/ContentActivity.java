@@ -342,7 +342,6 @@ public class ContentActivity extends FragmentActivity{
 					else {
 						
 						// Check if the name does not exist yet
-						
 						ParseQuery<ParseObject> teamQuery = ParseQuery.getQuery("Team");
 						teamQuery.whereEqualTo("name", s_teamName);
 						teamQuery.getFirstInBackground(new GetCallback<ParseObject>() {
@@ -350,7 +349,7 @@ public class ContentActivity extends FragmentActivity{
 							public void done(ParseObject arg0, ParseException e) {
 								if(e==null){
 									Toast.makeText(context, "Sorry, this name has already be taken.", Toast.LENGTH_SHORT).show();
-								}else{
+								}else if(e.equals(101)){
 									final ParseObject newTeam = new ParseObject("Team");
 									newTeam.put("name", s_teamName);
 									newTeam.put("createdBy", currentUser);
@@ -379,6 +378,8 @@ public class ContentActivity extends FragmentActivity{
 										}
 									});
 									teamName.setText("");
+								} else{
+									Toast.makeText(context, "An error occured.", Toast.LENGTH_SHORT).show();
 								}
 							}
 						});
@@ -506,20 +507,34 @@ public class ContentActivity extends FragmentActivity{
 						return;
 					}
 					else {
-						// Create game
-						final ParseObject newGame = new ParseObject("Game");
-						newGame.put("name", s_gameName);
-						newGame.put("createdBy", currentUser);
-						newGame.saveInBackground(new SaveCallback() {
+						// Check if the name does not exist yet
+						ParseQuery<ParseObject> gameQuery = ParseQuery.getQuery("Game");
+						gameQuery.whereEqualTo("name", s_gameName);
+						gameQuery.getFirstInBackground(new GetCallback<ParseObject>() {
 							@Override
-							public void done(ParseException e) {
-								if (e == null) {
-									games.add(new Game(newGame.getString("name"), EXTRA_LOGIN));
-									expandableList.setAdapter(gameAdapter);
+							public void done(ParseObject arg0, ParseException e) {
+								if(e==null){
+									Toast.makeText(context, "Sorry, this name has already be taken.", Toast.LENGTH_SHORT).show();
+								}else if(e.getCode() == 101){
+									// Create game
+									final ParseObject newGame = new ParseObject("Game");
+									newGame.put("name", s_gameName);
+									newGame.put("createdBy", currentUser);
+									newGame.saveInBackground(new SaveCallback() {
+										@Override
+										public void done(ParseException e) {
+											if (e == null) {
+												games.add(new Game(newGame.getString("name"), EXTRA_LOGIN));
+												expandableList.setAdapter(gameAdapter);
+											}
+										}
+									});
+									gameName.setText("");
+								} else{
+									Toast.makeText(context, "An error occured.", Toast.LENGTH_SHORT).show();
 								}
 							}
 						});
-						gameName.setText("");
 					}
 				}
 			});
