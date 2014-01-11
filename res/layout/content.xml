@@ -67,7 +67,7 @@
     	android:layout_width="@dimen/settings_wd"
     	android:layout_alignRight="@id/name"
     	android:layout_below="@id/top_menu"
-    	android:layout_height="match_parent"
+    	android:layout_height="wrap_content"
     	android:groupIndicator="@drawable/group_indicator" >
 	</ExpandableListView>
     

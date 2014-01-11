@@ -4,12 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-	<RelativeLayout 
-	    android:id="@+id/parent_layout"
+    <LinearLayout 
+        android:id="@+id/create_layout"
 	    android:layout_width="match_parent"
-	    android:layout_height="0dip" 
-	    android:layout_weight="20">
-    	    	     
+	    android:layout_height="wrap_content" 
+	    android:orientation="horizontal" >
+	    
 	     <EditText
 		    android:id="@+id/enter_game"
 		    android:layout_width="@dimen/button_wd"
@@ -21,17 +21,22 @@
 	     <Button
 		    android:id="@+id/create_game"
 		    style="@style/buttonLightBlue"
-		    android:layout_toRightOf="@id/enter_game"
 		    android:layout_width="@dimen/medium_wd"
-		    android:layout_alignTop="@id/enter_game"
 		    android:layout_marginTop="@dimen/small_mg"
 		    android:background="@drawable/light_button"
 		    android:text="@string/create" />
-	     
+	</LinearLayout>
+    
+    
+	<RelativeLayout 
+	    android:id="@+id/parent_layout"
+	    android:layout_width="match_parent"
+	    android:layout_height="0dip" 
+	    android:layout_weight="20">
+    	    	     
 		<ExpandableListView 
 		    android:id="@+id/games_list" 
 		    android:groupIndicator="@drawable/group_indicator"
-	   		android:layout_below="@+id/create_game"
 			android:layout_marginTop="@dimen/medium_mg"
 		    android:layout_width="match_parent"
 		    android:layout_height="match_parent" >
