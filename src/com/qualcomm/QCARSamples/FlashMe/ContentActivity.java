@@ -25,6 +25,7 @@ import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -65,69 +66,76 @@ public class ContentActivity extends FragmentActivity{
 	private static ExpandableListView expandableList = null;
 	private static ImageView avatarView = null;
 	private static int itemSelected = 0;
-	private static FragmentManager myFragmentManager;
-	private static ProfileFragment profileFrag;
-	private static TeamsFragment teamsFrag;
-	private static GamesFragment gamesFrag;
+	private ExpandableListView sList;
+	private SettingsAdapter sAdapter;
+	
+	// Fragments
+	
+	private String mFragment;
+	private ProfileFragment mProfileFragment;
+	private TeamsFragment mTeamsFragment;
+	private GamesFragment mGamesFragment;
 	private static String TAG_PROFILE = "PROFILE_FRAGMENT";
 	private static String TAG_TEAMS = "TEAMS_FRAGMENT";
 	private static String TAG_GAMES = "GAMES_FRAGMENT";
-	private ExpandableListView sList;
-	private SettingsAdapter sAdapter;
-
-	public static void updateMenu(){
+	
+	private void setupFragments() {
+		final FragmentManager fm = getSupportFragmentManager();
 		
-		switch(itemSelected){
-			case 0 : // profile selected
-				ProfileFragment profileFragment = (ProfileFragment)myFragmentManager.findFragmentByTag(TAG_PROFILE);
-				if(profileFragment==null){
-					FragmentTransaction fragmentTransaction = myFragmentManager.beginTransaction();
-					if(profileFrag.isAdded()){
-						fragmentTransaction.show(profileFrag);
-					} else {
-						fragmentTransaction.add(R.id.maincontainer, profileFrag, TAG_PROFILE);
-						fragmentTransaction.commit();
-					}
-					if(teamsFrag != null) fragmentTransaction.remove(teamsFrag);
-					if(gamesFrag != null) fragmentTransaction.remove(gamesFrag);
-				}
-				break;
-				
-			case 1 : // teams selected
-				TeamsFragment teamFragment = (TeamsFragment)myFragmentManager.findFragmentByTag(TAG_TEAMS);
-				if(teamFragment==null){
-					FragmentTransaction fragmentTransaction = myFragmentManager.beginTransaction();
-					if(teamsFrag.isAdded()){
-						fragmentTransaction.show(teamsFrag);
-					} else {
-						fragmentTransaction.add(R.id.maincontainer, teamsFrag, TAG_TEAMS);
-						fragmentTransaction.commit();
-					}
-					if(profileFrag != null) fragmentTransaction.remove(profileFrag);
-					if(gamesFrag != null) fragmentTransaction.remove(gamesFrag);
-				}
-				break;
-				
-			case 2 : // games selected
-				GamesFragment gameFragment = (GamesFragment)myFragmentManager.findFragmentByTag(TAG_GAMES);
-				if(gameFragment==null){
-					FragmentTransaction fragmentTransaction = myFragmentManager.beginTransaction();
-					if(gamesFrag.isAdded()){
-						fragmentTransaction.show(gamesFrag);
-					} else {
-						fragmentTransaction.add(R.id.maincontainer, gamesFrag, TAG_GAMES);
-						fragmentTransaction.commit();
-					}
-					if(teamsFrag != null) fragmentTransaction.remove(teamsFrag);
-					if(profileFrag != null) fragmentTransaction.remove(profileFrag);
-				}
-				break;
-				
-			default :
-				break;
+		mProfileFragment = (ProfileFragment) fm.findFragmentByTag(TAG_PROFILE);
+		if (mProfileFragment == null) {
+			mProfileFragment = new ProfileFragment();
 		}
+		mTeamsFragment = (TeamsFragment) fm.findFragmentByTag(TAG_TEAMS);
+		if (mTeamsFragment == null) {
+			mTeamsFragment = new TeamsFragment();
+		}
+		mGamesFragment = (GamesFragment) fm.findFragmentByTag(TAG_GAMES);
+		if (mGamesFragment == null) {
+			mGamesFragment = new GamesFragment();
+		}		
 	}
-	 
+
+	private void showFragment(final Fragment fragment) {
+		if (fragment == null){
+			return;
+		}
+		final FragmentManager fm = getSupportFragmentManager();
+		final FragmentTransaction ft = fm.beginTransaction();
+		// Animate the changing of fragment
+		ft.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+		ft.replace(R.id.maincontainer, fragment);
+		ft.commit();
+	}
+	
+	// Menu
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    // Inflate the menu items for use in the action bar
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.layout.main_activity_actions, menu);
+	    return super.onCreateOptionsMenu(menu);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    // Handle presses on the action bar items
+	    switch (item.getItemId()) {
+	        case R.id.action_profile:
+	        	showFragment(this.mProfileFragment);
+	            return true;
+	        case R.id.action_teams:
+	        	showFragment(this.mTeamsFragment);
+	            return true;
+	        case R.id.action_games:
+	        	showFragment(this.mGamesFragment);
+	            return true;
+	        default:
+	            return super.onOptionsItemSelected(item);
+	    }
+	}
+	
 	private static class LoadProfile extends AsyncTask<Void, Integer, Void> {
 
 		private Context context;
@@ -176,7 +184,7 @@ public class ContentActivity extends FragmentActivity{
 		@Override
 		protected void onPostExecute(Void result) {
 //			Toast.makeText(context, "Le traitement asynchrone est terminé", Toast.LENGTH_SHORT).show();
-			updateMenu();
+			//updateMenu();
 		}
 	}
 	
@@ -253,7 +261,7 @@ public class ContentActivity extends FragmentActivity{
 		@Override
 		protected void onPostExecute(Void result) {
 //			Toast.makeText(context, "Le traitement asynchrone est terminé", Toast.LENGTH_SHORT).show();
-			updateMenu();
+			//updateMenu();
 		}
 	}
 	
@@ -462,7 +470,7 @@ public class ContentActivity extends FragmentActivity{
 		@Override
 		protected void onPostExecute(Void result) {
 			//Toast.makeText(getApplicationContext(), "Le traitement asynchrone est terminé", Toast.LENGTH_SHORT).show();
-			updateMenu();
+			//updateMenu();
 		}
 	}
 
@@ -540,7 +548,28 @@ public class ContentActivity extends FragmentActivity{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 	 	setContentView(R.layout.content);
+
+	 	// Set fragment
+	 	if (savedInstanceState != null)
+	 		mFragment = savedInstanceState.getString("fragment");
+	 	else
+	 		mFragment = getIntent().getStringExtra("fragment");
 	 	
+	 	System.out.println("mFragment : "+mFragment);
+	 	
+	 	if(mFragment == null) {
+	 		mFragment = "ProfileFragment";
+	 	}
+	 	
+		setupFragments();
+		if (mFragment.equals("ProfileFragment")) {
+			showFragment(this.mProfileFragment);
+		} else if (mFragment.equals("TeamsFragment")) {
+			showFragment(this.mTeamsFragment);
+		} else if (mFragment.equals("GamesFragment")) {
+			showFragment(this.mGamesFragment);
+		}
+		
     	// Setting username on top of the page
     	TextView userName = (TextView) findViewById(R.id.name);
     	userName.setText(EXTRA_LOGIN);
@@ -578,19 +607,13 @@ public class ContentActivity extends FragmentActivity{
 		
 		sList.setAdapter(sAdapter);
 		
-		// Content fragments
-		myFragmentManager = getSupportFragmentManager();
-		profileFrag = new ProfileFragment();
-		teamsFrag = new TeamsFragment();
-		gamesFrag = new GamesFragment();
-		
 		// Top menu
-	 	final ImageButton profile_bt = (ImageButton) findViewById(R.id.profile_bt);
+	 	/*final ImageButton profile_bt = (ImageButton) findViewById(R.id.profile_bt);
 	 	final ImageButton teams_bt = (ImageButton) findViewById(R.id.team_bt);
-		final ImageButton games_bt = (ImageButton) findViewById(R.id.game_bt);
+		final ImageButton games_bt = (ImageButton) findViewById(R.id.game_bt);*/
 		final TextView top_line = (TextView) findViewById(R.id.top_line_light);
 				
-		profile_bt.setImageResource(R.drawable.menu_profile_bt);
+		/*profile_bt.setImageResource(R.drawable.menu_profile_bt);
 		top_line.setText(R.string.my_profile);
 		
 		// On profile icon click
@@ -637,16 +660,14 @@ public class ContentActivity extends FragmentActivity{
 				
 				updateMenu();
 			}
-		});
-		
-		// If it is created for the first time
-		if(savedInstanceState == null){
-			FragmentTransaction fragmentTransaction = myFragmentManager.beginTransaction();
-			fragmentTransaction.add(R.id.maincontainer, profileFrag, TAG_PROFILE);
-			fragmentTransaction.commit();
-		}	
+		});*/
  	}
 	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		outState.putString("fragment", mFragment != null ? mFragment : "");
+		super.onSaveInstanceState(outState);
+	}
 	
 	public class Settings {
 		private Drawable settingsBt;

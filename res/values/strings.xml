@@ -38,7 +38,12 @@
 	<string name="choose_pic">CHOOSE PICTURE</string>
 	<string name="take_pic">TAKE PICTURE</string>
 	<string name="account_created">Your account has been successfully created ! Your marker will be sent to your mail address in a few minutes. Meanwhile, you can discover and edit your profile. Enjoy !</string>
-		
+	
+	<!--  menu -->
+	<string name="action_profile">Profile</string>
+	<string name="action_teams">Teams</string>
+	<string name="action_games">Games</string>
+	
 	<!-- profile -->
 	<string name="my_profile">My profile</string>
     <string name="profile_bt">profile</string>
