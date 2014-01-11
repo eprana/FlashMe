@@ -44,6 +44,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources.NotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -580,8 +581,14 @@ public class ContentActivity extends FragmentActivity{
 			@Override
 			public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
 				if(groupPosition == 0 && childPosition == 1){
+					//Log out
 					ParseUser.logOut();
 					finish();
+				}
+				else if(groupPosition == 0 && childPosition == 0){
+					//Edit profile
+					Intent intent = new Intent(getApplicationContext(), EditActivity.class);
+	            	startActivity(intent);
 				}
 				
 				return false;

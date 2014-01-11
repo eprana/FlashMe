@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+        
+    <TextView
+        android:id="@+id/edit_profile"
+        android:text="@string/edit_profile"
+        style="@style/topMenu" />
+ 
+    <ImageButton
+		android:id="@+id/back_bt"
+		android:contentDescription="@string/back_bt"
+		android:layout_height="wrap_content" 
+		android:layout_width="wrap_content"
+		android:src="@drawable/back_bt"
+		style="@style/topLineButton" />
+    
+ 	<ImageView 
+        android:id="@+id/profile_picture"
+        android:layout_below="@id/edit_profile"
+        android:layout_margin="@dimen/large_mg"
+		android:layout_height="wrap_content" 
+		android:layout_width="wrap_content" 
+		android:background="@color/middle_blue"
+		android:contentDescription="@string/profile_picture"
+		android:layout_centerHorizontal="true" />
+ 	
+ 	<Button
+        android:id="@+id/change_pic"
+        android:layout_below="@id/profile_picture" 
+        android:layout_width="@dimen/button_wd"
+        android:layout_centerHorizontal="true"
+        android:text="@string/change_pic"
+        android:background="@drawable/light_button"
+        style="@style/buttonLightBlue" />
+ 	
+ 	<LinearLayout 
+ 	    android:id="@+id/update_mail"
+ 	    android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:orientation="horizontal"
+    	android:layout_below="@id/change_pic" >
+ 	    
+ 		<TextView
+	        android:id="@+id/change_mail"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:layout_margin="@dimen/medium_mg"
+	        android:text="@string/change_mail" 
+	        style="@style/dark_blue" />
+	 	
+	   	<EditText
+		    android:id="@+id/new_mail"
+		    android:layout_width="@dimen/button_wd"
+		    android:layout_weight="20"
+		    android:layout_height="wrap_content"
+		    android:layout_marginTop="@dimen/small_mg"
+		    android:hint="@string/new_mail"
+  	    	android:inputType="text" />
+   	
+ 	</LinearLayout>
+ 	<LinearLayout 
+ 	    android:id="@+id/update_pass"
+ 	    android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:orientation="horizontal"
+    	android:layout_below="@id/update_mail" >
+     
+	   	<TextView
+	        android:id="@+id/change_pass"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_margin="@dimen/medium_mg"
+	        android:layout_weight="1"
+	        android:text="@string/change_pass" 
+	        style="@style/dark_blue" />
+	   	
+		<EditText
+		    android:id="@+id/new_pass" 
+		    android:layout_width="@dimen/button_wd"
+		    android:layout_height="wrap_content"
+		    android:layout_marginTop="@dimen/small_mg"
+		    android:layout_marginBottom="@dimen/verysmall_mg"
+		    android:layout_weight="20"
+		    android:hint="@string/new_pass"
+		    android:inputType="text" />
+	
+	</LinearLayout>
+    	
+	<Button
+        android:id="@+id/save_changes"
+        android:layout_below="@id/update_pass" 
+        android:layout_width="@dimen/button_wd"
+        android:layout_marginTop="@dimen/verylarge_mg"
+        android:text="@string/save_changes"
+        android:background="@drawable/dark_button"
+        style="@style/buttonDarkBlue" />
+		 
+</RelativeLayout>

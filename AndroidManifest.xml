@@ -113,6 +113,11 @@
         <activity
             android:name=".ContentActivity"
             android:label="@string/title_activity_content" />
+        
+        <!-- _______________ EDIT ACTIVITY _______________ -->        
+        <activity
+            android:name=".EditActivity"
+            android:label="@string/title_edit_activity" />
       
     </application>
 

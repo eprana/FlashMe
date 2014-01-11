@@ -84,7 +84,7 @@
 	    android:layout_marginBottom="@dimen/verysmall_mg"
 	    android:hint="@string/password"
 	    android:layout_centerHorizontal="true"
-	    android:inputType="textPassword" />
+	    android:inputType="text" />
 	
 	<Button
         android:id="@+id/signup"
