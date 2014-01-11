@@ -152,26 +152,23 @@ public class ContentActivity extends FragmentActivity{
 
     	ParseQuery<ParseUser> query = ParseUser.getQuery();
     	query.whereEqualTo("username", currentUser.getUsername());
-    	query.findInBackground(new FindCallback<ParseUser>() {
-      	  public void done(List<ParseUser> objects, ParseException e) {
-      	    if (e == null) {
-      	    	// Getting the avatar form the database
-      	    	ParseUser userd = (ParseUser) objects.get(0);
-      	    	ParseFile avatarFile = (ParseFile) userd.get("avatar");
-      	    	try {
-					byte[] avatarByteArray = avatarFile.getData();
-					Bitmap avatarBitmap = BitmapFactory.decodeByteArray(avatarByteArray, 0, avatarByteArray.length);
-					// Setting the imageView
-					avatarView.setImageBitmap(avatarBitmap);
-				} catch (ParseException e1) {
-					e1.printStackTrace();
-				}
-      	    	
-      	    } else{
-      	    	Toast.makeText(context, "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
-      	    }
-      	  }
-      	});
+    	query.getFirstInBackground(new GetCallback<ParseUser>() {
+			public void done(ParseUser user, ParseException e) {
+			    if (e == null) {
+			    	ParseFile avatarFile = (ParseFile) user.get("avatar");
+			    	try {
+						byte[] avatarByteArray = avatarFile.getData();
+						Bitmap avatarBitmap = BitmapFactory.decodeByteArray(avatarByteArray, 0, avatarByteArray.length);
+						// Setting the imageView
+						avatarView.setImageBitmap(avatarBitmap);
+					} catch (ParseException e1) {
+						e1.printStackTrace();
+					}
+			    } else{
+		  	    	Toast.makeText(context, "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
+		  	    }
+			  }
+			});
 			
 			return null;
 		}
@@ -335,35 +332,48 @@ public class ContentActivity extends FragmentActivity{
 						return;
 					}
 					else {
-						// Create team
-						final ParseObject newTeam = new ParseObject("Team");
-						newTeam.put("name", s_teamName);
-						newTeam.put("createdBy", currentUser);
-						newTeam.saveInBackground(new SaveCallback() {
+						
+						// Check if the name does not exist yet
+						
+						ParseQuery<ParseObject> teamQuery = ParseQuery.getQuery("Team");
+						teamQuery.whereEqualTo("name", s_teamName);
+						teamQuery.getFirstInBackground(new GetCallback<ParseObject>() {
 							@Override
-							public void done(ParseException e) {
-								if (e == null) {
-									// Create Java Object
-									final Team javaTeam = new Team(newTeam.getString("name"), EXTRA_LOGIN, getResources().getDrawable(R.drawable.default_team_picture_thumb));
-									teams.add(javaTeam);
-									// Add relation with current user
-									ParseRelation<ParseObject> teamsRelation = newTeam.getRelation("players");
-									teamsRelation.add(currentUser);
+							public void done(ParseObject arg0, ParseException e) {
+								if(e==null){
+									Toast.makeText(context, "Sorry, this name has already be taken.", Toast.LENGTH_SHORT).show();
+								}else{
+									final ParseObject newTeam = new ParseObject("Team");
+									newTeam.put("name", s_teamName);
+									newTeam.put("createdBy", currentUser);
 									newTeam.saveInBackground(new SaveCallback() {
 										@Override
 										public void done(ParseException e) {
 											if (e == null) {
-												// Add javaPlayer
-												javaTeam.addPlayer(new Player(EXTRA_LOGIN, getResources().getDrawable(R.drawable.default_profile_picture_thumb)));
-												// Update view
-												expandableList.setAdapter(teamAdapter);
+												// Create Java Object
+												final Team javaTeam = new Team(newTeam.getString("name"), EXTRA_LOGIN, getResources().getDrawable(R.drawable.default_team_picture_thumb));
+												teams.add(javaTeam);
+												// Add relation with current user
+												ParseRelation<ParseObject> teamsRelation = newTeam.getRelation("players");
+												teamsRelation.add(currentUser);
+												newTeam.saveInBackground(new SaveCallback() {
+													@Override
+													public void done(ParseException e) {
+														if (e == null) {
+															// Add javaPlayer
+															javaTeam.addPlayer(new Player(EXTRA_LOGIN, getResources().getDrawable(R.drawable.default_profile_picture_thumb)));
+															// Update view
+															expandableList.setAdapter(teamAdapter);
+														}
+													}
+												});
 											}
 										}
 									});
+									teamName.setText("");
 								}
 							}
 						});
-						teamName.setText("");
 					}
 				}
 			});
