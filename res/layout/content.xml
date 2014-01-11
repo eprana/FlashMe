@@ -11,7 +11,7 @@
     	android:layout_height="wrap_content"
 		style="@style/topMenu" >
 		
-	   <ImageButton
+	   <!-- <ImageButton
 			android:id="@+id/profile_bt"
 			android:layout_weight="1"
     		android:layout_height="wrap_content"
@@ -42,7 +42,7 @@
     		android:layout_marginTop="@dimen/medium_mg"
     		android:layout_marginBottom="@dimen/medium_mg"
 			android:src="@drawable/menu_games_bt_in"
-			style="@style/topLineButton" />
+			style="@style/topLineButton" /> -->
 	</LinearLayout>
 	
     <TextView
