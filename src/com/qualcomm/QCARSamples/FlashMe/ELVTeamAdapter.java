@@ -121,9 +121,7 @@ public class ELVTeamAdapter extends BaseExpandableListAdapter {
 				adb.setTitle("Are you sure ?");
 				adb.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
 		            public void onClick(DialogInterface dialog, int which) {
-		            	// Go back to the screen and delete the alertDialogView
-		            	ViewGroup adbParent = (ViewGroup) alertDialogView.getParent();
-						adbParent.removeView(alertDialogView);
+		            	// Go back to the screen
 		          } });
 				adb.setPositiveButton("CONFIRM", new DialogInterface.OnClickListener() {
 		            public void onClick(DialogInterface dialog, int which) {
@@ -258,9 +256,7 @@ public class ELVTeamAdapter extends BaseExpandableListAdapter {
 				adb.setTitle("Are you sure ?");
 				adb.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
 		            public void onClick(DialogInterface dialog, int which) {
-		            	// Go back to the screen and delete the alertDialogView
-		            	ViewGroup adbParent = (ViewGroup) alertDialogView.getParent();
-						adbParent.removeView(alertDialogView);
+		            	// Go back to the screen
 		          } });
 				adb.setPositiveButton("CONFIRM", new DialogInterface.OnClickListener() {
 		            public void onClick(DialogInterface dialog, int which) {

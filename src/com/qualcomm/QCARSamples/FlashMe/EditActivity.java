@@ -5,8 +5,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
@@ -61,27 +63,24 @@ public class EditActivity extends Activity {
 		// Setting profile picture
 		ParseQuery<ParseUser> query = ParseUser.getQuery();
 		query.whereEqualTo("username", currentUser.getUsername());
-		query.findInBackground(new FindCallback<ParseUser>() {
-	  	  public void done(List<ParseUser> objects, ParseException e) {
-	  	    if (e == null) {
-	  	    	// Getting the avatar form the database
-	  	    	ParseUser userd = (ParseUser) objects.get(0);
-	  	    	ParseFile avatarFile = (ParseFile) userd.get("avatar");
-	  	    	try {
-					byte[] avatarByteArray = avatarFile.getData();
-					Bitmap avatarBitmap = BitmapFactory.decodeByteArray(avatarByteArray, 0, avatarByteArray.length);
-					// Setting the imageView
-					avatarView.setImageBitmap(avatarBitmap);
-				} catch (ParseException e1) {
-					e1.printStackTrace();
-				}
-	  	    	
-	  	    } else{
-	  	    	Toast.makeText(context, "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
-	  	    }
-	  	  }
-	  	});
-		
+		query.getFirstInBackground(new GetCallback<ParseUser>() {
+			public void done(ParseUser user, ParseException e) {
+			    if (e == null) {
+			    	ParseFile avatarFile = (ParseFile) user.get("avatar");
+			    	try {
+						byte[] avatarByteArray = avatarFile.getData();
+						Bitmap avatarBitmap = BitmapFactory.decodeByteArray(avatarByteArray, 0, avatarByteArray.length);
+						// Setting the imageView
+						avatarView.setImageBitmap(avatarBitmap);
+					} catch (ParseException e1) {
+						e1.printStackTrace();
+					}
+			    } else{
+		  	    	Toast.makeText(context, "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
+		  	    }
+			  }
+			});
+				
 //		changePic.setOnClickListener(new OnClickListener() {
 //			
 //			@Override

@@ -4,13 +4,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
     
-	<RelativeLayout
-	    android:id="@+id/parent_layout"
+    <LinearLayout 
+        android:id="@+id/create_layout"
 	    android:layout_width="match_parent"
-	    android:layout_height="0dip" 
-	    android:layout_weight="20">
-	     
-	     <EditText
+	    android:layout_height="wrap_content" 
+	    android:orientation="horizontal" >
+	    
+    	 <EditText
 		    android:id="@+id/enter_team"
 		    android:layout_width="@dimen/button_wd"
 		    android:layout_height="wrap_content"
@@ -20,18 +20,22 @@
 	     
 	     <Button
 		    android:id="@+id/create_team"
-		    android:layout_toRightOf="@id/enter_team" 
 		    android:layout_width="@dimen/medium_wd"
 		    android:layout_marginTop="@dimen/small_mg"
-		    android:layout_alignTop="@id/enter_team"
 		    android:text="@string/create"
 		    android:background="@drawable/light_button"
 		    style="@style/buttonLightBlue" />
+	</LinearLayout>
+    
+	<RelativeLayout
+	    android:id="@+id/parent_layout"
+	    android:layout_width="match_parent"
+	    android:layout_height="0dip" 
+	    android:layout_weight="20">
 	
 	    <ExpandableListView 
 		    android:id="@+id/teams_list" 
 		    android:groupIndicator="@drawable/group_indicator"
-	   		android:layout_below="@id/create_team"
 			android:layout_marginTop="@dimen/medium_mg"
 		    android:layout_width="match_parent"
 		    android:layout_height="match_parent" >
