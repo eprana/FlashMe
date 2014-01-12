@@ -237,13 +237,18 @@ public class ContentActivity extends FragmentActivity{
 			// Get teams where user is a player with Parse
         	ParseQuery<ParseObject> teamsQuery = ParseQuery.getQuery("Team");
         	teamsQuery.whereEqualTo("players", currentUser);
+        	teamsQuery.include("createdBy");
         	teamsQuery.findInBackground(new FindCallback<ParseObject>() {
 				// Parse query
 			    public void done(List<ParseObject> results, ParseException e) {
 			        if (e == null) {
 			        	for (ParseObject result : results) {
 			        		// Create java Team
-			        		final Team newTeam = new Team(result.getString("name"), currentUser.getUsername(), context.getResources().getDrawable(R.drawable.default_team_picture_thumb));
+			        		
+			        		ParseObject creator = new ParseObject("Team");
+			        		creator = result.getParseObject("createdBy");
+			        					        	
+			        		final Team newTeam = new Team(result.getString("name"), creator.getString("username"), context.getResources().getDrawable(R.drawable.default_team_picture_thumb));
 			        		// Get players in team with Parse
 			        		result.getRelation("players").getQuery().findInBackground(new FindCallback<ParseObject>() {
 			        			public void done(List<ParseObject> players, ParseException e) {
@@ -369,7 +374,7 @@ public class ContentActivity extends FragmentActivity{
 							public void done(ParseObject arg0, ParseException e) {
 								if(e==null){
 									Toast.makeText(context, "Sorry, this name has already be taken.", Toast.LENGTH_SHORT).show();
-								}else if(e.equals(101)){
+								}else if(e.getCode() == 101){
 									final ParseObject newTeam = new ParseObject("Team");
 									newTeam.put("name", s_teamName);
 									newTeam.put("createdBy", currentUser);

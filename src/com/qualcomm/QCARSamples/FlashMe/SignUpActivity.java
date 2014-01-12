@@ -53,8 +53,10 @@ public class SignUpActivity extends Activity {
     private ImageView avatarView;
     private ParseFile avatarParseFile;
     private final int PICK_IMAGE = 1000;
+    private final int CREATE_PROFILE = 1404;
     private boolean hasChanged = false;
     private Bitmap bitmapToSent;
+    private boolean hasBeenCreated = false;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -172,8 +174,9 @@ public class SignUpActivity extends Activity {
             				adb.setTitle("Success !");
             				adb.setPositiveButton("VIEW PROFILE", new DialogInterface.OnClickListener() {
             		            public void onClick(DialogInterface dialog, int which) {
+            		            	hasBeenCreated = true;
             		            	Intent intent = new Intent(context, ContentActivity.class);
-            		            	startActivity(intent);
+            		            	startActivityForResult(intent, CREATE_PROFILE);
             		        } });
             				
             				// Showing the alert box
@@ -194,7 +197,7 @@ public class SignUpActivity extends Activity {
       			finish();
       		}
       	});      
-    } 
+    }
     
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {  
         super.onActivityResult(requestCode, resultCode, data);
@@ -269,7 +272,9 @@ public class SignUpActivity extends Activity {
     				
     		}
     	}else if(resultCode == Activity.RESULT_CANCELED) {
-    		Toast.makeText(SignUpActivity.this, "No Photo Selected", Toast.LENGTH_SHORT).show();
+    		if(hasBeenCreated){
+    			finish();
+    		}else Toast.makeText(SignUpActivity.this, "No Photo Selected", Toast.LENGTH_SHORT).show();
     	}
     }
 }
