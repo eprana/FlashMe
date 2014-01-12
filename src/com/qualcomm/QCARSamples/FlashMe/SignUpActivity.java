@@ -53,6 +53,8 @@ public class SignUpActivity extends Activity {
     private ImageView avatarView;
     private ParseFile avatarParseFile;
     private final int PICK_IMAGE = 1000;
+    private boolean hasChanged = false;
+    private Bitmap bitmapToSent;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -67,11 +69,15 @@ public class SignUpActivity extends Activity {
 		final EditText email = (EditText) findViewById(R.id.mail);
         this.avatarView = (ImageView)this.findViewById(R.id.pic_empty);
         
+        if(!hasChanged){
+        	bitmapToSent = ((BitmapDrawable)getResources().getDrawable(R.drawable.default_profile_picture_thumb)).getBitmap();
+        }
+        
         // filling the database with avatarParseFile
-        Drawable avatarDrawable = avatarView.getDrawable();
-        Bitmap bitmap = ((BitmapDrawable)avatarDrawable).getBitmap();
+//        Drawable avatarDrawable = avatarView.getDrawable();
+//        Bitmap bitmap = ((BitmapDrawable)avatarDrawable).getBitmap();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        bitmapToSent.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byte[] bitmapdata = stream.toByteArray();
         this.avatarParseFile = new ParseFile("avatar.png", bitmapdata);
         avatarParseFile.saveInBackground(new SaveCallback() {
@@ -197,13 +203,17 @@ public class SignUpActivity extends Activity {
     			
     			case CAMERA_REQUEST:
     				
+    				hasChanged = true;
+    				
     				// Replacing the preview by the chosen image
     				Bitmap avatar = Bitmap.createScaledBitmap((Bitmap) data.getExtras().get("data"), 300, 300, false);
     				avatarView.setImageBitmap(avatar);
     				
+    				bitmapToSent = avatar;
+    				
     				// Replacing the avatar in the database
     				ByteArrayOutputStream stream = new ByteArrayOutputStream();
-    				avatar.compress(Bitmap.CompressFormat.PNG, 100, stream);
+    				bitmapToSent.compress(Bitmap.CompressFormat.PNG, 100, stream);
     				byte[] avatarByteArray = stream.toByteArray();
     				
     				avatarParseFile = new ParseFile("avatar.png", avatarByteArray);    				
@@ -218,6 +228,8 @@ public class SignUpActivity extends Activity {
     	            
     			case PICK_IMAGE:
     				
+    				hasChanged = true;
+    				
     				Uri selectedImage = data.getData();
     	            if (selectedImage != null) {
     	            	Bitmap bm = null;
@@ -231,9 +243,11 @@ public class SignUpActivity extends Activity {
 	    				Bitmap avatarPicked = Bitmap.createScaledBitmap(bm, 300, 300, false);
 						avatarView.setImageBitmap(avatarPicked);
 						
+						bitmapToSent = avatarPicked;
+						
 						// Replacing the avatar in the database
 	    				ByteArrayOutputStream streamPicked = new ByteArrayOutputStream();
-	    				avatarPicked.compress(Bitmap.CompressFormat.PNG, 100, streamPicked);
+	    				bitmapToSent.compress(Bitmap.CompressFormat.PNG, 100, streamPicked);
 	    				byte[] avatarByteArrayPicked = streamPicked.toByteArray();
 	    				
 	    				avatarParseFile = new ParseFile("avatar.png", avatarByteArrayPicked);
