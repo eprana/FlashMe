@@ -57,8 +57,8 @@ import android.widget.ExpandableListView.OnChildClickListener;
 
 public class ContentActivity extends FragmentActivity{
 
-	static ParseUser currentUser = ParseUser.getCurrentUser();
-	final static String EXTRA_LOGIN = currentUser.getUsername();
+	static ParseUser currentUser = null;
+	static String EXTRA_LOGIN = "";
 	private static ArrayList<Game> games = null;
 	private static ArrayList<Team> teams = null;
 	private static ELVTeamAdapter teamAdapter;
@@ -563,7 +563,10 @@ public class ContentActivity extends FragmentActivity{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 	 	setContentView(R.layout.content);
-
+	 	
+	 	 currentUser = ParseUser.getCurrentUser();
+	 	 EXTRA_LOGIN = currentUser.getUsername();
+	 	
 	 	// Set fragment
 	 	if (savedInstanceState != null)
 	 		mFragment = savedInstanceState.getString("fragment");

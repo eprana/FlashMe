@@ -58,6 +58,7 @@
     <string name="deaths_txt">000</string>
     <string name="edit_profile">Edit profile</string>
     <string name="change_pic">CHANGE PICTURE</string>
+    <string name="take_new_pic">TAKE NEW PICTURE</string>
     <string name="change_mail">Update mail :</string>
     <string name="change_pass">Update password :</string>
     <string name="new_mail">New mail</string>

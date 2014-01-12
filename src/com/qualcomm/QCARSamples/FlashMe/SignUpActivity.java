@@ -202,7 +202,6 @@ public class SignUpActivity extends Activity {
     				Display display = getWindowManager().getDefaultDisplay();
     				Point size = new Point();
     				display.getSize(size);
-    				int width = size.x;
     				Bitmap avatar = Bitmap.createScaledBitmap((Bitmap) data.getExtras().get("data"), size.x, 300, false);
     				
     				avatarView.setImageBitmap(photo);
