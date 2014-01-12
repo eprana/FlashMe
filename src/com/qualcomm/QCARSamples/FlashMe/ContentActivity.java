@@ -202,6 +202,14 @@ public class ContentActivity extends FragmentActivity{
 
 			return mainView;
 		}
+		
+		@Override
+		public void onResume(){
+			super.onResume();
+			final Context context = getActivity().getApplicationContext();
+			LoadProfile lp = new LoadProfile(context);
+        	lp.execute();
+		}
 	}
 	
 	private static class LoadTeams extends AsyncTask<Void, Integer, Void> {
