@@ -40,7 +40,7 @@ import android.widget.Toast;
 
 public class EditActivity extends Activity {
 	
-	static ParseUser currentUser = ParseUser.getCurrentUser();
+	static ParseUser currentUser;
 	Context context;
 	private ImageView avatarView;
 	private EditText updateMail;
@@ -59,6 +59,7 @@ public class EditActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.edit_profile);
 	
+	 	currentUser = ParseUser.getCurrentUser();
 		context = EditActivity.this;
 		avatarView = (ImageView) findViewById(R.id.profile_picture);
 		updateMail = (EditText) findViewById(R.id.new_mail);
@@ -221,10 +222,7 @@ public class EditActivity extends Activity {
     			case CAMERA_REQUEST:
     				
     				// Replacing the preview by the chosen image
-    				Display display = getWindowManager().getDefaultDisplay();
-    				Point size = new Point();
-    				display.getSize(size);
-    				Bitmap avatar = Bitmap.createScaledBitmap((Bitmap) data.getExtras().get("data"), size.x, 300, false);
+    				Bitmap avatar = Bitmap.createScaledBitmap((Bitmap) data.getExtras().get("data"), 300, 300, false);
     				avatarView.setImageBitmap(avatar);
     				
     				// Replacing the avatar in the database
@@ -253,11 +251,7 @@ public class EditActivity extends Activity {
 							e.printStackTrace();
 						}
 						// Replacing the preview image by the chosen image
-						
-						Display displayPicked = getWindowManager().getDefaultDisplay();
-	    				Point sizePicked = new Point();
-	    				displayPicked.getSize(sizePicked);
-	    				Bitmap avatarPicked = Bitmap.createScaledBitmap(bm, sizePicked.x, 300, false);
+	    				Bitmap avatarPicked = Bitmap.createScaledBitmap(bm, 300, 300, false);
 						avatarView.setImageBitmap(avatarPicked);
 						
 						// Replacing the avatar in the database

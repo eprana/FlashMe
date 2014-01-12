@@ -6,6 +6,7 @@ import java.util.List;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -14,6 +15,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -90,7 +93,7 @@ public class ELVTeamAdapter extends BaseExpandableListAdapter {
 		childViewHolder.state.setBackgroundColor(state);
 		childViewHolder.state.setTextColor(state);
 		childViewHolder.name.setText(player.getName());
-		childViewHolder.picture.setImageDrawable(player.getPicture());
+		childViewHolder.picture.setImageBitmap(player.getPicture());
 		
 		// Delete a player from a team
 		childViewHolder.delete_bt.setOnClickListener(new OnClickListener() {
@@ -324,7 +327,18 @@ public class ELVTeamAdapter extends BaseExpandableListAdapter {
 													teamParseObject.getRelation("players").add(userParseObject);
 													teamParseObject.saveInBackground();
 													// Create java Player
-													((Team) getGroup(teamPosition)).addPlayer(new Player(userParseObject.getUsername(), context.getResources().getDrawable(R.drawable.default_profile_picture_thumb)));
+													
+													ParseFile avatarFile = userParseObject.getParseFile("avatar");
+													
+													try {
+														byte[] avatarByteArray = avatarFile.getData();
+														Bitmap avatarBitmap = BitmapFactory.decodeByteArray(avatarByteArray, 0, avatarByteArray.length);
+														avatarBitmap = Bitmap.createScaledBitmap(avatarBitmap, 110, 110, false);
+														((Team) getGroup(teamPosition)).addPlayer(new Player(userParseObject.getUsername(), avatarBitmap));	
+													} catch (ParseException e1) {
+														e1.printStackTrace();
+													}
+													
 													// Display success message
 													Toast.makeText(context, "You just added "+userParseObject.getUsername()+" to the team "+teamParseObject.getString("name")+".", Toast.LENGTH_LONG).show();
 												}

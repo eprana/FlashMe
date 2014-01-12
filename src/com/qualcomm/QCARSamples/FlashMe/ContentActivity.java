@@ -249,8 +249,20 @@ public class ContentActivity extends FragmentActivity{
 			        			public void done(List<ParseObject> players, ParseException e) {
 			        				if (e == null) {
 			        					for (ParseObject player : players) {
-			        						// Add java Players
-			        						newTeam.addPlayer(new Player(((ParseUser) player).getUsername(),  context.getResources().getDrawable(R.drawable.default_profile_picture_thumb)));	
+			        						
+			        						// Create small avatar
+        							    	ParseFile avatarFile = (ParseFile) player.get("avatar");
+        							    	try {
+        							    		byte[] avatarByteArray = avatarFile.getData();
+			        							Bitmap avatarBitmap = BitmapFactory.decodeByteArray(avatarByteArray, 0, avatarByteArray.length);
+			        							avatarBitmap = Bitmap.createScaledBitmap(avatarBitmap, 110, 110, false);
+
+				        						// Add java Players
+				        						newTeam.addPlayer(new Player(((ParseUser) player).getUsername(), avatarBitmap));
+			        						} catch (ParseException e1) {
+			        							e1.printStackTrace();
+			        						}
+   							
 			        					}
 			        				}
 			        			}
@@ -376,7 +388,17 @@ public class ContentActivity extends FragmentActivity{
 													public void done(ParseException e) {
 														if (e == null) {
 															// Add javaPlayer
-															javaTeam.addPlayer(new Player(EXTRA_LOGIN, getResources().getDrawable(R.drawable.default_profile_picture_thumb)));
+															ParseFile avatarFile = currentUser.getParseFile("avatar");
+															
+															try {
+																byte[] avatarByteArray = avatarFile.getData();
+																Bitmap avatarBitmap = BitmapFactory.decodeByteArray(avatarByteArray, 0, avatarByteArray.length);
+																avatarBitmap = Bitmap.createScaledBitmap(avatarBitmap, 110, 110, false);
+																javaTeam.addPlayer(new Player(EXTRA_LOGIN, avatarBitmap));
+															} catch (ParseException e1) {
+																e1.printStackTrace();
+															}
+															
 															// Update view
 															expandableList.setAdapter(teamAdapter);
 														}

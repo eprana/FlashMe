@@ -198,13 +198,8 @@ public class SignUpActivity extends Activity {
     			case CAMERA_REQUEST:
     				
     				// Replacing the preview by the chosen image
-    				Bitmap photo = (Bitmap) data.getExtras().get("data");
-    				Display display = getWindowManager().getDefaultDisplay();
-    				Point size = new Point();
-    				display.getSize(size);
-    				Bitmap avatar = Bitmap.createScaledBitmap((Bitmap) data.getExtras().get("data"), size.x, 300, false);
-    				
-    				avatarView.setImageBitmap(photo);
+    				Bitmap avatar = Bitmap.createScaledBitmap((Bitmap) data.getExtras().get("data"), 300, 300, false);
+    				avatarView.setImageBitmap(avatar);
     				
     				// Replacing the avatar in the database
     				ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -233,13 +228,8 @@ public class SignUpActivity extends Activity {
 						}
 						// Replacing the preview image by the chosen image
 						
-						Display displayPicked = getWindowManager().getDefaultDisplay();
-	    				Point sizePicked = new Point();
-	    				displayPicked.getSize(sizePicked);
-	    				Bitmap avatarPicked = Bitmap.createScaledBitmap(bm, sizePicked.x, 300, false);
-						
-						Bitmap photoPicked = Bitmap.createScaledBitmap(bm, 200, 200, false);
-						avatarView.setImageBitmap(photoPicked);
+	    				Bitmap avatarPicked = Bitmap.createScaledBitmap(bm, 300, 300, false);
+						avatarView.setImageBitmap(avatarPicked);
 						
 						// Replacing the avatar in the database
 	    				ByteArrayOutputStream streamPicked = new ByteArrayOutputStream();
@@ -268,17 +258,4 @@ public class SignUpActivity extends Activity {
     		Toast.makeText(SignUpActivity.this, "No Photo Selected", Toast.LENGTH_SHORT).show();
     	}
     }
-	
-	private Bitmap cropBitmap(Bitmap bitmap, int width, int height){
-		
-	    Bitmap bmOverlay = Bitmap.createBitmap(320, 480, Bitmap.Config.ARGB_8888);
-
-	    Paint p = new Paint();
-	    p.setXfermode(new PorterDuffXfermode(Mode.CLEAR));              
-	    Canvas c = new Canvas(bmOverlay); 
-	    c.drawBitmap(bitmap, 0, 0, null); 
-	    c.drawRect(0, 0, width, height, p);
-
-	    return bmOverlay;
-	}
 }

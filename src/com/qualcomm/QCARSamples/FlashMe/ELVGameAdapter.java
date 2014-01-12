@@ -307,7 +307,7 @@ public class ELVGameAdapter extends BaseExpandableListAdapter {
 							public void done(List<ParseObject> teamsList, ParseException e) {
 								if (e==null){
 									if (teamsList.isEmpty()){
-										// If no matching user is found
+										// If no matching team is found
 										Toast.makeText(context, "Sorry, this team doesn't exist.", Toast.LENGTH_SHORT).show();
 									}
 									else {
@@ -319,7 +319,10 @@ public class ELVGameAdapter extends BaseExpandableListAdapter {
 										teamQuery.getFirstInBackground(new GetCallback<ParseObject>() {
 											public void done(final ParseObject gameParseObject, ParseException e) {
 												if (e==null){
-													// Add user to the team in Parse
+													
+													
+													
+													// Add team to the game in Parse
 													gameParseObject.getRelation("teams").add(teamParseObject);
 													gameParseObject.saveInBackground();
 													// Create java Player
