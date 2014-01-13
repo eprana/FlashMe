@@ -53,6 +53,10 @@ public class SignUpActivity extends Activity {
     private ImageView avatarView;
     private ParseFile avatarParseFile;
     private final int PICK_IMAGE = 1000;
+    private final int CREATE_PROFILE = 1404;
+    private boolean hasChanged = false;
+    private Bitmap bitmapToSent;
+    private boolean hasBeenCreated = false;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -67,11 +71,15 @@ public class SignUpActivity extends Activity {
 		final EditText email = (EditText) findViewById(R.id.mail);
         this.avatarView = (ImageView)this.findViewById(R.id.pic_empty);
         
+        if(!hasChanged){
+        	bitmapToSent = ((BitmapDrawable)getResources().getDrawable(R.drawable.default_profile_picture_thumb)).getBitmap();
+        }
+        
         // filling the database with avatarParseFile
-        Drawable avatarDrawable = avatarView.getDrawable();
-        Bitmap bitmap = ((BitmapDrawable)avatarDrawable).getBitmap();
+//        Drawable avatarDrawable = avatarView.getDrawable();
+//        Bitmap bitmap = ((BitmapDrawable)avatarDrawable).getBitmap();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        bitmapToSent.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byte[] bitmapdata = stream.toByteArray();
         this.avatarParseFile = new ParseFile("avatar.png", bitmapdata);
         avatarParseFile.saveInBackground(new SaveCallback() {
@@ -166,8 +174,9 @@ public class SignUpActivity extends Activity {
             				adb.setTitle("Success !");
             				adb.setPositiveButton("VIEW PROFILE", new DialogInterface.OnClickListener() {
             		            public void onClick(DialogInterface dialog, int which) {
+            		            	hasBeenCreated = true;
             		            	Intent intent = new Intent(context, ContentActivity.class);
-            		            	startActivity(intent);
+            		            	startActivityForResult(intent, CREATE_PROFILE);
             		        } });
             				
             				// Showing the alert box
@@ -188,7 +197,7 @@ public class SignUpActivity extends Activity {
       			finish();
       		}
       	});      
-    } 
+    }
     
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {  
         super.onActivityResult(requestCode, resultCode, data);
@@ -197,19 +206,17 @@ public class SignUpActivity extends Activity {
     			
     			case CAMERA_REQUEST:
     				
-    				// Replacing the preview by the chosen image
-    				Bitmap photo = (Bitmap) data.getExtras().get("data");
-    				Display display = getWindowManager().getDefaultDisplay();
-    				Point size = new Point();
-    				display.getSize(size);
-    				int width = size.x;
-    				Bitmap avatar = Bitmap.createScaledBitmap((Bitmap) data.getExtras().get("data"), size.x, 300, false);
+    				hasChanged = true;
     				
-    				avatarView.setImageBitmap(photo);
+    				// Replacing the preview by the chosen image
+    				Bitmap avatar = Bitmap.createScaledBitmap((Bitmap) data.getExtras().get("data"), 300, 300, false);
+    				avatarView.setImageBitmap(avatar);
+    				
+    				bitmapToSent = avatar;
     				
     				// Replacing the avatar in the database
     				ByteArrayOutputStream stream = new ByteArrayOutputStream();
-    				avatar.compress(Bitmap.CompressFormat.PNG, 100, stream);
+    				bitmapToSent.compress(Bitmap.CompressFormat.PNG, 100, stream);
     				byte[] avatarByteArray = stream.toByteArray();
     				
     				avatarParseFile = new ParseFile("avatar.png", avatarByteArray);    				
@@ -224,6 +231,8 @@ public class SignUpActivity extends Activity {
     	            
     			case PICK_IMAGE:
     				
+    				hasChanged = true;
+    				
     				Uri selectedImage = data.getData();
     	            if (selectedImage != null) {
     	            	Bitmap bm = null;
@@ -234,17 +243,14 @@ public class SignUpActivity extends Activity {
 						}
 						// Replacing the preview image by the chosen image
 						
-						Display displayPicked = getWindowManager().getDefaultDisplay();
-	    				Point sizePicked = new Point();
-	    				displayPicked.getSize(sizePicked);
-	    				Bitmap avatarPicked = Bitmap.createScaledBitmap(bm, sizePicked.x, 300, false);
+	    				Bitmap avatarPicked = Bitmap.createScaledBitmap(bm, 300, 300, false);
+						avatarView.setImageBitmap(avatarPicked);
 						
-						Bitmap photoPicked = Bitmap.createScaledBitmap(bm, 200, 200, false);
-						avatarView.setImageBitmap(photoPicked);
+						bitmapToSent = avatarPicked;
 						
 						// Replacing the avatar in the database
 	    				ByteArrayOutputStream streamPicked = new ByteArrayOutputStream();
-	    				avatarPicked.compress(Bitmap.CompressFormat.PNG, 100, streamPicked);
+	    				bitmapToSent.compress(Bitmap.CompressFormat.PNG, 100, streamPicked);
 	    				byte[] avatarByteArrayPicked = streamPicked.toByteArray();
 	    				
 	    				avatarParseFile = new ParseFile("avatar.png", avatarByteArrayPicked);
@@ -266,20 +272,9 @@ public class SignUpActivity extends Activity {
     				
     		}
     	}else if(resultCode == Activity.RESULT_CANCELED) {
-    		Toast.makeText(SignUpActivity.this, "No Photo Selected", Toast.LENGTH_SHORT).show();
+    		if(hasBeenCreated){
+    			finish();
+    		}else Toast.makeText(SignUpActivity.this, "No Photo Selected", Toast.LENGTH_SHORT).show();
     	}
     }
-	
-	private Bitmap cropBitmap(Bitmap bitmap, int width, int height){
-		
-	    Bitmap bmOverlay = Bitmap.createBitmap(320, 480, Bitmap.Config.ARGB_8888);
-
-	    Paint p = new Paint();
-	    p.setXfermode(new PorterDuffXfermode(Mode.CLEAR));              
-	    Canvas c = new Canvas(bmOverlay); 
-	    c.drawBitmap(bitmap, 0, 0, null); 
-	    c.drawRect(0, 0, width, height, p);
-
-	    return bmOverlay;
-	}
 }

@@ -58,8 +58,8 @@ import android.widget.ExpandableListView.OnChildClickListener;
 
 public class ContentActivity extends Activity{
 
-	static ParseUser currentUser = ParseUser.getCurrentUser();
-	final static String EXTRA_LOGIN = currentUser.getUsername();
+	static ParseUser currentUser = null;
+	static String EXTRA_LOGIN = "";
 	private static ArrayList<Game> games = null;
 	private static ArrayList<Team> teams = null;
 	private static ELVTeamAdapter teamAdapter;
@@ -212,6 +212,14 @@ public class ContentActivity extends Activity{
 
 			return mainView;
 		}
+		
+		@Override
+		public void onResume(){
+			super.onResume();
+			final Context context = getActivity().getApplicationContext();
+			LoadProfile lp = new LoadProfile(context);
+        	lp.execute();
+		}
 	}
 	
 	private static class LoadTeams extends AsyncTask<Void, Integer, Void> {
@@ -239,6 +247,7 @@ public class ContentActivity extends Activity{
 			// Get teams where user is a player with Parse
         	ParseQuery<ParseObject> teamsQuery = ParseQuery.getQuery("Team");
         	teamsQuery.whereEqualTo("players", currentUser);
+        	teamsQuery.include("createdBy");
         	teamsQuery.findInBackground(new FindCallback<ParseObject>() {
 				// Parse query
 			    public void done(List<ParseObject> results, ParseException e) {
@@ -251,7 +260,6 @@ public class ContentActivity extends Activity{
 	        		 // Update adapter
 	        		 expandableList.setAdapter(teamAdapter);
 		        }
-			    
 			});
 			
 			return null;
@@ -279,8 +287,18 @@ public class ContentActivity extends Activity{
 		private void addPlayersToTeam( Team team, List<ParseObject> players )
 		{
 			for (ParseObject player : players) {
-				// Add java Players
-				team.addPlayer(new Player(((ParseUser) player).getUsername(),  context.getResources().getDrawable(R.drawable.default_profile_picture_thumb)));	
+				// Create small avatar
+		    	ParseFile avatarFile = (ParseFile) player.get("avatar");
+		    	try {
+		    		byte[] avatarByteArray = avatarFile.getData();
+					Bitmap avatarBitmap = BitmapFactory.decodeByteArray(avatarByteArray, 0, avatarByteArray.length);
+					avatarBitmap = Bitmap.createScaledBitmap(avatarBitmap, 110, 110, false);
+
+					// Add java Players
+					team.addPlayer(new Player(((ParseUser) player).getUsername(), avatarBitmap));
+				} catch (ParseException e1) {
+					e1.printStackTrace();
+				}
 			}
 		}
 
@@ -372,7 +390,6 @@ public class ContentActivity extends Activity{
 					else {
 						
 						// Check if the name does not exist yet
-						
 						ParseQuery<ParseObject> teamQuery = ParseQuery.getQuery("Team");
 						teamQuery.whereEqualTo("name", s_teamName);
 						teamQuery.getFirstInBackground(new GetCallback<ParseObject>() {
@@ -380,7 +397,7 @@ public class ContentActivity extends Activity{
 							public void done(ParseObject arg0, ParseException e) {
 								if(e==null){
 									Toast.makeText(context, "Sorry, this name has already be taken.", Toast.LENGTH_SHORT).show();
-								}else{
+								}else if(e.getCode() == 101){
 									final ParseObject newTeam = new ParseObject("Team");
 									newTeam.put("name", s_teamName);
 									newTeam.put("createdBy", currentUser);
@@ -399,7 +416,17 @@ public class ContentActivity extends Activity{
 													public void done(ParseException e) {
 														if (e == null) {
 															// Add javaPlayer
-															javaTeam.addPlayer(new Player(EXTRA_LOGIN, getResources().getDrawable(R.drawable.default_profile_picture_thumb)));
+															ParseFile avatarFile = currentUser.getParseFile("avatar");
+															
+															try {
+																byte[] avatarByteArray = avatarFile.getData();
+																Bitmap avatarBitmap = BitmapFactory.decodeByteArray(avatarByteArray, 0, avatarByteArray.length);
+																avatarBitmap = Bitmap.createScaledBitmap(avatarBitmap, 110, 110, false);
+																javaTeam.addPlayer(new Player(EXTRA_LOGIN, avatarBitmap));
+															} catch (ParseException e1) {
+																e1.printStackTrace();
+															}
+															
 															// Update view
 															expandableList.setAdapter(teamAdapter);
 														}
@@ -409,6 +436,8 @@ public class ContentActivity extends Activity{
 										}
 									});
 									teamName.setText("");
+								} else{
+									Toast.makeText(context, "An error occured.", Toast.LENGTH_SHORT).show();
 								}
 							}
 						});
@@ -536,20 +565,34 @@ public class ContentActivity extends Activity{
 						return;
 					}
 					else {
-						// Create game
-						final ParseObject newGame = new ParseObject("Game");
-						newGame.put("name", s_gameName);
-						newGame.put("createdBy", currentUser);
-						newGame.saveInBackground(new SaveCallback() {
+						// Check if the name does not exist yet
+						ParseQuery<ParseObject> gameQuery = ParseQuery.getQuery("Game");
+						gameQuery.whereEqualTo("name", s_gameName);
+						gameQuery.getFirstInBackground(new GetCallback<ParseObject>() {
 							@Override
-							public void done(ParseException e) {
-								if (e == null) {
-									games.add(new Game(newGame.getString("name"), EXTRA_LOGIN));
-									expandableList.setAdapter(gameAdapter);
+							public void done(ParseObject arg0, ParseException e) {
+								if(e==null){
+									Toast.makeText(context, "Sorry, this name has already be taken.", Toast.LENGTH_SHORT).show();
+								}else if(e.getCode() == 101){
+									// Create game
+									final ParseObject newGame = new ParseObject("Game");
+									newGame.put("name", s_gameName);
+									newGame.put("createdBy", currentUser);
+									newGame.saveInBackground(new SaveCallback() {
+										@Override
+										public void done(ParseException e) {
+											if (e == null) {
+												games.add(new Game(newGame.getString("name"), EXTRA_LOGIN));
+												expandableList.setAdapter(gameAdapter);
+											}
+										}
+									});
+									gameName.setText("");
+								} else{
+									Toast.makeText(context, "An error occured.", Toast.LENGTH_SHORT).show();
 								}
 							}
 						});
-						gameName.setText("");
 					}
 				}
 			});
@@ -578,7 +621,10 @@ public class ContentActivity extends Activity{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 	 	setContentView(R.layout.content);
-
+	 	
+	 	 currentUser = ParseUser.getCurrentUser();
+	 	 EXTRA_LOGIN = currentUser.getUsername();
+	 	
 	 	// Set fragment
 	 	if (savedInstanceState != null)
 	 		mFragment = savedInstanceState.getString("fragment");

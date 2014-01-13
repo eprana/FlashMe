@@ -17,6 +17,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.parse.LogInCallback;
 import com.parse.Parse;
 import com.parse.ParseAnalytics;
@@ -30,6 +32,7 @@ public class MainActivity extends Activity {
 	private PopupWindow popup;
 	private ImageButton aboutButton = null;
 	private ImageButton closeButton = null;
+	private int LOGIN = 2000;
 
 	// Data to get
 	private final String EXTRA_LOGIN = "user_login";
@@ -56,7 +59,7 @@ public class MainActivity extends Activity {
 	 	Parse.initialize(this, "ysJVmuI4oJDEsyF7YOcQG12WVkLzwQlLrqzt15Fg", "YTTLp7GRoHYEMzLXa58T2zB7mcTTPWJuB19JcGnJ");
 	 	ParseAnalytics.trackAppOpened(getIntent());
 	 	
-		logInButton.setOnClickListener(new OnClickListener() {
+	 	logInButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				
@@ -72,10 +75,10 @@ public class MainActivity extends Activity {
 							Intent intent = new Intent(MainActivity.this, ContentActivity.class);
 							intent.putExtra(EXTRA_LOGIN, s_username);
 							intent.putExtra(EXTRA_PASSWORD, s_password);
-							startActivity(intent);
+							startActivityForResult(intent, LOGIN);
 							
 						} else {
-							
+														
 							// Login failed, display alert box
 							AlertDialog.Builder adb = new AlertDialog.Builder(context);
 							MessageAlert msg_a;
@@ -172,5 +175,16 @@ public class MainActivity extends Activity {
 	    return location;
 	}
 	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+	    super.onActivityResult(requestCode, resultCode, intent);
+
+	    if((requestCode == LOGIN)||(requestCode == RESULT_CANCELED)) {
+	    	Intent i = getIntent();
+	    	finish();
+	    	startActivity(i);
+	    }
+	    
+	}
 	
 }

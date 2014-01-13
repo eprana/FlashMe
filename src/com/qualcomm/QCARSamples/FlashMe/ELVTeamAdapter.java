@@ -6,6 +6,7 @@ import java.util.List;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -14,6 +15,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -90,7 +93,7 @@ public class ELVTeamAdapter extends BaseExpandableListAdapter {
 		childViewHolder.state.setBackgroundColor(state);
 		childViewHolder.state.setTextColor(state);
 		childViewHolder.name.setText(player.getName());
-		childViewHolder.picture.setImageDrawable(player.getPicture());
+		childViewHolder.picture.setImageBitmap(player.getPicture());
 		
 		// Delete a player from a team
 		childViewHolder.delete_bt.setOnClickListener(new OnClickListener() {
@@ -301,23 +304,22 @@ public class ELVTeamAdapter extends BaseExpandableListAdapter {
 			    alert.setPositiveButton("Add", new DialogInterface.OnClickListener() {
 			        public void onClick(DialogInterface dialog, int whichButton) {
 			        	// Get input value
-			            String playerName = input.getText().toString().trim();
+			            final String playerName = input.getText().toString().trim();
 			            
 			            // Get matching user with Parse
 			            ParseQuery<ParseUser> playerQuery = ParseUser.getQuery();
 			            playerQuery.whereEqualTo("username", playerName);
-						playerQuery.findInBackground(new FindCallback<ParseUser>() {
-							public void done(List<ParseUser> usersList, ParseException e) {
-								if (e==null){
-									if (usersList.isEmpty()){
+			            playerQuery.getFirstInBackground(new GetCallback<ParseUser>() {
+			            	public void done(final ParseUser userParseObject, ParseException e) {
+			            		if (e==null){
+									if (userParseObject == null){
 										// If no matching user is found
 										Toast.makeText(context, "Sorry, this player doesn't exist.", Toast.LENGTH_SHORT).show();
-									}
-									else {
-										final ParseUser userParseObject = usersList.get(0);
+									} else {
 										// Get concerned team with Parse
 										ParseQuery<ParseObject> teamQuery = ParseQuery.getQuery("Team");
 										teamQuery.whereEqualTo("name", team.getName());
+										teamQuery.whereNotEqualTo("players", userParseObject);
 										teamQuery.getFirstInBackground(new GetCallback<ParseObject>() {
 											public void done(final ParseObject teamParseObject, ParseException e) {
 												if (e==null){
@@ -325,12 +327,24 @@ public class ELVTeamAdapter extends BaseExpandableListAdapter {
 													teamParseObject.getRelation("players").add(userParseObject);
 													teamParseObject.saveInBackground();
 													// Create java Player
-													((Team) getGroup(teamPosition)).addPlayer(new Player(userParseObject.getUsername(), context.getResources().getDrawable(R.drawable.default_profile_picture_thumb)));
+													
+													ParseFile avatarFile = userParseObject.getParseFile("avatar");
+													
+													try {
+														byte[] avatarByteArray = avatarFile.getData();
+														Bitmap avatarBitmap = BitmapFactory.decodeByteArray(avatarByteArray, 0, avatarByteArray.length);
+														avatarBitmap = Bitmap.createScaledBitmap(avatarBitmap, 110, 110, false);
+														((Team) getGroup(teamPosition)).addPlayer(new Player(userParseObject.getUsername(), avatarBitmap));	
+													} catch (ParseException e1) {
+														e1.printStackTrace();
+													}
+													
 													// Display success message
 													Toast.makeText(context, "You just added "+userParseObject.getUsername()+" to the team "+teamParseObject.getString("name")+".", Toast.LENGTH_LONG).show();
 												}
 												else {
-													Toast.makeText(context, userParseObject.getUsername()+" can't be added to the team "+teamParseObject.getString("name")+".", Toast.LENGTH_LONG).show();
+													if(e.getCode() == 101) Toast.makeText(context, userParseObject.getUsername()+" is already in the team.", Toast.LENGTH_SHORT).show();
+													else Toast.makeText(context, userParseObject.getUsername()+" can't be added to the team. ", Toast.LENGTH_SHORT).show();
 												}
 												
 											}
@@ -339,8 +353,8 @@ public class ELVTeamAdapter extends BaseExpandableListAdapter {
 								}
 								else {
 									Toast.makeText(context, "The player can't be added to the team.", Toast.LENGTH_SHORT).show();
-								}
-							}
+								}}
+			            		
 						});
 			        }
 			    });

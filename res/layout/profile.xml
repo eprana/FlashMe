@@ -7,7 +7,7 @@
         android:id="@+id/profile_picture"
 		android:layout_height="wrap_content" 
 		android:layout_width="wrap_content" 
-		android:background="@color/middle_blue"
+		android:layout_margin="@dimen/large_mg"
 		android:contentDescription="@string/profile_picture"
 		android:layout_centerHorizontal="true" />
  	

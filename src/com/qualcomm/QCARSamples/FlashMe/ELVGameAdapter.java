@@ -307,7 +307,7 @@ public class ELVGameAdapter extends BaseExpandableListAdapter {
 							public void done(List<ParseObject> teamsList, ParseException e) {
 								if (e==null){
 									if (teamsList.isEmpty()){
-										// If no matching user is found
+										// If no matching team is found
 										Toast.makeText(context, "Sorry, this team doesn't exist.", Toast.LENGTH_SHORT).show();
 									}
 									else {
@@ -315,10 +315,14 @@ public class ELVGameAdapter extends BaseExpandableListAdapter {
 										// Get concerned team with Parse
 										ParseQuery<ParseObject> teamQuery = ParseQuery.getQuery("Game");
 										teamQuery.whereEqualTo("name", game.getName());
+										teamQuery.whereNotEqualTo("teams", teamParseObject);
 										teamQuery.getFirstInBackground(new GetCallback<ParseObject>() {
 											public void done(final ParseObject gameParseObject, ParseException e) {
 												if (e==null){
-													// Add user to the team in Parse
+													
+													
+													
+													// Add team to the game in Parse
 													gameParseObject.getRelation("teams").add(teamParseObject);
 													gameParseObject.saveInBackground();
 													// Create java Player
@@ -335,7 +339,8 @@ public class ELVGameAdapter extends BaseExpandableListAdapter {
 													Toast.makeText(context, "You just added the team "+teamParseObject.getString("name")+" to the game "+gameParseObject.getString("name")+".", Toast.LENGTH_LONG).show();
 												}
 												else {
-													Toast.makeText(context, "The team "+teamParseObject.getString("name")+" can't be added to the game "+gameParseObject.getString("name")+".", Toast.LENGTH_LONG).show();
+													if(e.getCode() == 101) Toast.makeText(context, teamParseObject.getString("name")+" is already in the game.", Toast.LENGTH_SHORT).show();
+													else Toast.makeText(context, teamParseObject.getString("name")+" can't be added to the team. ", Toast.LENGTH_SHORT).show();
 												}
 												
 											}

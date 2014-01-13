@@ -1,14 +1,15 @@
 package com.qualcomm.QCARSamples.FlashMe;
 
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
 public class Player {
 
 	private boolean ready;
 	private String name;
-	private Drawable picture;
+	private Bitmap picture;
 	
-	public Player(String name, Drawable picture){
+	public Player(String name, Bitmap picture){
 		super();
 		this.ready = false;
 		this.name = name;
@@ -27,7 +28,7 @@ public class Player {
 		return ready;
 	}
 	
-	public Drawable getPicture(){
+	public Bitmap getPicture(){
 		return picture;
 	}	
 	
@@ -35,7 +36,7 @@ public class Player {
 		this.ready = ready;
 	}
 
-	public void setPicture(Drawable picture){
+	public void setPicture(Bitmap picture){
 		this.picture = picture;
 	}
 	
