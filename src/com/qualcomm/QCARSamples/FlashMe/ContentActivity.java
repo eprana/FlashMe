@@ -26,7 +26,6 @@ import android.widget.ExpandableListView.OnChildClickListener;
 public class ContentActivity extends Activity{
 
 	static ParseUser currentUser = null;
-	static String EXTRA_LOGIN = "";
 
 	private ExpandableListView sList;
 	private SettingsAdapter sAdapter;
@@ -61,15 +60,8 @@ public class ContentActivity extends Activity{
 		if (fragment == null){
 			return;
 		}
-
-		//fragment.setArguments(getIntent().getExtras());
-		
 		final FragmentManager fm = getFragmentManager();
-		final FragmentTransaction ft = fm.beginTransaction();
-		
-		// Animate the changing of fragment
-		//ft.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-		
+		final FragmentTransaction ft = fm.beginTransaction();		
 		try {
 			ft.replace(R.id.maincontainer, fragment, fragment.getTag());
 		} catch (Exception e) {
@@ -109,11 +101,14 @@ public class ContentActivity extends Activity{
 			
 	@Override
     public void onCreate(Bundle savedInstanceState) {
+		
         super.onCreate(savedInstanceState);
 	 	setContentView(R.layout.content);
 	 	
-	 	 currentUser = ParseUser.getCurrentUser();
-	 	 EXTRA_LOGIN = currentUser.getUsername();
+    	// Set username on top of the page
+	 	currentUser = ParseUser.getCurrentUser();
+    	TextView userName = (TextView) findViewById(R.id.name);
+    	userName.setText(currentUser.getUsername());
 	 	
 	 	// Set fragment
 	 	if (savedInstanceState != null)
@@ -121,13 +116,12 @@ public class ContentActivity extends Activity{
 	 	else
 	 		mFragment = getIntent().getStringExtra("fragment");
 	 	
-	 	System.out.println("mFragment : "+mFragment);
-	 	
 	 	if(mFragment == null) {
 	 		mFragment = "ProfileFragment";
 	 	}
 	 	
 		setupFragments();
+
 		if(mFragment != null) {
 			if (mFragment.equals("ProfileFragment")) {
 				showFragment(this.mProfileFragment);
@@ -137,10 +131,6 @@ public class ContentActivity extends Activity{
 				showFragment(this.mGamesFragment);
 			}
 		}
-		
-    	// Setting username on top of the page
-    	TextView userName = (TextView) findViewById(R.id.name);
-    	userName.setText(EXTRA_LOGIN);
 		
     	// Settings button expandable list
     	sList = (ExpandableListView)findViewById(R.id.s_list);
@@ -292,7 +282,5 @@ public class ContentActivity extends Activity{
 			public ImageView picto;
 			public TextView picto_tx;
 		}
-	}
-	
+	}	
 }
-
