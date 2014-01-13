@@ -26,9 +26,11 @@ import android.widget.Toast;
 
 public class GamesFragment extends Fragment {
 
+	// Data elements
 	private ParseUser currentUser = null;
 	private static ArrayList<Game> games = null;
 	
+	// Layout elements
 	private static ELVGameAdapter gameAdapter;
 	private static ExpandableListView expandableList = null;
 	
@@ -143,8 +145,9 @@ public class GamesFragment extends Fragment {
 	    				if (e == null) {
 	    					for (ParseObject team : teamsList) {
 	    						// Add java Teams
-	    						//((ParseUser) team.fetch().getParseObject("createdBy")).fetch().getUsername()
-								newGame.addTeam(new Team(team.getString("name"), "creator", getActivity().getResources().getDrawable(R.drawable.default_team_picture_thumb)));
+	    						ParseObject creator = new ParseObject("User");
+	    						creator = team.getParseObject("createdBy");
+								newGame.addTeam(new Team(team.getString("name"), creator.getString("username"), getActivity().getResources().getDrawable(R.drawable.default_team_picture_thumb)));
 	    					}
 	    				}
 					}

@@ -29,9 +29,11 @@ import android.widget.Toast;
 
 public class TeamsFragment extends Fragment {
 	
+	// Data elements
 	private ParseUser currentUser = null;
 	private ArrayList<Team> teams = null;
 	
+	// Layout elements
 	private static ELVTeamAdapter teamAdapter;
 	private static ExpandableListView expandableList = null;
 	
