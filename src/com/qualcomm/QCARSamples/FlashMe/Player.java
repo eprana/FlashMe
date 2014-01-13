@@ -16,10 +16,6 @@ public class Player {
 		this.picture = picture;
 	}
 	
-//	public Team getTeam(){
-//		return team;
-//	}
-	
 	public String getName(){
 		return name;
 	}
