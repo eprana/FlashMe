@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item android:id="@+id/action_profile"
-          android:icon="@drawable/menu_profile_bt_in"
+          android:icon="@drawable/menu_profile_bt"
+          android:showAsAction="ifRoom"
           android:title="@string/action_profile" />
     <item android:id="@+id/action_teams"
           android:icon="@drawable/menu_teams_bt_in"
+          android:showAsAction="ifRoom"
           android:title="@string/action_teams" />
     <item android:id="@+id/action_games"
           android:icon="@drawable/menu_games_bt_in"
+          android:showAsAction="ifRoom"
           android:title="@string/action_games" />
 </menu>

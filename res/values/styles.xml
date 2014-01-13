@@ -13,8 +13,14 @@
     </style>
 
     <!-- Application theme. -->
-    <style name="AppTheme" parent="AppBaseTheme">
+    <style name="AppTheme" parent="android:Theme.Holo.Light">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+        <item name="android:actionBarStyle">@style/actionBar</item>
+    </style>
+    
+    <!-- ActionBar -->
+    <style name="actionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">@color/dark_blue</item>
     </style>
     
     <style name="translucide">
