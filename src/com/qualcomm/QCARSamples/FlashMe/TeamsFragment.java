@@ -123,7 +123,7 @@ public class TeamsFragment extends Fragment {
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
 			progress.setVisibility(View.GONE);
-			expandableList.setAdapter(teamAdapter);
+			//expandableList.setAdapter(teamAdapter);
 		}
 		
 	}
@@ -141,6 +141,7 @@ public class TeamsFragment extends Fragment {
 		    		return;
 		    	}
 		    	createTeams(context, teamsList);
+				expandableList.setAdapter(teamAdapter);
 	        }
 		});
 	}

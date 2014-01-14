@@ -120,7 +120,7 @@ public class GamesFragment extends Fragment {
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
 			progress.setVisibility(View.GONE);
-			expandableList.setAdapter(gameAdapter);
+			//expandableList.setAdapter(gameAdapter);
 		}
 	}
 	private static void loadGames(final Context context) {
@@ -134,6 +134,7 @@ public class GamesFragment extends Fragment {
 		        	return;
 		        }
 		        createGames(context, gamesList);
+		        expandableList.setAdapter(gameAdapter);
 		    }
 		});
 	}
