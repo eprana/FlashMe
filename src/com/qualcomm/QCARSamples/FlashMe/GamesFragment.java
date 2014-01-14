@@ -14,6 +14,7 @@ import com.parse.SaveCallback;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.res.Resources.NotFoundException;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 public class GamesFragment extends Fragment {
@@ -29,6 +31,7 @@ public class GamesFragment extends Fragment {
 	// Data elements
 	private ParseUser currentUser = null;
 	private static ArrayList<Game> games = null;
+	private static ProgressBar progress = null;
 	
 	// Layout elements
 	private static ELVGameAdapter gameAdapter;
@@ -46,8 +49,10 @@ public class GamesFragment extends Fragment {
     	// Initialize games ArrayList
     	games = new ArrayList<Game>();
     	
-    	// Get user's teams with Parse to create Java Teams
-    	this.loadGames();
+    	// Load fragment data
+        progress = (ProgressBar) mainView.findViewById(R.id.progressBar);
+    	LoadTeams lt = new LoadTeams(context);
+    	lt.execute();
     	
     	// Display teams in expandable list
     	gameAdapter = new ELVGameAdapter(context, games);        	
@@ -114,26 +119,52 @@ public class GamesFragment extends Fragment {
 				}
 			}
 		});
-    	return mainView;
-    	
+    	return mainView;	
 	}
 	
-	private void loadGames() {
+	private static class LoadTeams extends AsyncTask<Void, Integer, Void> {
+
+		private Context context;
+		
+		public LoadTeams(Context context){
+			this.context = context;
+		}
+		
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			progress.setVisibility(View.VISIBLE);
+		}
+		
+		@Override
+		protected Void doInBackground(Void... params) {
+	    	// Get user's teams with Parse to create Java Teams
+	    	loadGames(context);
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(Void result) {
+			super.onPostExecute(result);
+			progress.setVisibility(View.GONE);
+		}
+	}
+	private static void loadGames(final Context context) {
 		// Parse query
 		ParseQuery<ParseObject> gamesQuery = ParseQuery.getQuery("Game");
 		gamesQuery.findInBackground(new FindCallback<ParseObject>() {
 			// Find all existing games with Parse
 		    public void done(List<ParseObject> gamesList, ParseException e) {
 		        if (e != null) {
-		        	Toast.makeText(getActivity(), "Error : " + e.toString(), Toast.LENGTH_LONG).show();
+		        	Toast.makeText(context, "Error : " + e.toString(), Toast.LENGTH_LONG).show();
 		        	return;
 		        }
-		        createGames(gamesList);
+		        createGames(context, gamesList);
 		    }
 		});
 	}
 	
-	private void createGames(List<ParseObject> gamesList) {
+	private static void createGames(final Context context, List<ParseObject> gamesList) {
 		for (final ParseObject game : gamesList) {
 			// Create java Game
 			try {
@@ -148,7 +179,7 @@ public class GamesFragment extends Fragment {
 	    						ParseObject creator = new ParseObject("User");
 	    						creator = team.getParseObject("createdBy");
 								try {
-									newGame.addTeam(new Team(team.getString("name"), creator.fetch().getString("username"), getActivity().getResources().getDrawable(R.drawable.default_team_picture_thumb)));
+									newGame.addTeam(new Team(team.fetch().getString("name"), creator.fetch().getString("username"), context.getResources().getDrawable(R.drawable.default_team_picture_thumb)));
 								} catch (NotFoundException e1) {
 									// TODO Auto-generated catch block
 									e1.printStackTrace();
@@ -162,10 +193,10 @@ public class GamesFragment extends Fragment {
 				});
 	    		games.add(newGame);
 			} catch (NotFoundException e1) {
-				Toast.makeText(getActivity(), "Error : " + e1.toString(), Toast.LENGTH_LONG).show();
+				Toast.makeText(context, "Error : " + e1.toString(), Toast.LENGTH_LONG).show();
 				e1.printStackTrace();
 			} catch (ParseException e1) {
-				Toast.makeText(getActivity(), "Error : " + e1.toString(), Toast.LENGTH_LONG).show();
+				Toast.makeText(context, "Error : " + e1.toString(), Toast.LENGTH_LONG).show();
 				e1.printStackTrace();
 			}
 		}

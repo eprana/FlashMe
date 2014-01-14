@@ -17,6 +17,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,13 +26,15 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 public class TeamsFragment extends Fragment {
 	
 	// Data elements
-	private ParseUser currentUser = null;
-	private ArrayList<Team> teams = null;
+	private static ParseUser currentUser = null;
+	private static ArrayList<Team> teams = null;
+	private static ProgressBar progress = null;
 	
 	// Layout elements
 	private static ELVTeamAdapter teamAdapter;
@@ -45,6 +48,9 @@ public class TeamsFragment extends Fragment {
 		View mainView = inflater.inflate(R.layout.teams, container, false);
 		Context context = mainView.getContext();
 		
+		// Initialize loader
+		//getLoaderManager().initLoader(0, null, getActivity());
+		
 		// Get current user
 		currentUser = ParseUser.getCurrentUser();
 		
@@ -56,8 +62,10 @@ public class TeamsFragment extends Fragment {
     	expandableList = (ExpandableListView) mainView.findViewById(R.id.teams_list);
     	expandableList.setAdapter(teamAdapter);
     	
-		// Get user's teams with Parse to create Java Teams
-		this.loadTeams();
+    	// Load fragment data
+        progress = (ProgressBar) mainView.findViewById(R.id.progressBar);
+    	LoadTeams lt = new LoadTeams(context);
+    	lt.execute();
     	
     	// Create team button
 		teamName = (EditText) mainView.findViewById(R.id.enter_team);
@@ -96,7 +104,36 @@ public class TeamsFragment extends Fragment {
     	return mainView;
 	}
 	
-	private void loadTeams(){
+	private static class LoadTeams extends AsyncTask<Void, Integer, Void> {
+
+		private Context context;
+		
+		public LoadTeams(Context context){
+			this.context = context;
+		}
+		
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+	        progress.setVisibility(View.VISIBLE);
+		}
+		
+		@Override
+		protected Void doInBackground(Void... params) {
+			// Get user's teams with Parse to create Java Teams
+			loadTeams(context);
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(Void result) {
+			super.onPostExecute(result);
+			progress.setVisibility(View.GONE);
+		}
+		
+	}
+	
+	private static void loadTeams(final Context context){
 		// Parse query
 		ParseQuery<ParseObject> teamsQuery = ParseQuery.getQuery("Team");
 		teamsQuery.whereEqualTo("players", currentUser);
@@ -105,35 +142,35 @@ public class TeamsFragment extends Fragment {
 			// Find current user's teams with Parse
 		    public void done(List<ParseObject> teamsList, ParseException e) {
 		    	if( e != null ) {
-		    		Toast.makeText(getActivity(), "Error : " + e.toString(), Toast.LENGTH_LONG).show();
+		    		Toast.makeText(context, "Error : " + e.toString(), Toast.LENGTH_LONG).show();
 		    		return;
 		    	}
-		    	createTeams(teamsList);
+		    	createTeams(context, teamsList);
 	        }
 		});
 	}
 
-	private void createTeams(List<ParseObject> parseTeams) {
+	private static void createTeams(final Context context, List<ParseObject> parseTeams) {
 		for (ParseObject team : parseTeams) {
 			// Create java Team
 			ParseObject creator = new ParseObject("User");
 			creator = team.getParseObject("createdBy");
-			final Team newTeam = new Team(team.getString("name"), creator.getString("username"), getActivity().getResources().getDrawable(R.drawable.default_team_picture_thumb));
+			final Team newTeam = new Team(team.getString("name"), creator.getString("username"), context.getResources().getDrawable(R.drawable.default_team_picture_thumb));
 			// Get players of the team with Parse
 			team.getRelation("players").getQuery().findInBackground(new FindCallback<ParseObject>() {
 				public void done(List<ParseObject> players, ParseException e) {
 					if(e != null) {
-						Toast.makeText(getActivity(), "Error : " + e.toString(), Toast.LENGTH_LONG).show();
+						Toast.makeText(context, "Error : " + e.toString(), Toast.LENGTH_LONG).show();
 						return;
 					}
-					addPlayersToTeam( newTeam, players );
+					addPlayersToTeam(context, newTeam, players );
 				}
 			});
 			teams.add(newTeam);
 		}
 	}
 	
-	private void addPlayersToTeam(Team team, List<ParseObject> players) {
+	private static void addPlayersToTeam(Context context, Team team, List<ParseObject> players) {
 		for (ParseObject player : players) {
 			// Create small avatar
 	    	ParseFile avatarFile = (ParseFile) player.get("avatar");
@@ -145,7 +182,7 @@ public class TeamsFragment extends Fragment {
 				// Add java Player
 				team.addPlayer(new Player(((ParseUser) player).getUsername(), avatarBitmap));
 			} catch (ParseException e1) {
-				Toast.makeText(getActivity(), "Error : "+e1.getMessage(), Toast.LENGTH_LONG).show();
+				Toast.makeText(context, "Error : "+e1.getMessage(), Toast.LENGTH_LONG).show();
 				e1.printStackTrace();
 			}
 		}
