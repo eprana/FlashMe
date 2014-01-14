@@ -40,7 +40,7 @@ public class TeamsFragment extends Fragment {
 	private static ELVTeamAdapter teamAdapter;
 	private static ExpandableListView expandableList = null;
 	private EditText teamName;
-	Button createTeam;
+	private Button createTeam;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -48,19 +48,15 @@ public class TeamsFragment extends Fragment {
 		View mainView = inflater.inflate(R.layout.teams, container, false);
 		Context context = mainView.getContext();
 		
-		// Initialize loader
-		//getLoaderManager().initLoader(0, null, getActivity());
-		
 		// Get current user
 		currentUser = ParseUser.getCurrentUser();
 		
 		// Initialize teams ArrayList
 		teams = new ArrayList<Team>();
 		
-		// Display teams in expandable list
+		// Initialize expandable list
     	teamAdapter = new ELVTeamAdapter(context, teams);        	
     	expandableList = (ExpandableListView) mainView.findViewById(R.id.teams_list);
-    	expandableList.setAdapter(teamAdapter);
     	
     	// Load fragment data
         progress = (ProgressBar) mainView.findViewById(R.id.progressBar);
@@ -129,6 +125,7 @@ public class TeamsFragment extends Fragment {
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
 			progress.setVisibility(View.GONE);
+			expandableList.setAdapter(teamAdapter);
 		}
 		
 	}
@@ -186,8 +183,9 @@ public class TeamsFragment extends Fragment {
 				e1.printStackTrace();
 			}
 		}
-		expandableList.setAdapter(teamAdapter);
 	}
+	
+	// Create team button
 	
 	private void createTeam(final String name) {
 		// Parse query
