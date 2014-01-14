@@ -147,7 +147,15 @@ public class GamesFragment extends Fragment {
 	    						// Add java Teams
 	    						ParseObject creator = new ParseObject("User");
 	    						creator = team.getParseObject("createdBy");
-								newGame.addTeam(new Team(team.getString("name"), creator.getString("username"), getActivity().getResources().getDrawable(R.drawable.default_team_picture_thumb)));
+								try {
+									newGame.addTeam(new Team(team.getString("name"), creator.fetch().getString("username"), getActivity().getResources().getDrawable(R.drawable.default_team_picture_thumb)));
+								} catch (NotFoundException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								} catch (ParseException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
 	    					}
 	    				}
 					}

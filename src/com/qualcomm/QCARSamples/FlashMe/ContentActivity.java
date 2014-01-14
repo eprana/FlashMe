@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import com.parse.ParseUser;
 
+import android.R.menu;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -26,7 +28,7 @@ import android.widget.ExpandableListView.OnChildClickListener;
 public class ContentActivity extends Activity{
 
 	static ParseUser currentUser = null;
-
+	private Menu menu;
 	private ExpandableListView sList;
 	private SettingsAdapter sAdapter;
 	
@@ -75,7 +77,9 @@ public class ContentActivity extends Activity{
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
+		System.out.println("CREATE MENUUUUUUUUUUUUUUUU");
 	    // Inflate the menu items for use in the action bar
+		this.menu = menu;
 	    MenuInflater inflater = getMenuInflater();
 	    inflater.inflate(R.layout.main_activity_actions, menu);
 	    return super.onCreateOptionsMenu(menu);
@@ -86,12 +90,21 @@ public class ContentActivity extends Activity{
 	    // Handle presses on the action bar items
 	    switch (item.getItemId()) {
 	        case R.id.action_profile:
+	        	item.setIcon(R.drawable.menu_profile_bt);
+	        	menu.getItem(1).setIcon(R.drawable.menu_teams_bt_in);
+	        	menu.getItem(2).setIcon(R.drawable.menu_games_bt_in);
 	        	showFragment(this.mProfileFragment);
 	            return true;
 	        case R.id.action_teams:
+	        	item.setIcon(R.drawable.menu_teams_bt);
+	        	menu.getItem(0).setIcon(R.drawable.menu_profile_bt_in);
+	        	menu.getItem(2).setIcon(R.drawable.menu_games_bt_in);
 	        	showFragment(this.mTeamsFragment);
 	            return true;
 	        case R.id.action_games:
+	        	item.setIcon(R.drawable.menu_games_bt);
+	        	menu.getItem(1).setIcon(R.drawable.menu_teams_bt_in);
+	        	menu.getItem(0).setIcon(R.drawable.menu_profile_bt_in);
 	        	showFragment(this.mGamesFragment);
 	            return true;
 	        default:
@@ -105,6 +118,11 @@ public class ContentActivity extends Activity{
         super.onCreate(savedInstanceState);
 	 	setContentView(R.layout.content);
 	 	
+	 	// Don't display logo and title in the menu
+	 	getActionBar().setDisplayShowHomeEnabled(false);
+        getActionBar().setDisplayShowTitleEnabled(false);
+        //getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        
     	// Set username on top of the page
 	 	currentUser = ParseUser.getCurrentUser();
     	TextView userName = (TextView) findViewById(R.id.name);
