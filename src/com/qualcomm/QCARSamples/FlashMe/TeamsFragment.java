@@ -49,24 +49,22 @@ public class TeamsFragment extends Fragment {
 		View mainView = inflater.inflate(R.layout.teams, container, false);
 		Context context = mainView.getContext();
 		
-		// Get current user
+		// Initialize members
 		currentUser = ParseUser.getCurrentUser();
-		
-		// Initialize teams ArrayList
 		teams = new ArrayList<Team>();
+		progress = (ProgressBar) mainView.findViewById(R.id.progressBar);
 		
-		// Initialize expandable list
     	teamAdapter = new ELVTeamAdapter(context, teams);        	
     	expandableList = (ExpandableListView) mainView.findViewById(R.id.teams_list);
+    	teamName = (EditText) mainView.findViewById(R.id.enter_team);
+    	createTeam = (Button) mainView.findViewById(R.id.create_team);
+    	playButton = (Button) mainView.findViewById(R.id.play);
     	
     	// Load fragment data
-        progress = (ProgressBar) mainView.findViewById(R.id.progressBar);
-    	LoadTeams lt = new LoadTeams(context);
+        LoadTeams lt = new LoadTeams(context);
     	lt.execute();
     	
-    	// Create team button
-		teamName = (EditText) mainView.findViewById(R.id.enter_team);
-		createTeam = (Button) mainView.findViewById(R.id.create_team);
+    	// Create team button listener
 		createTeam.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -82,8 +80,7 @@ public class TeamsFragment extends Fragment {
 			}
 		});
 		
-		// Create play button
-		playButton = (Button) mainView.findViewById(R.id.play);
+		// Create play button listener
 		playButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -91,8 +88,8 @@ public class TeamsFragment extends Fragment {
 				if(teamAdapter.getSelectedTeam() != null){
 					Toast.makeText(getActivity(), "Selected team : "+teamAdapter.getSelectedTeam().getName(), Toast.LENGTH_LONG).show();
 				} 
-				// If no team has been selected
 				else {
+					// If no team has been selected
 					Toast.makeText(getActivity(), "Ooops! You must select a team to play." , Toast.LENGTH_LONG).show();
 				}
 			}

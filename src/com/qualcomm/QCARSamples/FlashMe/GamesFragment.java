@@ -46,24 +46,22 @@ public class GamesFragment extends Fragment {
 		View mainView = inflater.inflate(R.layout.games, container, false);
 		final Context context = mainView.getContext();
     	
-		// Get current user
+		// Initialize members
 		currentUser = ParseUser.getCurrentUser();
-
-    	// Initialize games ArrayList
     	games = new ArrayList<Game>();
+    	progress = (ProgressBar) mainView.findViewById(R.id.progressBar);
     	
-    	// Initialize expandable list
     	gameAdapter = new ELVGameAdapter(context, games);        	
     	expandableList = (ExpandableListView) mainView.findViewById(R.id.games_list);
+    	gameName = (EditText) mainView.findViewById(R.id.enter_game);
+		createGame = (Button) mainView.findViewById(R.id.create_game);
+		playButton = (Button) mainView.findViewById(R.id.play);
     	
     	// Load fragment data
-        progress = (ProgressBar) mainView.findViewById(R.id.progressBar);
     	LoadGames lg = new LoadGames(context);
     	lg.execute();
 
-    	// Create game button
-		gameName = (EditText) mainView.findViewById(R.id.enter_game);
-		createGame = (Button) mainView.findViewById(R.id.create_game);
+    	// Create game button listener
 		createGame.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -79,8 +77,7 @@ public class GamesFragment extends Fragment {
 			}
 		});
 
-		// Play button
-		playButton = (Button) mainView.findViewById(R.id.play);
+		// Create play button listener
 		playButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -94,6 +91,7 @@ public class GamesFragment extends Fragment {
 				}
 			}
 		});
+
     	return mainView;	
 	}
 	

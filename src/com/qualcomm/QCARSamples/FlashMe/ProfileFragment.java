@@ -36,14 +36,13 @@ public class ProfileFragment extends Fragment {
 		View mainView = inflater.inflate(R.layout.profile, container, false);
 		Context context = mainView.getContext();
     	
-		// Get current user
+		// Initialize members
 		currentUser = ParseUser.getCurrentUser();
+		progress = (ProgressBar) mainView.findViewById(R.id.progressBar);
 		
-		// Get layout element for avatar
 		profilePictureView = (ImageView) mainView.findViewById(R.id.profile_picture);
 		
 		// Load fragment data
-		progress = (ProgressBar) mainView.findViewById(R.id.progressBar);
 		LoadProfile lp = new LoadProfile(context);
     	lp.execute();
     	
