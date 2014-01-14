@@ -36,6 +36,8 @@ public class TeamsFragment extends Fragment {
 	// Layout elements
 	private static ELVTeamAdapter teamAdapter;
 	private static ExpandableListView expandableList = null;
+	private EditText teamName;
+	Button createTeam;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -58,71 +60,19 @@ public class TeamsFragment extends Fragment {
 		this.loadTeams();
     	
     	// Create team button
-		final EditText teamName = (EditText) mainView.findViewById(R.id.enter_team);
-		Button createButton = (Button) mainView.findViewById(R.id.create_team);
-		createButton.setOnClickListener(new OnClickListener() {
+		teamName = (EditText) mainView.findViewById(R.id.enter_team);
+		createTeam = (Button) mainView.findViewById(R.id.create_team);
+		createTeam.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				final String s_teamName = teamName.getText().toString();
 				if(s_teamName.equals("")){
 					// Invalid team name
-					Toast.makeText(getActivity(), R.string.empty_team_name, Toast.LENGTH_SHORT).show();
+					Toast.makeText(getActivity(), R.string.empty_team_name, Toast.LENGTH_LONG).show();
 					return;
 				}
 				else {
-					
-					// Check if the name does not exist yet
-					ParseQuery<ParseObject> teamQuery = ParseQuery.getQuery("Team");
-					teamQuery.whereEqualTo("name", s_teamName);
-					teamQuery.getFirstInBackground(new GetCallback<ParseObject>() {
-						@Override
-						public void done(ParseObject arg0, ParseException e) {
-							if(e==null){
-								Toast.makeText(getActivity(), "Sorry, this name has already be taken.", Toast.LENGTH_SHORT).show();
-							}else if(e.getCode() == 101){
-								final ParseObject newTeam = new ParseObject("Team");
-								newTeam.put("name", s_teamName);
-								newTeam.put("createdBy", currentUser);
-								newTeam.saveInBackground(new SaveCallback() {
-									@Override
-									public void done(ParseException e) {
-										if (e == null) {
-											// Create Java Object
-											final Team javaTeam = new Team(newTeam.getString("name"), currentUser.getUsername(), getResources().getDrawable(R.drawable.default_team_picture_thumb));
-											teams.add(javaTeam);
-											// Add relation with current user
-											ParseRelation<ParseObject> teamsRelation = newTeam.getRelation("players");
-											teamsRelation.add(currentUser);
-											newTeam.saveInBackground(new SaveCallback() {
-												@Override
-												public void done(ParseException e) {
-													if (e == null) {
-														// Add javaPlayer
-														ParseFile avatarFile = currentUser.getParseFile("avatar");
-														
-														try {
-															byte[] avatarByteArray = avatarFile.getData();
-															Bitmap avatarBitmap = BitmapFactory.decodeByteArray(avatarByteArray, 0, avatarByteArray.length);
-															avatarBitmap = Bitmap.createScaledBitmap(avatarBitmap, 110, 110, false);
-															javaTeam.addPlayer(new Player(currentUser.getUsername(), avatarBitmap));
-														} catch (ParseException e1) {
-															e1.printStackTrace();
-														}
-														
-														// Update view
-														expandableList.setAdapter(teamAdapter);
-													}
-												}
-											});
-										}
-									}
-								});
-								teamName.setText("");
-							} else{
-								Toast.makeText(getActivity(), "An error occured.", Toast.LENGTH_SHORT).show();
-							}
-						}
-					});
+					createTeam(s_teamName);
 				}
 			}
 		});
@@ -134,11 +84,11 @@ public class TeamsFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				if(teamAdapter.getSelectedTeam() != null){
-					Toast.makeText(getActivity(), "selected team : "+ teamAdapter.getSelectedTeam().getName(), Toast.LENGTH_SHORT).show();
+					Toast.makeText(getActivity(), "Selected team : "+teamAdapter.getSelectedTeam().getName(), Toast.LENGTH_LONG).show();
 				} 
 				// If no team has been selected
 				else {
-					Toast.makeText(getActivity(), "Ooops! You must select a team to play." , Toast.LENGTH_SHORT).show();
+					Toast.makeText(getActivity(), "Ooops! You must select a team to play." , Toast.LENGTH_LONG).show();
 				}
 			}
 		});
@@ -192,12 +142,80 @@ public class TeamsFragment extends Fragment {
 				Bitmap avatarBitmap = BitmapFactory.decodeByteArray(avatarByteArray, 0, avatarByteArray.length);
 				avatarBitmap = Bitmap.createScaledBitmap(avatarBitmap, 110, 110, false);
 	
-				// Add java Players
+				// Add java Player
 				team.addPlayer(new Player(((ParseUser) player).getUsername(), avatarBitmap));
 			} catch (ParseException e1) {
+				Toast.makeText(getActivity(), "Error : "+e1.getMessage(), Toast.LENGTH_LONG).show();
 				e1.printStackTrace();
 			}
 		}
 		expandableList.setAdapter(teamAdapter);
+	}
+	
+	private void createTeam(final String name) {
+		// Parse query
+		ParseQuery<ParseObject> teamQuery = ParseQuery.getQuery("Team");
+		teamQuery.whereEqualTo("name", name);
+		teamQuery.getFirstInBackground(new GetCallback<ParseObject>() {
+			@Override
+			// Check if a team already exists with the same name
+			public void done(ParseObject arg0, ParseException e) {
+				if(e==null){
+					Toast.makeText(getActivity(), "Sorry, this name has already be taken.", Toast.LENGTH_SHORT).show();
+					return;
+				}
+				if(e.getCode() == 101){
+					// Create Parse Team
+					final ParseObject newTeam = new ParseObject("Team");
+					newTeam.put("name", name);
+					newTeam.put("createdBy", currentUser);
+					newTeam.saveInBackground(new SaveCallback() {
+						@Override
+						public void done(ParseException e) {
+							if (e == null) {
+								createJavaTeam(newTeam);
+							}
+						}
+					});
+					teamName.setText("");
+				}
+				else {
+					Toast.makeText(getActivity(), "Error : "+e.getMessage(), Toast.LENGTH_LONG).show();
+				}
+			}
+		});
+	}
+	
+	private void createJavaTeam(ParseObject parseTeam) {
+		// Create Java Object
+		final Team javaTeam = new Team(parseTeam.getString("name"), currentUser.getUsername(), getResources().getDrawable(R.drawable.default_team_picture_thumb));
+		teams.add(javaTeam);
+		// Add relation with current user
+		ParseRelation<ParseObject> teamsRelation = parseTeam.getRelation("players");
+		teamsRelation.add(currentUser);
+		parseTeam.saveInBackground(new SaveCallback() {
+			@Override
+			public void done(ParseException e) {
+				if (e != null) {
+					Toast.makeText(getActivity(), "Error : "+e.getMessage(), Toast.LENGTH_LONG).show();
+					return;
+				}
+				// Get player's avatar
+				ParseFile avatarFile = currentUser.getParseFile("avatar");
+				try {
+					byte[] avatarByteArray = avatarFile.getData();
+					Bitmap avatarBitmap = BitmapFactory.decodeByteArray(avatarByteArray, 0, avatarByteArray.length);
+					avatarBitmap = Bitmap.createScaledBitmap(avatarBitmap, 110, 110, false);
+					// Add player to the team
+					javaTeam.addPlayer(new Player(currentUser.getUsername(), avatarBitmap));
+				} catch (ParseException e1) {
+					Toast.makeText(getActivity(), "Error : "+e1.getMessage(), Toast.LENGTH_LONG).show();
+					e1.printStackTrace();
+				}
+				
+				// Update view
+				expandableList.setAdapter(teamAdapter);
+			}
+		});
 	}
 }
