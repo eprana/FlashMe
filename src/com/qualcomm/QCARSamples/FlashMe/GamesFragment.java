@@ -57,8 +57,8 @@ public class GamesFragment extends Fragment {
     	
     	// Load fragment data
         progress = (ProgressBar) mainView.findViewById(R.id.progressBar);
-    	LoadTeams lt = new LoadTeams(context);
-    	lt.execute();
+    	LoadGames lg = new LoadGames(context);
+    	lg.execute();
 
     	// Create game button
 		gameName = (EditText) mainView.findViewById(R.id.enter_game);
@@ -96,11 +96,11 @@ public class GamesFragment extends Fragment {
     	return mainView;	
 	}
 	
-	private static class LoadTeams extends AsyncTask<Void, Integer, Void> {
+	private static class LoadGames extends AsyncTask<Void, Integer, Void> {
 
 		private Context context;
 		
-		public LoadTeams(Context context){
+		public LoadGames(Context context){
 			this.context = context;
 		}
 		
