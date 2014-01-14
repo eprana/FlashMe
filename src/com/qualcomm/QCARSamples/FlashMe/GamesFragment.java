@@ -38,6 +38,7 @@ public class GamesFragment extends Fragment {
 	private static ExpandableListView expandableList = null;
 	private EditText gameName;
 	private Button createGame;
+	private Button playButton;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -79,7 +80,7 @@ public class GamesFragment extends Fragment {
 		});
 
 		// Play button
-		Button playButton = (Button) mainView.findViewById(R.id.play);
+		playButton = (Button) mainView.findViewById(R.id.play);
 		playButton.setOnClickListener(new OnClickListener() {
 			
 			@Override

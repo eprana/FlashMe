@@ -41,6 +41,7 @@ public class TeamsFragment extends Fragment {
 	private static ExpandableListView expandableList = null;
 	private EditText teamName;
 	private Button createTeam;
+	private Button playButton;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -81,8 +82,8 @@ public class TeamsFragment extends Fragment {
 			}
 		});
 		
-		// Play button
-		Button playButton = (Button) mainView.findViewById(R.id.play);
+		// Create play button
+		playButton = (Button) mainView.findViewById(R.id.play);
 		playButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
