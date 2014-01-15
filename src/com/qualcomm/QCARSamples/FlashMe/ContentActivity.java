@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.content.Context;
 import android.content.Intent;
+import android.content.Loader;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.widget.ExpandableListView.OnChildClickListener;
@@ -111,12 +112,13 @@ public class ContentActivity extends Activity{
 	            return super.onOptionsItemSelected(item);
 	    }
 	}
-			
+
 	@Override
     public void onCreate(Bundle savedInstanceState) {
 		
         super.onCreate(savedInstanceState);
 	 	setContentView(R.layout.content);
+
 	 	
 	 	// Don't display logo and title in the menu
 	 	getActionBar().setDisplayShowHomeEnabled(false);

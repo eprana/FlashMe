@@ -14,6 +14,7 @@ import com.parse.SaveCallback;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.res.Resources.NotFoundException;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 public class GamesFragment extends Fragment {
@@ -29,10 +31,14 @@ public class GamesFragment extends Fragment {
 	// Data elements
 	private ParseUser currentUser = null;
 	private static ArrayList<Game> games = null;
+	private static ProgressBar progress = null;
 	
 	// Layout elements
 	private static ELVGameAdapter gameAdapter;
 	private static ExpandableListView expandableList = null;
+	private EditText gameName;
+	private Button createGame;
+	private Button playButton;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -40,67 +46,38 @@ public class GamesFragment extends Fragment {
 		View mainView = inflater.inflate(R.layout.games, container, false);
 		final Context context = mainView.getContext();
     	
-		// Get current user
+		// Initialize members
 		currentUser = ParseUser.getCurrentUser();
-
-    	// Initialize games ArrayList
     	games = new ArrayList<Game>();
+    	progress = (ProgressBar) mainView.findViewById(R.id.progressBar);
     	
-    	// Get user's teams with Parse to create Java Teams
-    	this.loadGames();
-    	
-    	// Display teams in expandable list
     	gameAdapter = new ELVGameAdapter(context, games);        	
     	expandableList = (ExpandableListView) mainView.findViewById(R.id.games_list);
-    	expandableList.setAdapter(gameAdapter);
+    	gameName = (EditText) mainView.findViewById(R.id.enter_game);
+		createGame = (Button) mainView.findViewById(R.id.create_game);
+		playButton = (Button) mainView.findViewById(R.id.play);
+    	
+    	// Load fragment data
+    	LoadGames lg = new LoadGames(context);
+    	lg.execute();
 
-    	// Create game button
-		final EditText gameName = (EditText) mainView.findViewById(R.id.enter_game);
-		Button createButton = (Button) mainView.findViewById(R.id.create_game);
-		createButton.setOnClickListener(new OnClickListener() {
+    	// Create game button listener
+		createGame.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				final String s_gameName = gameName.getText().toString();
 				if(s_gameName.equals("")){
-					// Invalid game name
-					Toast.makeText(context, R.string.empty_team_name, Toast.LENGTH_SHORT).show();
+					// Empty edit text
+					Toast.makeText(context, R.string.empty_team_name, Toast.LENGTH_LONG).show();
 					return;
 				}
 				else {
-					// Check if the name does not exist yet
-					ParseQuery<ParseObject> gameQuery = ParseQuery.getQuery("Game");
-					gameQuery.whereEqualTo("name", s_gameName);
-					gameQuery.getFirstInBackground(new GetCallback<ParseObject>() {
-						@Override
-						public void done(ParseObject arg0, ParseException e) {
-							if(e==null){
-								Toast.makeText(context, "Sorry, this name has already be taken.", Toast.LENGTH_SHORT).show();
-							}else if(e.getCode() == 101){
-								// Create game
-								final ParseObject newGame = new ParseObject("Game");
-								newGame.put("name", s_gameName);
-								newGame.put("createdBy", currentUser);
-								newGame.saveInBackground(new SaveCallback() {
-									@Override
-									public void done(ParseException e) {
-										if (e == null) {
-											games.add(new Game(newGame.getString("name"), currentUser.getUsername()));
-											expandableList.setAdapter(gameAdapter);
-										}
-									}
-								});
-								gameName.setText("");
-							} else{
-								Toast.makeText(context, "An error occured.", Toast.LENGTH_SHORT).show();
-							}
-						}
-					});
+					createGame(s_gameName);
 				}
 			}
 		});
 
-		// Play button
-		Button playButton = (Button) mainView.findViewById(R.id.play);
+		// Create play button listener
 		playButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -114,26 +91,55 @@ public class GamesFragment extends Fragment {
 				}
 			}
 		});
-    	return mainView;
-    	
+
+    	return mainView;	
 	}
 	
-	private void loadGames() {
+	private static class LoadGames extends AsyncTask<Void, Integer, Void> {
+
+		private Context context;
+		
+		public LoadGames(Context context){
+			this.context = context;
+		}
+		
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			progress.setVisibility(View.VISIBLE);
+		}
+		
+		@Override
+		protected Void doInBackground(Void... params) {
+	    	// Get user's teams with Parse to create Java Teams
+	    	loadGames(context);
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(Void result) {
+			super.onPostExecute(result);
+			progress.setVisibility(View.GONE);
+			//expandableList.setAdapter(gameAdapter);
+		}
+	}
+	private static void loadGames(final Context context) {
 		// Parse query
 		ParseQuery<ParseObject> gamesQuery = ParseQuery.getQuery("Game");
 		gamesQuery.findInBackground(new FindCallback<ParseObject>() {
 			// Find all existing games with Parse
 		    public void done(List<ParseObject> gamesList, ParseException e) {
 		        if (e != null) {
-		        	Toast.makeText(getActivity(), "Error : " + e.toString(), Toast.LENGTH_LONG).show();
+		        	Toast.makeText(context, "Error : " + e.toString(), Toast.LENGTH_LONG).show();
 		        	return;
 		        }
-		        createGames(gamesList);
+		        createGames(context, gamesList);
+		        expandableList.setAdapter(gameAdapter);
 		    }
 		});
 	}
 	
-	private void createGames(List<ParseObject> gamesList) {
+	private static void createGames(final Context context, List<ParseObject> gamesList) {
 		for (final ParseObject game : gamesList) {
 			// Create java Game
 			try {
@@ -142,33 +148,74 @@ public class GamesFragment extends Fragment {
 				// Get teams in game with Parse
 	    		game.getRelation("teams").getQuery().findInBackground(new FindCallback<ParseObject>() {
 	    			public void done(List<ParseObject> teamsList, ParseException e) {
-	    				if (e == null) {
-	    					for (ParseObject team : teamsList) {
-	    						// Add java Teams
-	    						ParseObject creator = new ParseObject("User");
-	    						creator = team.getParseObject("createdBy");
-								try {
-									newGame.addTeam(new Team(team.getString("name"), creator.fetch().getString("username"), getActivity().getResources().getDrawable(R.drawable.default_team_picture_thumb)));
-								} catch (NotFoundException e1) {
-									// TODO Auto-generated catch block
-									e1.printStackTrace();
-								} catch (ParseException e1) {
-									// TODO Auto-generated catch block
-									e1.printStackTrace();
-								}
-	    					}
+	    				if (e != null) {
+	    					Toast.makeText(context, "Error : " + e.toString(), Toast.LENGTH_LONG).show();
+	    					return;
 	    				}
+	    				addTeamsToGame(context, newGame, teamsList);
 					}
 				});
 	    		games.add(newGame);
 			} catch (NotFoundException e1) {
-				Toast.makeText(getActivity(), "Error : " + e1.toString(), Toast.LENGTH_LONG).show();
+				Toast.makeText(context, "Error : " + e1.toString(), Toast.LENGTH_LONG).show();
 				e1.printStackTrace();
 			} catch (ParseException e1) {
-				Toast.makeText(getActivity(), "Error : " + e1.toString(), Toast.LENGTH_LONG).show();
+				Toast.makeText(context, "Error : " + e1.toString(), Toast.LENGTH_LONG).show();
 				e1.printStackTrace();
 			}
 		}
-		expandableList.setAdapter(gameAdapter);
+	}
+	
+	private static void addTeamsToGame(Context context, Game game, List<ParseObject> teamsList) {
+		for (ParseObject team : teamsList) {
+			ParseObject creator = new ParseObject("User");
+			creator = team.getParseObject("createdBy");
+			try {
+				// Add new java Team
+				game.addTeam(new Team(team.fetch().getString("name"), creator.fetch().getString("username"), context.getResources().getDrawable(R.drawable.default_team_picture_thumb)));
+			} catch (NotFoundException e1) {
+				Toast.makeText(context, "Error : " + e1.toString(), Toast.LENGTH_LONG).show();
+				e1.printStackTrace();
+			} catch (ParseException e1) {
+				Toast.makeText(context, "Error : " + e1.toString(), Toast.LENGTH_LONG).show();
+				e1.printStackTrace();
+			}
+		}
+	}
+	
+	// Create game button
+	private void createGame(final String name) {
+		ParseQuery<ParseObject> gameQuery = ParseQuery.getQuery("Game");
+		gameQuery.whereEqualTo("name", name);
+		gameQuery.getFirstInBackground(new GetCallback<ParseObject>() {
+			@Override
+			// Check if a game already exists with the same name
+			public void done(ParseObject arg0, ParseException e) {
+				if(e==null){
+					Toast.makeText(getActivity(), "Sorry, this name has already be taken.", Toast.LENGTH_LONG).show();
+				}else if(e.getCode() == 101){
+					// Create Parse game
+					final ParseObject newGame = new ParseObject("Game");
+					newGame.put("name", name);
+					newGame.put("createdBy", currentUser);
+					newGame.saveInBackground(new SaveCallback() {
+						@Override
+						public void done(ParseException e) {
+							if (e != null) {
+								Toast.makeText(getActivity(), "Error : "+e.getMessage(), Toast.LENGTH_LONG).show();
+								return;
+							}
+							// Create Java game
+							games.add(new Game(newGame.getString("name"), currentUser.getUsername()));
+							expandableList.setAdapter(gameAdapter);
+						}
+					});
+					// Clear edit text value
+					gameName.setText("");
+				} else{
+					Toast.makeText(getActivity(), "An error occured.", Toast.LENGTH_SHORT).show();
+				}
+			}
+		});
 	}
 }

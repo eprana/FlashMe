@@ -1,6 +1,7 @@
 package com.qualcomm.QCARSamples.FlashMe;
 
 import com.parse.GetCallback;
+import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseQuery;
@@ -10,20 +11,23 @@ import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 public class ProfileFragment extends Fragment {
 
 	// Data elements
-	private ParseUser currentUser = null;
+	private static ParseUser currentUser = null;
+	private static ProgressBar progress = null;
 	
 	// Layout elements
-	private ImageView profilePictureView = null;
+	private static ImageView profilePictureView = null;
 	
 	
 	@Override
@@ -32,30 +36,47 @@ public class ProfileFragment extends Fragment {
 		View mainView = inflater.inflate(R.layout.profile, container, false);
 		Context context = mainView.getContext();
     	
-		// Get current user
+		// Initialize members
 		currentUser = ParseUser.getCurrentUser();
+		progress = (ProgressBar) mainView.findViewById(R.id.progressBar);
 		
-		// Get layout element for avatar
 		profilePictureView = (ImageView) mainView.findViewById(R.id.profile_picture);
 		
-		// Get user's profile picture with Parse
-		this.loadProfilePicture();
-		
-		//LoadProfile lp = new LoadProfile(context);
-    	//lp.execute();
+		// Load fragment data
+		LoadProfile lp = new LoadProfile(context);
+    	lp.execute();
     	
 		return mainView;
 	}
 	
-	@Override
-	public void onResume(){
-		super.onResume();
-		final Context context = getActivity().getApplicationContext();
-		//LoadProfile lp = new LoadProfile(context);
-    	//lp.execute();
+	private static class LoadProfile extends AsyncTask<Void, Integer, Void> {
+
+		private Context context;
+		
+		public LoadProfile(Context context){
+			this.context = context;
+		}
+		
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			progress.setVisibility(View.VISIBLE);
+		}
+		
+		@Override
+		protected Void doInBackground(Void... arg0) {
+			loadProfilePicture(context);
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(Void result) {
+			super.onPostExecute(result);
+			progress.setVisibility(View.GONE);
+		}
 	}
 	
-	private void loadProfilePicture() {
+	public static void loadProfilePicture(final Context context) {
 		// Parse query
 		ParseQuery<ParseUser> query = ParseUser.getQuery();
 		query.whereEqualTo("username", currentUser.getUsername());
@@ -63,18 +84,21 @@ public class ProfileFragment extends Fragment {
 			// Find current user
 			public void done(ParseUser user, ParseException e) {
 			    if (e != null) {
-			    	Toast.makeText(getActivity(), "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
+			    	Toast.makeText(context, "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
 			    	return;
 			    }
 		    	ParseFile avatarFile = (ParseFile) user.get("avatar");
-		    	try {
-					byte[] avatarByteArray = avatarFile.getData();
-					Bitmap avatarBitmap = BitmapFactory.decodeByteArray(avatarByteArray, 0, avatarByteArray.length);
-					// Setting the imageView
-					profilePictureView.setImageBitmap(avatarBitmap);
-				} catch (ParseException e1) {
-					e1.printStackTrace();
-				}
+				avatarFile.getDataInBackground(new GetDataCallback() {
+					public void done(byte[] data, ParseException e) {
+						if (e != null){
+							Toast.makeText(context, "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
+							return;
+						}
+						Bitmap avatarBitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+						// Setting the imageView
+						profilePictureView.setImageBitmap(avatarBitmap);
+					}
+				});
 			}
 		});
 	}
