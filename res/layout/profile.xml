@@ -2,57 +2,228 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-        
- 	<ImageView 
-        android:id="@+id/profile_picture"
-		android:layout_height="wrap_content" 
-		android:layout_width="wrap_content" 
-		android:layout_margin="@dimen/large_mg"
-		android:contentDescription="@string/profile_picture"
-		android:layout_centerHorizontal="true" />
- 	
+    
+    <TextView
+	    android:id="@+id/top_line_light"
+	    android:text="@string/my_profile"
+	    style="@style/topLineLight" />
+
 	<ProgressBar
         android:id="@+id/progressBar"
+        android:layout_below="@id/top_line_light"
         style="@android:style/Widget.ProgressBar.Large"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
- 	
- 	<LinearLayout
-        android:orientation="horizontal"
-        android:id="@+id/scores"
-        android:layout_below="@id/profile_picture"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/medium_mg" >
- 		
-	    <ImageView
-			android:id="@+id/score_ic"
-			android:layout_weight="1"
-			android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"
-			android:contentDescription="@string/score_ic"
-			android:src="@drawable/best_score_icon"
-			style="@style/translucide" />
+
+	 <TableLayout 
+        android:id="@+id/profile_content"
+        android:layout_below="@id/top_line_light"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:orientation="vertical">
+    	
+	    <TableRow
+	        android:id="@+id/row1"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:gravity="center_horizontal">
+			    
+		 	<ImageView 
+		        android:id="@+id/profile_picture"
+				android:layout_height="@dimen/profile_pic_wd" 
+				android:layout_width="wrap_content" 
+				android:layout_margin="@dimen/medium_mg"
+				android:layout_weight="1"
+				android:contentDescription="@string/profile_picture" />
+		 	
+		 	<ImageView 
+		        android:id="@+id/profile_marker"
+				android:layout_height="@dimen/profile_pic_wd"
+				android:layout_width="wrap_content" 
+				android:layout_margin="@dimen/medium_mg"
+				android:layout_weight="1"
+				android:contentDescription="@string/profile_marker" />
+		 	
+		 </TableRow>
+		 
+	   	 <TableRow
+	        android:id="@+id/row2"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:gravity="center_horizontal"
+            android:background="@color/dark_blue">
+		 	
+		    <TextView
+			    android:id="@+id/score_line"
+			    android:text="@string/total_score"
+				android:layout_span="2"
+			    style="@style/topLine" />
+	    </TableRow>
 	    
-	    <ImageView
-			android:id="@+id/vics_ic"
-			android:layout_weight="1" 
-			android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"
-			android:contentDescription="@string/vics_ic"
-			android:src="@drawable/victories_icon"
-			style="@style/translucide" />
+	   	<TableRow
+	        android:id="@+id/row3"
+            android:layout_height="wrap_content"
+            android:layout_weight="5"
+            android:layout_width="match_parent"
+            android:gravity="center_horizontal">
 	    
-	    <ImageView
-			android:id="@+id/deaths_ic"
-			android:layout_weight="1"
-			android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"
-			android:contentDescription="@string/deaths_ic"
-			android:src="@drawable/defeats_icon"
-			style="@style/translucide" />
+	        <ImageView 
+		        android:id="@+id/score_icon"
+				android:layout_height="match_parent"
+				android:layout_margin="@dimen/medium_mg" 
+				android:layout_width="0dip"
+				android:layout_weight="1" 
+				android:src="@drawable/best_score_icon"
+				android:gravity="center"
+				android:contentDescription="@string/score_ic" />
+	        
+	        <ImageView 
+		        android:id="@+id/victories_icon"
+				android:layout_height="match_parent"
+				android:layout_margin="@dimen/medium_mg" 
+				android:layout_width="0dip" 
+				android:layout_weight="1"
+				android:src="@drawable/victories_icon"
+				android:gravity="center"
+				android:contentDescription="@string/vics_ic" />
+
+	       </TableRow>
+	   	 
+	   	<TableRow
+	        android:id="@+id/row4"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_horizontal">
+	        
+	   	   <TextView 
+		        android:id="@+id/score_txt"
+				android:layout_height="match_parent"
+				android:layout_width="0dip"
+				android:layout_weight="1" 
+				android:text="@string/score_txt"
+				android:paddingBottom="@dimen/medium_mg"
+				android:gravity="center"
+				android:textSize="@dimen/verylarge_tx"
+				style="@style/middle_blue" />
+	   	 	        
+	        <TextView 
+		        android:id="@+id/victories_txt"
+				android:layout_height="match_parent"
+				android:layout_width="0dip" 
+				android:paddingBottom="@dimen/medium_mg" 
+				android:layout_weight="1"
+				android:text="@string/vics_txt"
+				android:gravity="center"
+				android:textSize="@dimen/verylarge_tx"
+				style="@style/middle_blue" />
+	        
+	    </TableRow>
+	    
+	   	<TableRow
+	        android:id="@+id/row5"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_weight="5"
+            android:gravity="center_horizontal">
+	    
+	        <ImageView 
+		        android:id="@+id/rank_icon"
+				android:layout_height="match_parent"
+				android:layout_margin="@dimen/medium_mg"
+				android:layout_width="0dip"
+				android:layout_weight="1"
+				android:src="@drawable/rank_icon"
+				android:gravity="center"
+				android:contentDescription="@string/rank_ic" />
+	        
+	        <ImageView 
+		        android:id="@+id/defeats_icon"
+				android:layout_height="match_parent"
+				android:layout_margin="@dimen/medium_mg"  
+				android:layout_width="0dip" 
+				android:layout_weight="1"
+				android:src="@drawable/defeats_icon"
+				android:gravity="center"
+				android:contentDescription="@string/vics_ic" />
+
+	       </TableRow>
+	   	 
+	   	<TableRow
+	        android:id="@+id/row6"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_horizontal">
+	        
+	   	   <TextView 
+		        android:id="@+id/rank_txt"
+				android:layout_height="match_parent"
+				android:layout_width="0dip"
+				android:layout_weight="1" 
+				android:text="@string/rank_txt"
+				android:gravity="center"
+				android:textSize="@dimen/verylarge_tx"
+				style="@style/middle_blue" />
+	   	 	        
+	        <TextView 
+		        android:id="@+id/defeats_txt"
+				android:layout_height="match_parent"
+				android:layout_width="0dip" 
+				android:layout_weight="1"
+				android:text="@string/deaths_txt"
+				android:gravity="center"
+				android:textSize="@dimen/verylarge_tx"
+				style="@style/middle_blue" />
+	        
+	    </TableRow>
+	   	 
+	    
+	   	<!-- <TableRow
+	        android:id="@+id/row5"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_horizontal">
+	        
+	   	    <TextView 
+		        android:id="@+id/rank_icon"
+				android:layout_height="match_parent" 
+				android:paddingTop="@dimen/medium_mg" 
+				android:layout_width="0dip" 
+				android:background="@drawable/rank_icon"
+				android:layout_weight="1"
+				android:text="@string/score_txt"
+				android:gravity="center"
+				android:textSize="@dimen/verylarge_tx"
+				style="@style/middle_blue" />
+	  	    
+	  	    <TextView 
+		        android:id="@+id/defeats_icon"
+				android:layout_height="match_parent" 
+				android:paddingTop="@dimen/medium_mg" 
+				android:layout_width="0dip" 
+				android:background="@drawable/defeats_icon"
+				android:layout_weight="1"
+				android:text="@string/score_txt"
+				android:gravity="center"
+				android:textSize="@dimen/verylarge_tx"
+				style="@style/middle_blue" />
+	    </TableRow> -->
+	
+	</TableLayout>
+
+    
+
+	 	
+<!-- 	 	<LinearLayout
+	        android:orientation="horizontal"
+	        android:id="@+id/scores"
+	        android:layout_below="@id/score_line"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="@dimen/medium_mg" >
 	    
 	 </LinearLayout>
 	 
@@ -92,83 +263,7 @@
  	        android:layout_height="wrap_content"
 	        android:text="@string/deaths_txt"
 	        android:textSize="@dimen/verylarge_tx"
-	        style="@style/middle_blue" />
-	</LinearLayout>
-    
- 	<LinearLayout
-        android:orientation="horizontal"
-        android:id="@+id/scores2"
-        android:layout_below="@id/scores"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/verylarge_mg" >
- 		
-	    <ImageView
-			android:id="@+id/score_ic2"
-			android:layout_weight="1"
-			android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"
-			android:contentDescription="@string/score_ic"
-			android:src="@drawable/best_score_icon"
-			style="@style/translucide" />
-	    
-	    <ImageView
-			android:id="@+id/vics_ic2"
-			android:layout_weight="1" 
-			android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"
-			android:contentDescription="@string/vics_ic"
-			android:src="@drawable/victories_icon"
-			style="@style/translucide" />
-	    
-	    <ImageView
-			android:id="@+id/deaths_ic2"
-			android:layout_weight="1"
-			android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"
-			android:contentDescription="@string/deaths_ic"
-			android:src="@drawable/defeats_icon"
-			style="@style/translucide" />
-	    
-	 </LinearLayout>
-	 
-	 <LinearLayout
-        android:orientation="horizontal"
-        android:id="@+id/scores_txt2"
-        android:layout_below="@id/scores2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/verysmall_mg" >
-	    
- 	    <TextView
- 	        android:id="@+id/score_txt2"
- 	        android:gravity="center"
- 	        android:layout_width="wrap_content"
- 	        android:layout_height="wrap_content"
- 	        android:layout_weight="1"
- 	        android:text="@string/score_txt"
-	        android:textSize="@dimen/verylarge_tx"
-	        style="@style/middle_blue" />
-
- 	    <TextView
- 	        android:id="@+id/vics_txt2"
- 	        android:gravity="center"
- 	        android:layout_width="wrap_content"
- 	        android:layout_height="wrap_content"
-			android:layout_weight="1"
-	        android:text="@string/vics_txt"
-	        android:textSize="@dimen/verylarge_tx"
-	        style="@style/middle_blue" />
- 	    
- 	   <TextView
- 	        android:id="@+id/deaths_txt2"
- 	        android:gravity="center"
-			android:layout_weight="1"
- 	        android:layout_width="wrap_content"
- 	        android:layout_height="wrap_content"
-	        android:text="@string/deaths_txt"
-	        android:textSize="@dimen/verylarge_tx"
-	        style="@style/middle_blue" />
-	</LinearLayout>
+	        style="@style/middle_blue" /> 
+	</LinearLayout> -->
 		 
 </RelativeLayout>

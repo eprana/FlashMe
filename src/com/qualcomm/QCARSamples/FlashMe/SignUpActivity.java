@@ -52,10 +52,12 @@ public class SignUpActivity extends Activity {
     private static final int CAMERA_REQUEST = 1888; 
     private ImageView avatarView;
     private ParseFile avatarParseFile;
+    private ParseFile markerParseFile;
     private final int PICK_IMAGE = 1000;
     private final int CREATE_PROFILE = 1404;
     private boolean hasChanged = false;
     private Bitmap bitmapToSent;
+    private Bitmap bitmapMarkerToSent;
     private boolean hasBeenCreated = false;
 	
     @Override
@@ -80,6 +82,7 @@ public class SignUpActivity extends Activity {
 //        Bitmap bitmap = ((BitmapDrawable)avatarDrawable).getBitmap();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmapToSent.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        bitmapToSent = Bitmap.createScaledBitmap(bitmapToSent, 300, 300, false);
         byte[] bitmapdata = stream.toByteArray();
         this.avatarParseFile = new ParseFile("avatar.png", bitmapdata);
         avatarParseFile.saveInBackground(new SaveCallback() {
@@ -89,6 +92,21 @@ public class SignUpActivity extends Activity {
 				}
 			}
 		}); 
+        
+        // sending an empty marker to the database
+        bitmapMarkerToSent = ((BitmapDrawable)getResources().getDrawable(R.drawable.default_team_picture_thumb)).getBitmap();
+        ByteArrayOutputStream markerStream = new ByteArrayOutputStream();
+        bitmapMarkerToSent = Bitmap.createScaledBitmap(bitmapMarkerToSent, 300, 300, false);
+        bitmapMarkerToSent.compress(Bitmap.CompressFormat.PNG, 100, markerStream);
+        byte[] bitmapMarkerData = markerStream.toByteArray();
+        this.markerParseFile = new ParseFile("marker.png", bitmapMarkerData);
+        markerParseFile.saveInBackground(new SaveCallback() {
+			public void done(ParseException e) {
+				if (e != null) {
+					Toast.makeText(context, "Error saving: " + e.getMessage(), Toast.LENGTH_LONG).show();
+				}
+			}
+		});        
         
         // Choose picture button
         Button folderButton = (Button) this.findViewById(R.id.choose_pic);
@@ -146,6 +164,7 @@ public class SignUpActivity extends Activity {
              	newUser.setPassword(s_password);
              	newUser.setEmail(s_email);
              	newUser.put("avatar", avatarParseFile);
+             	newUser.put("marker", markerParseFile);
              	newUser.signUpInBackground(new SignUpCallback() {
              		public void done(ParseException e) {
              			if (e == null) {

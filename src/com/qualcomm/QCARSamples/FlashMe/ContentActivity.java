@@ -186,10 +186,7 @@ public class ContentActivity extends Activity{
 		
 		sList.setAdapter(sAdapter);
 		
-		final TextView top_line = (TextView) findViewById(R.id.top_line_light);
-		top_line.setText(R.string.my_profile);
-		
- 	}
+	}
 	
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {

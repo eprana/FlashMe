@@ -14,9 +14,11 @@
     
     <!-- width/height -->
     <dimen name="verysmall_wd">30dip</dimen>
+    <dimen name="topLineLight_wd">40dip</dimen>
     <dimen name="small_wd">50dip</dimen>
     <dimen name="medium_wd">100dip</dimen>
     <dimen name="settings_wd">120dip</dimen>
+    <dimen name="profile_pic_wd">140dip</dimen>
     <dimen name="button_wd">180dip</dimen>
     <dimen name="large_wd">250dip</dimen>
     
