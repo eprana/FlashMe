@@ -10,8 +10,7 @@
     <ImageView
 		android:id="@+id/settings_bt"
 		android:contentDescription="@string/empty_string"
-		android:layout_marginTop="@dimen/small_mg"
-		android:layout_height="match_parent"
+		android:layout_height="@dimen/topLineLight_wd"
 		android:layout_width="wrap_content"
 		android:src="@drawable/settings_bt"
 		style="@style/translucide" />
