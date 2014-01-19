@@ -67,8 +67,6 @@ public class SignUpActivity extends Activity {
         }
         
         // filling the database with avatarParseFile
-//        Drawable avatarDrawable = avatarView.getDrawable();
-//        Bitmap bitmap = ((BitmapDrawable)avatarDrawable).getBitmap();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmapToSent.compress(Bitmap.CompressFormat.PNG, 100, stream);
         bitmapToSent = Bitmap.createScaledBitmap(bitmapToSent, 300, 300, false);

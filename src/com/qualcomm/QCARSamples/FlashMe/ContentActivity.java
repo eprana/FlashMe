@@ -7,6 +7,7 @@ import com.parse.ParseUser;
 import android.R.menu;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.view.LayoutInflater;
@@ -19,7 +20,9 @@ import android.widget.ExpandableListView;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.graphics.drawable.Drawable;
@@ -32,6 +35,8 @@ public class ContentActivity extends Activity{
 	private Menu menu;
 	private ExpandableListView sList;
 	private SettingsAdapter sAdapter;
+	private View alertDialogView;
+	private Context context;
 	
 	// Fragments
 	private String mFragment;
@@ -68,7 +73,6 @@ public class ContentActivity extends Activity{
 		try {
 			ft.replace(R.id.maincontainer, fragment, fragment.getTag());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		ft.commit();
@@ -118,7 +122,8 @@ public class ContentActivity extends Activity{
 		
         super.onCreate(savedInstanceState);
 	 	setContentView(R.layout.content);
-
+	 	context = ContentActivity.this;
+	 	final LayoutInflater inflater = LayoutInflater.from(context);
 	 	
 	 	// Don't display logo and title in the menu
 	 	getActionBar().setDisplayShowHomeEnabled(false);
@@ -159,6 +164,7 @@ public class ContentActivity extends Activity{
 		Settings setting = new Settings(getResources().getDrawable(R.drawable.settings_bt));
 		ArrayList<SettingsButton> buttons = new ArrayList<SettingsButton>();
 		buttons.add(new SettingsButton(setting, getResources().getDrawable(R.drawable.edit_bt), "Edit profile"));
+		buttons.add(new SettingsButton(setting, getResources().getDrawable(R.drawable.edit_bt), "Send marker"));
 		buttons.add(new SettingsButton(setting, getResources().getDrawable(R.drawable.logout_bt), "Log out"));
 		setting.setSettingsButtons(buttons);
 		settings_bt.add(setting);
@@ -169,15 +175,60 @@ public class ContentActivity extends Activity{
 			
 			@Override
 			public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-				if(groupPosition == 0 && childPosition == 1){
-					//Log out
-					ParseUser.logOut();
-					finish();
-				}
-				else if(groupPosition == 0 && childPosition == 0){
+				if(groupPosition == 0 && childPosition == 0){
 					//Edit profile
 					Intent intent = new Intent(getApplicationContext(), EditActivity.class);
 	            	startActivity(intent);
+				}
+				else if(groupPosition == 0 && childPosition == 1){
+					//Send marker
+					
+					// Ask confirmation
+     				// Create an alert box
+    				AlertDialog.Builder adb = new AlertDialog.Builder(context);
+    				MessageAlert msg_a;
+    				
+    				if (alertDialogView == null) {
+    					msg_a = new MessageAlert();
+    					alertDialogView = inflater.inflate(R.layout.alert_dialog, null);
+    					msg_a.msg = (TextView)alertDialogView.findViewById(R.id.text_alert);
+    					alertDialogView.setTag(msg_a);
+    				} else {
+    					msg_a = (MessageAlert) alertDialogView.getTag();
+    	            	ViewGroup adbParent = (ViewGroup) alertDialogView.getParent();
+    					adbParent.removeView(alertDialogView);
+    				}
+    				
+    				// Choosing the type of message alert
+    				msg_a.msg.setText(context.getResources().getString(R.string.resend_marker, currentUser.getEmail()));
+    				
+    				// Filling the alert box
+    				adb.setView(alertDialogView);
+    				adb.setTitle("Send marker again");
+					adb.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+			            public void onClick(DialogInterface dialog, int which) {
+			            	// Going back to the front screen
+			          } });
+    				adb.setPositiveButton("SEND AGAIN", new DialogInterface.OnClickListener() {
+    		            public void onClick(DialogInterface dialog, int which) {
+    	          	   		// Send an e-mail
+    	     				SendMailToUser mail = new SendMailToUser(context);
+    	     				String email = currentUser.getEmail();
+    	                    String subject = "Your marker";
+    	                    String message = context.getResources().getString(R.string.marker_to_resend, "http://www.pouet.fr");
+    	                    mail.sendMail(email, subject, message);
+    	                    
+    	                    Toast.makeText(context, "Your marker will be sent to your e-mail address in a few minutes.", Toast.LENGTH_LONG).show();
+    		        } });
+    				
+    				// Showing the alert box
+    		        adb.create();
+    				adb.show();				
+				}
+				else if(groupPosition == 0 && childPosition == 2){
+					//Log out
+					ParseUser.logOut();
+					finish();
 				}
 				
 				return false;
