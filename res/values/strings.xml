@@ -55,12 +55,11 @@
     <string name="vics_ic">vics</string>
     <string name="deaths_ic">deaths</string>
     <string name="rank_ic">rank</string>
-    <!-- <string name="score_txt"><Data><![CDATA[<html><body><font size=5 color=red>Hello </font> %1$s </body><html>  ]]> </Data></string> -->
-    <string name="score_txt">254</string>
-    <string name="rank_txt">14</string>
+    <string name="score_txt"><Data><![CDATA[<font color="#A4A4A4">BEST SCORES</font><br /> %1$s]]> </Data></string>
+    <string name="rank_txt"><Data><![CDATA[<font color="#A4A4A4">RANK</font><br /> %1$s]]> </Data></string>
     <string name="total_score">TOTAL SCORE : 6821</string>
-    <string name="vics_txt">003</string>
-    <string name="deaths_txt">000</string>
+    <string name="vics_txt"><Data><![CDATA[<font color="#A4A4A4">VICTORIES</font><br /> %1$s]]> </Data></string>
+    <string name="deaths_txt"><Data><![CDATA[<font color="#A4A4A4">DEATHS</font><br /> %1$s]]> </Data></string>
     <string name="edit_profile">Edit profile</string>
     <string name="change_pic">CHANGE PICTURE</string>
     <string name="take_new_pic">TAKE NEW PICTURE</string>

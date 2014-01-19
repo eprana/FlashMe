@@ -49,8 +49,15 @@ public class ProfileFragment extends Fragment {
 		
 		profilePictureView = (ImageView) mainView.findViewById(R.id.profile_picture);
 		profileMarkerView = (ImageView) mainView.findViewById(R.id.profile_marker);
+		scoreView = (TextView) mainView.findViewById(R.id.score_txt);
+		rankView = (TextView) mainView.findViewById(R.id.rank_txt);
+		defeatsView = (TextView) mainView.findViewById(R.id.defeats_txt);
+		victoriesView = (TextView) mainView.findViewById(R.id.victories_txt);
 		
-		//scoreView.setText(Html.fromHtml(context.getResources().getString(R.string.score_txt, 254)));
+		scoreView.setText(Html.fromHtml(context.getResources().getString(R.string.score_txt, "254")));
+		rankView.setText(Html.fromHtml(context.getResources().getString(R.string.rank_txt, "14")));
+		defeatsView.setText(Html.fromHtml(context.getResources().getString(R.string.deaths_txt, "4")));
+		victoriesView.setText(Html.fromHtml(context.getResources().getString(R.string.vics_txt, "5")));
 				
 		// Load fragment data
 		LoadProfile lp = new LoadProfile(context);

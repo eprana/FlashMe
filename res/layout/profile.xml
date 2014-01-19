@@ -105,7 +105,7 @@
 				android:text="@string/score_txt"
 				android:paddingBottom="@dimen/medium_mg"
 				android:gravity="center"
-				android:textSize="@dimen/verylarge_tx"
+				android:textSize="@dimen/medium_tx"
 				style="@style/middle_blue" />
 	   	 	        
 	        <TextView 
@@ -116,7 +116,7 @@
 				android:layout_weight="1"
 				android:text="@string/vics_txt"
 				android:gravity="center"
-				android:textSize="@dimen/verylarge_tx"
+				android:textSize="@dimen/medium_tx"
 				style="@style/middle_blue" />
 	        
 	    </TableRow>
@@ -164,7 +164,7 @@
 				android:layout_weight="1" 
 				android:text="@string/rank_txt"
 				android:gravity="center"
-				android:textSize="@dimen/verylarge_tx"
+				android:textSize="@dimen/medium_tx"
 				style="@style/middle_blue" />
 	   	 	        
 	        <TextView 
@@ -174,7 +174,7 @@
 				android:layout_weight="1"
 				android:text="@string/deaths_txt"
 				android:gravity="center"
-				android:textSize="@dimen/verylarge_tx"
+				android:textSize="@dimen/medium_tx"
 				style="@style/middle_blue" />
 	        
 	    </TableRow>
