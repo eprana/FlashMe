@@ -38,6 +38,13 @@
 	<string name="choose_pic">CHOOSE PICTURE</string>
 	<string name="take_pic">TAKE PICTURE</string>
 	<string name="account_created">Your account has been successfully created ! Your marker will be sent to your mail address in a few minutes. Meanwhile, you can discover and edit your profile. Enjoy !</string>
+	<string name="email_to_send">Welcome to <font color="#A4A4A4"><b>Flash Me (if you can!)</b></font> ! \n\n<br/><br />
+	    										Here are your username and password required to access the application : \n<br />
+	    										<b>username :</b> %1$s \n<br />
+	    										<b>password :</b> %2$s \n\n<br /><br />
+	    										You can download your <b>marker</b> from this address : %3$s. \n<br />
+	    										Enjoy your game! \n\n<br /><br />
+	    										The Flash Me Team\n</string>
 	
 	<!--  menu -->
 	<string name="action_profile">Profile</string>
