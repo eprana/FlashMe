@@ -17,6 +17,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,6 +49,8 @@ public class SignUpActivity extends Activity {
     private Bitmap bitmapToSent;
     private Bitmap bitmapMarkerToSent;
     private boolean hasBeenCreated = false;
+    private DisplayMetrics screen = new DisplayMetrics();
+    int pictureSize = 0;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,6 +58,9 @@ public class SignUpActivity extends Activity {
         setContentView(R.layout.sign_up);
         context = SignUpActivity.this;
         final LayoutInflater inflater = LayoutInflater.from(context);
+        
+        getWindowManager().getDefaultDisplay().getMetrics(screen);
+        pictureSize = screen.widthPixels/3;
         
         // Get activity elements
 		final EditText username = (EditText) findViewById(R.id.username);
@@ -69,7 +75,7 @@ public class SignUpActivity extends Activity {
         // filling the database with avatarParseFile
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmapToSent.compress(Bitmap.CompressFormat.PNG, 100, stream);
-        bitmapToSent = Bitmap.createScaledBitmap(bitmapToSent, 300, 300, false);
+        bitmapToSent = Bitmap.createScaledBitmap(bitmapToSent, pictureSize, pictureSize, false);
         byte[] bitmapdata = stream.toByteArray();
         this.avatarParseFile = new ParseFile("avatar.png", bitmapdata);
         avatarParseFile.saveInBackground(new SaveCallback() {
@@ -83,7 +89,7 @@ public class SignUpActivity extends Activity {
         // sending an empty marker to the database
         bitmapMarkerToSent = ((BitmapDrawable)getResources().getDrawable(R.drawable.default_team_picture_thumb)).getBitmap();
         ByteArrayOutputStream markerStream = new ByteArrayOutputStream();
-        bitmapMarkerToSent = Bitmap.createScaledBitmap(bitmapMarkerToSent, 300, 300, false);
+        bitmapMarkerToSent = Bitmap.createScaledBitmap(bitmapMarkerToSent, pictureSize, pictureSize, false);
         bitmapMarkerToSent.compress(Bitmap.CompressFormat.PNG, 100, markerStream);
         byte[] bitmapMarkerData = markerStream.toByteArray();
         this.markerParseFile = new ParseFile("marker.png", bitmapMarkerData);
@@ -222,7 +228,7 @@ public class SignUpActivity extends Activity {
     				hasChanged = true;
     				
     				// Replacing the preview by the chosen image
-    				Bitmap avatar = Bitmap.createScaledBitmap((Bitmap) data.getExtras().get("data"), 300, 300, false);
+    				Bitmap avatar = Bitmap.createScaledBitmap((Bitmap) data.getExtras().get("data"), pictureSize, pictureSize, false);
     				avatarView.setImageBitmap(avatar);
     				
     				bitmapToSent = avatar;
@@ -256,7 +262,7 @@ public class SignUpActivity extends Activity {
 						}
 						// Replacing the preview image by the chosen image
 						
-	    				Bitmap avatarPicked = Bitmap.createScaledBitmap(bm, 300, 300, false);
+	    				Bitmap avatarPicked = Bitmap.createScaledBitmap(bm, pictureSize, pictureSize, false);
 						avatarView.setImageBitmap(avatarPicked);
 						
 						bitmapToSent = avatarPicked;
