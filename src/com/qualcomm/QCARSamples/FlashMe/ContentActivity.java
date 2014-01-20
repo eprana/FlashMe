@@ -2,6 +2,8 @@ package com.qualcomm.QCARSamples.FlashMe;
 
 import java.util.ArrayList;
 
+import javax.mail.internet.AddressException;
+
 import com.parse.ParseUser;
 
 import android.R.menu;
@@ -37,6 +39,7 @@ public class ContentActivity extends Activity{
 	private SettingsAdapter sAdapter;
 	private View alertDialogView;
 	private Context context;
+	private AddressException exception;
 	
 	// Fragments
 	private String mFragment;
@@ -217,8 +220,6 @@ public class ContentActivity extends Activity{
     	                    String subject = "Your marker";
     	                    String message = context.getResources().getString(R.string.marker_to_resend, "http://www.pouet.fr");
     	                    mail.sendMail(email, subject, message);
-    	                    
-    	                    Toast.makeText(context, "Your marker will be sent to your e-mail address in a few minutes.", Toast.LENGTH_LONG).show();
     		        } });
     				
     				// Showing the alert box

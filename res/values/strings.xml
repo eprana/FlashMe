@@ -45,11 +45,12 @@
 	    										You can download your <b>marker</b> from this address : %3$s. \n<br />
 	    										Enjoy your game! \n\n<br /><br />
 	    										The Flash Me Team\n</string>
+	<string name="error_mail">We were not able to send the marker to your address, it seems to be wrong. Please enter a new e-mail address in the "Edit Profile" section.</string>
 	<string name="marker_to_resend">Hello again!\n\n<br/><br />
 	    							You can download again your marker from this address : %1$s.\n<br />
 	    							Enjoy your game! \n\n<br /><br />
 	    							The Flash Me Team\n</string>
-	<string name="resend_marker">Do you want your marker to be sent again to your current e-mail adress : %1$s ?</string>
+	<string name="resend_marker">Do you want your marker to be sent again to your current e-mail address : %1$s ?</string>
 	
 	<!--  menu -->
 	<string name="action_profile">Profile</string>

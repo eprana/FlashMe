@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.mail.internet.AddressException;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -18,6 +20,7 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -144,7 +147,16 @@ public class SignUpActivity extends Activity {
 				
 				// If the e-mail is invalid
       	        // Declaring pattern and matcher we need to compare
-      	   		Pattern p = Pattern.compile(".+@.+\\.[a-z]+");
+				String regExpn =
+			             "^(([\\w-]+\\.)+[\\w-]+|([a-zA-Z]{1}|[\\w-]{2,}))@"
+			                 +"((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
+			                   +"[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\."
+			                   +"([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
+			                   +"[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|"
+			                   +"([a-zA-Z]+[\\w-]+\\.)+[a-zA-Z]{2,4})$";
+
+
+				Pattern p = Pattern.compile(regExpn,Pattern.CASE_INSENSITIVE);
       	   		Matcher m = p.matcher(s_email);
       	   		if (!m.matches()) {
       	   			Toast.makeText(context, R.string.wrong_mail_pattern, Toast.LENGTH_SHORT).show();
@@ -162,13 +174,14 @@ public class SignUpActivity extends Activity {
              		public void done(ParseException e) {
              			if (e == null) {
              				// Notify the user his account has been created and that his marker will be sent by mail
+
                   	   		// Send an e-mail
              				SendMailToUser mail = new SendMailToUser(context);
              				String email = s_email;
                             String subject = "Welcome !";
                             String message = context.getResources().getString(R.string.email_to_send, s_username, s_password, "http://www.pouet.fr");
                             mail.sendMail(email, subject, message);
-             				
+                            
              				// Create an alert box
             				AlertDialog.Builder adb = new AlertDialog.Builder(context);
             				MessageAlert msg_a;
@@ -186,7 +199,6 @@ public class SignUpActivity extends Activity {
             				
             				// Choosing the type of message alert
             				msg_a.msg.setText(context.getResources().getString(R.string.account_created));
-            				
             				
             				// Filling the alert box
             				adb.setView(alertDialogView);
