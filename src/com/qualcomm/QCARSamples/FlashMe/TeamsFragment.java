@@ -1,47 +1,59 @@
 package com.qualcomm.QCARSamples.FlashMe;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
-import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseRelation;
+import com.parse.ParseQueryAdapter.OnQueryLoadListener;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
-import android.app.Fragment;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.app.Fragment;
+import android.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ExpandableListView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-public class TeamsFragment extends Fragment {
+public class TeamsFragment extends ListFragment {
+	
+	private OnTeamSelectedListener listener;
+	
+	public static String TAG="TAG_TEAMS";
 	
 	// Data elements
 	private static ParseUser currentUser = null;
-	private static ArrayList<Team> teams = null;
 	private static ProgressBar progress = null;
 	
 	// Layout elements
-	private static ELVTeamAdapter teamAdapter;
-	private static ExpandableListView expandableList = null;
+	private TeamParseAdapter teamParseAdapter;
+	private ListView teamsList;
 	private EditText teamName;
 	private Button createTeam;
-	private Button playButton;
+	//private Button playButton;
+	
+	public interface OnTeamSelectedListener {
+		public void onTeamSelected(int index);
+	}
+	
+	public void setOnTeamSelectedListener(OnTeamSelectedListener listener) {
+		this.listener = listener;
+	}
+	
+	@Override
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		listener.onTeamSelected(position);
+		super.onListItemClick(l, v, position, id);
+	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -51,18 +63,29 @@ public class TeamsFragment extends Fragment {
 		
 		// Initialize members
 		currentUser = ParseUser.getCurrentUser();
-		teams = new ArrayList<Team>();
 		progress = (ProgressBar) mainView.findViewById(R.id.progressBar);
 		
-    	teamAdapter = new ELVTeamAdapter(context, teams);        	
-    	expandableList = (ExpandableListView) mainView.findViewById(R.id.teams_list);
     	teamName = (EditText) mainView.findViewById(R.id.enter_team);
     	createTeam = (Button) mainView.findViewById(R.id.create_team);
-    	playButton = (Button) mainView.findViewById(R.id.play);
+    	//playButton = (Button) mainView.findViewById(R.id.play);
     	
     	// Load fragment data
-        LoadTeams lt = new LoadTeams(context);
-    	lt.execute();
+    	teamsList = (ListView) mainView.findViewById(R.id.teams_list);
+    	teamParseAdapter = new TeamParseAdapter(getActivity(), currentUser);
+    	teamsList.setAdapter(teamParseAdapter);
+    	teamParseAdapter.addOnQueryLoadListener(new OnQueryLoadListener<ParseObject>() {
+
+			@Override
+			public void onLoaded(List<ParseObject> arg0, Exception arg1) {
+				progress.setVisibility(View.GONE);
+			}
+
+			@Override
+			public void onLoading() {
+				progress.setVisibility(View.VISIBLE);
+			}
+
+    	});
     	
     	// Create team button listener
 		createTeam.setOnClickListener(new OnClickListener() {
@@ -81,9 +104,9 @@ public class TeamsFragment extends Fragment {
 		});
 		
 		// Create play button listener
-		playButton.setOnClickListener(new OnClickListener() {
+		/*playButton.setOnClickListener(new OnClickListener() {
 			
-			@Override
+			@Overrideb
 			public void onClick(View v) {
 				if(teamAdapter.getSelectedTeam() != null){
 					Toast.makeText(getActivity(), "Selected team : "+teamAdapter.getSelectedTeam().getName(), Toast.LENGTH_LONG).show();
@@ -93,95 +116,9 @@ public class TeamsFragment extends Fragment {
 					Toast.makeText(getActivity(), "Ooops! You must select a team to play." , Toast.LENGTH_LONG).show();
 				}
 			}
-		});
+		});*/
 		
     	return mainView;
-	}
-	
-	private static class LoadTeams extends AsyncTask<Void, Integer, Void> {
-
-		private Context context;
-		
-		public LoadTeams(Context context){
-			this.context = context;
-		}
-		
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-	        progress.setVisibility(View.VISIBLE);
-		}
-		
-		@Override
-		protected Void doInBackground(Void... params) {
-			// Get user's teams with Parse to create Java Teams
-			loadTeams(context);
-			return null;
-		}
-		
-		@Override
-		protected void onPostExecute(Void result) {
-			super.onPostExecute(result);
-			progress.setVisibility(View.GONE);
-			//expandableList.setAdapter(teamAdapter);
-		}
-		
-	}
-	
-	private static void loadTeams(final Context context){
-		// Parse query
-		ParseQuery<ParseObject> teamsQuery = ParseQuery.getQuery("Team");
-		teamsQuery.whereEqualTo("players", currentUser);
-		teamsQuery.include("createdBy");
-		teamsQuery.findInBackground(new FindCallback<ParseObject>() {
-			// Find current user's teams with Parse
-		    public void done(List<ParseObject> teamsList, ParseException e) {
-		    	if( e != null ) {
-		    		Toast.makeText(context, "Error : " + e.toString(), Toast.LENGTH_LONG).show();
-		    		return;
-		    	}
-		    	createTeams(context, teamsList);
-				expandableList.setAdapter(teamAdapter);
-	        }
-		});
-	}
-
-	private static void createTeams(final Context context, List<ParseObject> parseTeams) {
-		for (ParseObject team : parseTeams) {
-			// Create java Team
-			ParseObject creator = new ParseObject("User");
-			creator = team.getParseObject("createdBy");
-			final Team newTeam = new Team(team.getString("name"), creator.getString("username"), context.getResources().getDrawable(R.drawable.default_team_picture_thumb));
-			// Get players of the team with Parse
-			team.getRelation("players").getQuery().findInBackground(new FindCallback<ParseObject>() {
-				public void done(List<ParseObject> players, ParseException e) {
-					if(e != null) {
-						Toast.makeText(context, "Error : " + e.toString(), Toast.LENGTH_LONG).show();
-						return;
-					}
-					addPlayersToTeam(context, newTeam, players );
-				}
-			});
-			teams.add(newTeam);
-		}
-	}
-	
-	private static void addPlayersToTeam(Context context, Team team, List<ParseObject> players) {
-		for (ParseObject player : players) {
-			// Create small avatar
-	    	ParseFile avatarFile = (ParseFile) player.get("avatar");
-	    	try {
-	    		byte[] avatarByteArray = avatarFile.getData();
-				Bitmap avatarBitmap = BitmapFactory.decodeByteArray(avatarByteArray, 0, avatarByteArray.length);
-				avatarBitmap = Bitmap.createScaledBitmap(avatarBitmap, 110, 110, false);
-	
-				// Add java Player
-				team.addPlayer(new Player(((ParseUser) player).getUsername(), avatarBitmap));
-			} catch (ParseException e1) {
-				Toast.makeText(context, "Error : "+e1.getMessage(), Toast.LENGTH_LONG).show();
-				e1.printStackTrace();
-			}
-		}
 	}
 	
 	// Create team button
@@ -203,11 +140,12 @@ public class TeamsFragment extends Fragment {
 					final ParseObject newTeam = new ParseObject("Team");
 					newTeam.put("name", name);
 					newTeam.put("createdBy", currentUser);
+					newTeam.getRelation("players").add(currentUser);
 					newTeam.saveInBackground(new SaveCallback() {
 						@Override
 						public void done(ParseException e) {
 							if (e == null) {
-								createJavaTeam(newTeam);
+								teamParseAdapter.loadObjects();
 							}
 						}
 					});
@@ -220,7 +158,7 @@ public class TeamsFragment extends Fragment {
 		});
 	}
 	
-	private void createJavaTeam(ParseObject parseTeam) {
+	/*private void createJavaTeam(ParseObject parseTeam) {
 		// Create Java Object
 		final Team javaTeam = new Team(parseTeam.getString("name"), currentUser.getUsername(), getResources().getDrawable(R.drawable.default_team_picture_thumb));
 		teams.add(javaTeam);
@@ -251,5 +189,5 @@ public class TeamsFragment extends Fragment {
 				expandableList.setAdapter(teamAdapter);
 			}
 		});
-	}
+	}*/
 }

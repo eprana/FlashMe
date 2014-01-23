@@ -1,20 +1,28 @@
 package com.qualcomm.QCARSamples.FlashMe;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Map;
 
 import com.parse.ParseUser;
+
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.support.v13.app.FragmentPagerAdapter;
+import android.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 
 import android.R.menu;
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.ExpandableListView;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
@@ -26,175 +34,208 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.widget.ExpandableListView.OnChildClickListener;
 
-public class ContentActivity extends Activity{
+public class ContentActivity extends Activity implements 
+	ActionBar.TabListener,
+	ViewPager.OnPageChangeListener,
+	TeamsFragment.OnTeamSelectedListener {
 
+
+	private class TabAction { public int icon; public String text; 
+		public TabAction(int icon, String text) {
+			this.icon = icon;
+			this.text = text;
+		}
+	}
+	
 	static ParseUser currentUser = null;
+	private ViewPager mViewPager;
+	private TabsPagerAdapter mAdapter;
+	private TabAction[] tabs = {new TabAction(R.drawable.menu_profile_bt, "Profile"), new TabAction(R.drawable.menu_teams_bt, "Teams"), new TabAction(R.drawable.menu_games_bt, "Games")};
 	private Menu menu;
 	private ExpandableListView sList;
 	private SettingsAdapter sAdapter;
 	
-	// Fragments
-	private String mFragment;
-	private ProfileFragment mProfileFragment;
-	private TeamsFragment mTeamsFragment;
-	private GamesFragment mGamesFragment;
-	private static String TAG_PROFILE = "PROFILE_FRAGMENT";
-	private static String TAG_TEAMS = "TEAMS_FRAGMENT";
-	private static String TAG_GAMES = "GAMES_FRAGMENT";
-	
-	private void setupFragments() {
-		final FragmentManager fm = getFragmentManager();
-		
-		mProfileFragment = (ProfileFragment) fm.findFragmentByTag(TAG_PROFILE);
-		if (mProfileFragment == null) {
-			mProfileFragment = new ProfileFragment();
-		}
-		mTeamsFragment = (TeamsFragment) fm.findFragmentByTag(TAG_TEAMS);
-		if (mTeamsFragment == null) {
-			mTeamsFragment = new TeamsFragment();
-		}
-		mGamesFragment = (GamesFragment) fm.findFragmentByTag(TAG_GAMES);
-		if (mGamesFragment == null) {
-			mGamesFragment = new GamesFragment();
-		}		
-	}
-
-	private void showFragment(final android.app.Fragment fragment) {
-		if (fragment == null){
-			return;
-		}
-		final FragmentManager fm = getFragmentManager();
-		final FragmentTransaction ft = fm.beginTransaction();		
-		try {
-			ft.replace(R.id.maincontainer, fragment, fragment.getTag());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		ft.commit();
-	}
-	
-	// Menu
-	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		System.out.println("CREATE MENUUUUUUUUUUUUUUUU");
-	    // Inflate the menu items for use in the action bar
-		this.menu = menu;
-	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.layout.main_activity_actions, menu);
-	    return super.onCreateOptionsMenu(menu);
-	}
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-	    // Handle presses on the action bar items
-	    switch (item.getItemId()) {
-	        case R.id.action_profile:
-	        	item.setIcon(R.drawable.menu_profile_bt);
-	        	menu.getItem(1).setIcon(R.drawable.menu_teams_bt_in);
-	        	menu.getItem(2).setIcon(R.drawable.menu_games_bt_in);
-	        	showFragment(this.mProfileFragment);
-	            return true;
-	        case R.id.action_teams:
-	        	item.setIcon(R.drawable.menu_teams_bt);
-	        	menu.getItem(0).setIcon(R.drawable.menu_profile_bt_in);
-	        	menu.getItem(2).setIcon(R.drawable.menu_games_bt_in);
-	        	showFragment(this.mTeamsFragment);
-	            return true;
-	        case R.id.action_games:
-	        	item.setIcon(R.drawable.menu_games_bt);
-	        	menu.getItem(1).setIcon(R.drawable.menu_teams_bt_in);
-	        	menu.getItem(0).setIcon(R.drawable.menu_profile_bt_in);
-	        	showFragment(this.mGamesFragment);
-	            return true;
-	        default:
-	            return super.onOptionsItemSelected(item);
-	    }
-	}
+//	@Override
+//	public boolean onCreateOptionsMenu(Menu menu) {
+//	    // Inflate the menu items for use in the action bar
+//		this.menu = menu;
+//	    MenuInflater inflater = getMenuInflater();
+//	    inflater.inflate(R.layout.main_activity_actions, menu);
+//	    return super.onCreateOptionsMenu(menu);
+//	}
+//	
+//	@Override
+//	public boolean onOptionsItemSelected(MenuItem item) {
+//	    // Handle presses on the action bar items
+//	    switch (item.getItemId()) {
+//	        case R.id.action_profile:
+//	        	item.setIcon(R.drawable.menu_profile_bt);
+//	        	menu.getItem(1).setIcon(R.drawable.menu_teams_bt_in);
+//	        	menu.getItem(2).setIcon(R.drawable.menu_games_bt_in);
+//	        	//showFragment(ProfileFragment.class);
+//	            return true;
+//	        case R.id.action_teams:
+//	        	item.setIcon(R.drawable.menu_teams_bt);
+//	        	menu.getItem(0).setIcon(R.drawable.menu_profile_bt_in);
+//	        	menu.getItem(2).setIcon(R.drawable.menu_games_bt_in);
+//	        	//showFragment(TeamsFragment.class);
+//	            return true;
+//	        case R.id.action_games:
+//	        	item.setIcon(R.drawable.menu_games_bt);
+//	        	menu.getItem(1).setIcon(R.drawable.menu_teams_bt_in);
+//	        	menu.getItem(0).setIcon(R.drawable.menu_profile_bt_in);
+//	        	//showFragment(GamesFragment.class);
+//	            return true;
+//	        default:
+//	            return super.onOptionsItemSelected(item);
+//	    }
+//	}
 
 	@Override
     public void onCreate(Bundle savedInstanceState) {
 		
         super.onCreate(savedInstanceState);
 	 	setContentView(R.layout.content);
-
 	 	
-	 	// Don't display logo and title in the menu
-	 	getActionBar().setDisplayShowHomeEnabled(false);
-        getActionBar().setDisplayShowTitleEnabled(false);
-        //getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+	 	final FragmentManager fm = getFragmentManager();
+	 	mViewPager = (ViewPager) findViewById(R.id.pager);
+	 	final ActionBar actionBar = getActionBar();
+	 	mAdapter = new TabsPagerAdapter(fm);
+	 	mViewPager.setAdapter(mAdapter);
+	 	mViewPager.setOffscreenPageLimit(2);
+	 	mViewPager.setOnPageChangeListener(this);
+	 	
+	 	//getActionBar().setDisplayShowHomeEnabled(false);
+	 	actionBar.setDisplayShowTitleEnabled(false);
+	 	actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         
-    	// Set username on top of the page
-	 	currentUser = ParseUser.getCurrentUser();
-    	TextView userName = (TextView) findViewById(R.id.name);
-    	userName.setText(currentUser.getUsername());
-	 	
-	 	// Set fragment
-	 	if (savedInstanceState != null)
-	 		mFragment = savedInstanceState.getString("fragment");
-	 	else
-	 		mFragment = getIntent().getStringExtra("fragment");
-	 	
-	 	if(mFragment == null) {
-	 		mFragment = "ProfileFragment";
+	 	for(TabAction tab : tabs) {
+	 		actionBar.addTab(actionBar.newTab().setIcon(tab.icon).setText(tab.text).setTabListener(this));
 	 	}
+	 	mViewPager.setCurrentItem(0);
 	 	
-		setupFragments();
-
-		if(mFragment != null) {
-			if (mFragment.equals("ProfileFragment")) {
-				showFragment(this.mProfileFragment);
-			} else if (mFragment.equals("TeamsFragment")) {
-				showFragment(this.mTeamsFragment);
-			} else if (mFragment.equals("GamesFragment")) {
-				showFragment(this.mGamesFragment);
-			}
-		}
+    	// Set username on top of the page
+//	 	currentUser = ParseUser.getCurrentUser();
+//    	TextView userName = (TextView) findViewById(R.id.name);
+//    	userName.setText(currentUser.getUsername());
+//    	
+//    	mFragmentClass = ProfileFragment.class;
+//	 	
+//	 	// Set fragment
+//	 	if (savedInstanceState != null)
+//	 		mFragment = savedInstanceState.getString("fragment");
+//	 	else
+//	 		mFragment = getIntent().getStringExtra("fragment");
+//	 	
+//	 	if(mFragment == null) {
+//	 		mFragment = "ProfileFragment";
+//	 	}
+//	 	
+		//setupFragments();
+	 	//showFragment(mFragmentClass);
+//		if(mFragment != null) {
+//			if (mFragment.equals("ProfileFragment")) {
+//				showFragment(this.mProfileFragment);
+//			} else if (mFragment.equals("TeamsFragment")) {
+//				showFragment(this.mTeamsFragment);
+//			} else if (mFragment.equals("GamesFragment")) {
+//				showFragment(this.mGamesFragment);
+//			}
+//		}
 		
     	// Settings button expandable list
-    	sList = (ExpandableListView)findViewById(R.id.s_list);
-    	sList.setDivider(null);
-    	ArrayList<Settings> settings_bt = new ArrayList<Settings>();
-		Settings setting = new Settings(getResources().getDrawable(R.drawable.settings_bt));
-		ArrayList<SettingsButton> buttons = new ArrayList<SettingsButton>();
-		buttons.add(new SettingsButton(setting, getResources().getDrawable(R.drawable.edit_bt), "Edit profile"));
-		buttons.add(new SettingsButton(setting, getResources().getDrawable(R.drawable.logout_bt), "Log out"));
-		setting.setSettingsButtons(buttons);
-		settings_bt.add(setting);
-		sAdapter = new SettingsAdapter(this, settings_bt);
-		//backend = new BackEnd(this);
-
-		sList.setOnChildClickListener(new OnChildClickListener() {
-			
-			@Override
-			public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-				if(groupPosition == 0 && childPosition == 1){
-					//Log out
-					ParseUser.logOut();
-					finish();
-				}
-				else if(groupPosition == 0 && childPosition == 0){
-					//Edit profile
-					Intent intent = new Intent(getApplicationContext(), EditActivity.class);
-	            	startActivity(intent);
-				}
-				
-				return false;
-			}
-		});
-		
-		sList.setAdapter(sAdapter);
-		
-		final TextView top_line = (TextView) findViewById(R.id.top_line_light);
-		top_line.setText(R.string.my_profile);
-		
- 	}
+//    	sList = (ExpandableListView)findViewById(R.id.s_list);
+//    	sList.setDivider(null);
+//    	ArrayList<Settings> settings_bt = new ArrayList<Settings>();
+//		Settings setting = new Settings(getResources().getDrawable(R.drawable.settings_bt));
+//		ArrayList<SettingsButton> buttons = new ArrayList<SettingsButton>();
+//		buttons.add(new SettingsButton(setting, getResources().getDrawable(R.drawable.edit_bt), "Edit profile"));
+//		buttons.add(new SettingsButton(setting, getResources().getDrawable(R.drawable.logout_bt), "Log out"));
+//		setting.setSettingsButtons(buttons);
+//		settings_bt.add(setting);
+//		sAdapter = new SettingsAdapter(this, settings_bt);
+//		//backend = new BackEnd(this);
+//
+//		sList.setOnChildClickListener(new OnChildClickListener() {
+//			
+//			@Override
+//			public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+//				if(groupPosition == 0 && childPosition == 1){
+//					//Log out
+//					ParseUser.logOut();
+//					finish();
+//				}
+//				else if(groupPosition == 0 && childPosition == 0){
+//					//Edit profile
+//					Intent intent = new Intent(getApplicationContext(), EditActivity.class);
+//	            	startActivity(intent);
+//				}
+//				
+//				return false;
+//			}
+//		});
+//		
+//		sList.setAdapter(sAdapter);
+//		
+//		final TextView top_line = (TextView) findViewById(R.id.top_line_light);
+//		top_line.setText(R.string.my_profile);
+//		
+	}
 	
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
-		outState.putString("fragment", mFragment != null ? mFragment : "");
+//		outState.putString("fragment", mFragment != null ? mFragment : "");
 		super.onSaveInstanceState(outState);
+	}
+	
+	private class TabsPagerAdapter extends FragmentPagerAdapter {
+
+		public TabsPagerAdapter(FragmentManager fm) {
+			super(fm);
+		}
+		
+		@Override
+		public Fragment getItem(int index) {
+			switch(index) {
+			case 0:
+				return new ProfileFragment();
+			case 1:
+				return new TeamsFragment();
+			case 2:
+				return new GamesFragment();
+				
+			}
+			return null;
+		}
+
+		@Override
+		public int getCount() {
+			// TODO Auto-generated method stub
+			return 3;
+		}
+		
+	}
+	
+	@Override
+	public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
+		// TODO
+	}
+
+	@Override
+	public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
+		mViewPager.setCurrentItem(tab.getPosition());
+	}
+
+	@Override
+	public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
+		// TODO Auto-generated method stub
+		
+	}	
+
+	@Override
+	public void onTeamSelected(int index) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	public class Settings {
@@ -302,5 +343,23 @@ public class ContentActivity extends Activity{
 			public ImageView picto;
 			public TextView picto_tx;
 		}
-	}	
+	}
+
+	@Override
+	public void onPageScrollStateChanged(int arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPageScrolled(int arg0, float arg1, int arg2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPageSelected(int position) {
+		getActionBar().setSelectedNavigationItem(position);
+		
+	}
 }

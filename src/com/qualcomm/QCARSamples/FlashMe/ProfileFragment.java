@@ -7,12 +7,12 @@ import com.parse.ParseFile;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 public class ProfileFragment extends Fragment {
 
+	public static String TAG="TAG_PROFILE";
 	// Data elements
 	private static ParseUser currentUser = null;
 	private static ProgressBar progress = null;

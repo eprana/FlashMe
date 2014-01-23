@@ -10,12 +10,13 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.parse.ParseQueryAdapter.OnQueryLoadListener;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.content.res.Resources.NotFoundException;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -34,8 +36,10 @@ public class GamesFragment extends Fragment {
 	private static ProgressBar progress = null;
 	
 	// Layout elements
-	private static ELVGameAdapter gameAdapter;
-	private static ExpandableListView expandableList = null;
+//	private static ELVGameAdapter gameAdapter;
+//	private static ExpandableListView expandableList = null;
+	private GameParseAdapter gameParseAdapter;
+	private ListView gamesList;
 	private EditText gameName;
 	private Button createGame;
 	private Button playButton;
@@ -51,15 +55,31 @@ public class GamesFragment extends Fragment {
     	games = new ArrayList<Game>();
     	progress = (ProgressBar) mainView.findViewById(R.id.progressBar);
     	
-    	gameAdapter = new ELVGameAdapter(context, games);        	
-    	expandableList = (ExpandableListView) mainView.findViewById(R.id.games_list);
+    	//gameAdapter = new ELVGameAdapter(context, games);        	
+    	//expandableList = (ExpandableListView) mainView.findViewById(R.id.games_list);
     	gameName = (EditText) mainView.findViewById(R.id.enter_game);
 		createGame = (Button) mainView.findViewById(R.id.create_game);
 		playButton = (Button) mainView.findViewById(R.id.play);
     	
     	// Load fragment data
-    	LoadGames lg = new LoadGames(context);
-    	lg.execute();
+    	//LoadGames lg = new LoadGames(context);
+    	//lg.execute();
+		gamesList = (ListView) mainView.findViewById(R.id.games_list);
+    	gameParseAdapter = new GameParseAdapter(context, currentUser);
+    	gamesList.setAdapter(gameParseAdapter);
+    	gameParseAdapter.addOnQueryLoadListener(new OnQueryLoadListener<ParseObject>() {
+
+			@Override
+			public void onLoaded(List<ParseObject> arg0, Exception arg1) {
+				progress.setVisibility(View.GONE);
+			}
+
+			@Override
+			public void onLoading() {
+				progress.setVisibility(View.VISIBLE);
+			}
+
+    	});
 
     	// Create game button listener
 		createGame.setOnClickListener(new OnClickListener() {
@@ -78,19 +98,19 @@ public class GamesFragment extends Fragment {
 		});
 
 		// Create play button listener
-		playButton.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				if(gameAdapter.getSelectedGame() != null){
-					Toast.makeText(context, "Selected team : "+ gameAdapter.getSelectedGame().getName(), Toast.LENGTH_SHORT).show();
-				} 
-				// If no team has been selected
-				else {
-					Toast.makeText(context, "Ooops! You must select a game to play." , Toast.LENGTH_SHORT).show();
-				}
-			}
-		});
+//		playButton.setOnClickListener(new OnClickListener() {
+//			
+//			@Override
+//			public void onClick(View v) {
+//				if(gameAdapter.getSelectedGame() != null){
+//					Toast.makeText(context, "Selected team : "+ gameAdapter.getSelectedGame().getName(), Toast.LENGTH_SHORT).show();
+//				} 
+//				// If no team has been selected
+//				else {
+//					Toast.makeText(context, "Ooops! You must select a game to play." , Toast.LENGTH_SHORT).show();
+//				}
+//			}
+//		});
 
     	return mainView;	
 	}
@@ -134,7 +154,7 @@ public class GamesFragment extends Fragment {
 		        	return;
 		        }
 		        createGames(context, gamesList);
-		        expandableList.setAdapter(gameAdapter);
+		        //expandableList.setAdapter(gameAdapter);
 		    }
 		});
 	}
@@ -207,7 +227,7 @@ public class GamesFragment extends Fragment {
 							}
 							// Create Java game
 							games.add(new Game(newGame.getString("name"), currentUser.getUsername()));
-							expandableList.setAdapter(gameAdapter);
+							//expandableList.setAdapter(gameAdapter);
 						}
 					});
 					// Clear edit text value

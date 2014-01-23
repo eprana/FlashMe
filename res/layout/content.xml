@@ -5,13 +5,18 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
     
-    <LinearLayout 
+    <android.support.v4.view.ViewPager
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    
+    <!-- <LinearLayout 
 		android:orientation="horizontal"
 		android:id="@+id/top_menu"
     	android:layout_height="wrap_content"
 		style="@style/topMenu" >
 		
-	   <!-- <ImageButton
+	   <ImageButton
 			android:id="@+id/profile_bt"
 			android:layout_weight="1"
     		android:layout_height="wrap_content"
@@ -42,12 +47,12 @@
     		android:layout_marginTop="@dimen/medium_mg"
     		android:layout_marginBottom="@dimen/medium_mg"
 			android:src="@drawable/menu_games_bt_in"
-			style="@style/topLineButton" /> -->
+			style="@style/topLineButton" />
 	</LinearLayout>
 	
     <TextView
 	        android:id="@+id/name"
-	        android:layout_below="@id/top_menu"
+	        android:layout_below="@id/pager"
 	        style="@style/topLine" />
 
      <TextView
@@ -66,9 +71,9 @@
     	android:id="@+id/s_list" 
     	android:layout_width="@dimen/settings_wd"
     	android:layout_alignRight="@id/name"
-    	android:layout_below="@id/top_menu"
+    	android:layout_below="@id/pager"
     	android:layout_height="wrap_content"
     	android:groupIndicator="@drawable/group_indicator" >
-	</ExpandableListView>
+	</ExpandableListView>-->
     
 </RelativeLayout>

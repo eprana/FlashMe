@@ -40,9 +40,9 @@
 	<string name="account_created">Your account has been successfully created ! Your marker will be sent to your mail address in a few minutes. Meanwhile, you can discover and edit your profile. Enjoy !</string>
 	
 	<!--  menu -->
-	<string name="action_profile">Profile</string>
-	<string name="action_teams">Teams</string>
-	<string name="action_games">Games</string>
+	<string name="tab_profile">Profile</string>
+	<string name="tab_teams">Teams</string>
+	<string name="tab_games">Games</string>
 	
 	<!-- profile -->
 	<string name="my_profile">My profile</string>
@@ -85,6 +85,9 @@
 	<string name="no_contextual_menu">no_contextual_menu</string>
 	<string name="play">PLAY</string>
 	
+	<!--  my team's players -->
+	<string name="empty_player_name">You must enter a valid player name.</string>
+	
 	<!-- my games -->
 	<string name="my_games">My games</string>
 	<string name="enter_game">New game name</string>
@@ -96,5 +99,6 @@
 	
 	<!-- expandable row -->
 	<string name="add_bt">Add element</string>
+	<string name="next_bt">See details</string>
 	<string name="delete_bt">Delete element</string>	
 </resources>
