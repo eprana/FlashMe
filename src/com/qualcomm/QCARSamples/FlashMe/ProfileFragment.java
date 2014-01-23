@@ -13,11 +13,13 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class ProfileFragment extends Fragment {
@@ -29,6 +31,11 @@ public class ProfileFragment extends Fragment {
 	
 	// Layout elements
 	private static ImageView profilePictureView = null;
+	private static ImageView profileMarkerView = null;
+	private static TextView scoreView;
+	private static TextView victoriesView;
+	private static TextView rankView;
+	private static TextView defeatsView;
 	
 	
 	@Override
@@ -42,7 +49,17 @@ public class ProfileFragment extends Fragment {
 		progress = (ProgressBar) mainView.findViewById(R.id.progressBar);
 		
 		profilePictureView = (ImageView) mainView.findViewById(R.id.profile_picture);
+		profileMarkerView = (ImageView) mainView.findViewById(R.id.profile_marker);
+		scoreView = (TextView) mainView.findViewById(R.id.score_txt);
+		rankView = (TextView) mainView.findViewById(R.id.rank_txt);
+		defeatsView = (TextView) mainView.findViewById(R.id.defeats_txt);
+		victoriesView = (TextView) mainView.findViewById(R.id.victories_txt);
 		
+		scoreView.setText(Html.fromHtml(context.getResources().getString(R.string.score_txt, "254")));
+		rankView.setText(Html.fromHtml(context.getResources().getString(R.string.rank_txt, "14")));
+		defeatsView.setText(Html.fromHtml(context.getResources().getString(R.string.deaths_txt, "4")));
+		victoriesView.setText(Html.fromHtml(context.getResources().getString(R.string.vics_txt, "5")));
+				
 		// Load fragment data
 		LoadProfile lp = new LoadProfile(context);
     	lp.execute();
@@ -66,7 +83,7 @@ public class ProfileFragment extends Fragment {
 		
 		@Override
 		protected Void doInBackground(Void... arg0) {
-			loadProfilePicture(context);
+			loadProfilePictureAndMarker(context);
 			return null;
 		}
 		
@@ -77,8 +94,8 @@ public class ProfileFragment extends Fragment {
 		}
 	}
 	
-	public static void loadProfilePicture(final Context context) {
-		// Parse query
+	public static void loadProfilePictureAndMarker(final Context context) {
+		// Parse query for profile picture
 		ParseQuery<ParseUser> query = ParseUser.getQuery();
 		query.whereEqualTo("username", currentUser.getUsername());
 		query.getFirstInBackground(new GetCallback<ParseUser>() {
@@ -96,8 +113,33 @@ public class ProfileFragment extends Fragment {
 							return;
 						}
 						Bitmap avatarBitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-						// Setting the imageView
+						// Setting the profile imageView
 						profilePictureView.setImageBitmap(avatarBitmap);
+					}
+				});
+			}
+		});
+		
+		// Parse query for profile picture
+		ParseQuery<ParseUser> markerQuery = ParseUser.getQuery();
+		markerQuery.whereEqualTo("username", currentUser.getUsername());
+		markerQuery.getFirstInBackground(new GetCallback<ParseUser>() {
+			// Find current user
+			public void done(ParseUser user, ParseException e) {
+			    if (e != null) {
+			    	Toast.makeText(context, "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
+			    	return;
+			    }
+		    	ParseFile markerFile = (ParseFile) user.get("marker");
+		    	markerFile.getDataInBackground(new GetDataCallback() {
+					public void done(byte[] data, ParseException e) {
+						if (e != null){
+							Toast.makeText(context, "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
+							return;
+						}
+						Bitmap markerBitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+						// Setting the marker imageView
+						profileMarkerView.setImageBitmap(markerBitmap);
 					}
 				});
 			}

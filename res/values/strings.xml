@@ -38,6 +38,19 @@
 	<string name="choose_pic">CHOOSE PICTURE</string>
 	<string name="take_pic">TAKE PICTURE</string>
 	<string name="account_created">Your account has been successfully created ! Your marker will be sent to your mail address in a few minutes. Meanwhile, you can discover and edit your profile. Enjoy !</string>
+	<string name="email_to_send">Welcome to <font color="#A4A4A4"><b>Flash Me (if you can!)</b></font> ! \n\n<br/><br />
+	    										Here are your username and password required to access the application : \n<br />
+	    										<b>username :</b> %1$s \n<br />
+	    										<b>password :</b> %2$s \n\n<br /><br />
+	    										You can download your <b>marker</b> from this address : %3$s. \n<br />
+	    										Enjoy your game! \n\n<br /><br />
+	    										The Flash Me Team\n</string>
+	<string name="error_mail">We were not able to send the marker to your address, it seems to be wrong. Please enter a new e-mail address in the "Edit Profile" section.</string>
+	<string name="marker_to_resend">Hello again!\n\n<br/><br />
+	    							You can download again your marker from this address : %1$s.\n<br />
+	    							Enjoy your game! \n\n<br /><br />
+	    							The Flash Me Team\n</string>
+	<string name="resend_marker">Do you want your marker to be sent again to your current e-mail address : %1$s ?</string>
 	
 	<!--  menu -->
 	<string name="tab_profile">Profile</string>
@@ -50,12 +63,16 @@
     <string name="team_bt">teams</string>
     <string name="game_bt">games</string>
     <string name="profile_picture">profile_picture</string>
+    <string name="profile_marker">profile_marker</string>
     <string name="score_ic">score</string>
     <string name="vics_ic">vics</string>
     <string name="deaths_ic">deaths</string>
-    <string name="score_txt">254</string>
-    <string name="vics_txt">003</string>
-    <string name="deaths_txt">000</string>
+    <string name="rank_ic">rank</string>
+    <string name="score_txt"><Data><![CDATA[<font color="#A4A4A4">BEST SCORES</font><br /> %1$s]]> </Data></string>
+    <string name="rank_txt"><Data><![CDATA[<font color="#A4A4A4">RANK</font><br /> %1$s]]> </Data></string>
+    <string name="total_score">TOTAL SCORE : 6821</string>
+    <string name="vics_txt"><Data><![CDATA[<font color="#A4A4A4">VICTORIES</font><br /> %1$s]]> </Data></string>
+    <string name="deaths_txt"><Data><![CDATA[<font color="#A4A4A4">DEATHS</font><br /> %1$s]]> </Data></string>
     <string name="edit_profile">Edit profile</string>
     <string name="change_pic">CHANGE PICTURE</string>
     <string name="take_new_pic">TAKE NEW PICTURE</string>

@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.mail.internet.AddressException;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -12,18 +14,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Point;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
-import android.view.Display;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,12 +30,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.parse.GetCallback;
-import com.parse.ParseAnalytics;
 import com.parse.ParseException;
 import com.parse.ParseFile;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
@@ -52,11 +45,15 @@ public class SignUpActivity extends Activity {
     private static final int CAMERA_REQUEST = 1888; 
     private ImageView avatarView;
     private ParseFile avatarParseFile;
+    private ParseFile markerParseFile;
     private final int PICK_IMAGE = 1000;
     private final int CREATE_PROFILE = 1404;
     private boolean hasChanged = false;
     private Bitmap bitmapToSent;
+    private Bitmap bitmapMarkerToSent;
     private boolean hasBeenCreated = false;
+    private DisplayMetrics screen = new DisplayMetrics();
+    int pictureSize = 0;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,6 +61,9 @@ public class SignUpActivity extends Activity {
         setContentView(R.layout.sign_up);
         context = SignUpActivity.this;
         final LayoutInflater inflater = LayoutInflater.from(context);
+        
+        getWindowManager().getDefaultDisplay().getMetrics(screen);
+        pictureSize = screen.widthPixels/3;
         
         // Get activity elements
 		final EditText username = (EditText) findViewById(R.id.username);
@@ -76,10 +76,9 @@ public class SignUpActivity extends Activity {
         }
         
         // filling the database with avatarParseFile
-//        Drawable avatarDrawable = avatarView.getDrawable();
-//        Bitmap bitmap = ((BitmapDrawable)avatarDrawable).getBitmap();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmapToSent.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        bitmapToSent = Bitmap.createScaledBitmap(bitmapToSent, pictureSize, pictureSize, false);
         byte[] bitmapdata = stream.toByteArray();
         this.avatarParseFile = new ParseFile("avatar.png", bitmapdata);
         avatarParseFile.saveInBackground(new SaveCallback() {
@@ -89,6 +88,21 @@ public class SignUpActivity extends Activity {
 				}
 			}
 		}); 
+        
+        // sending an empty marker to the database
+        bitmapMarkerToSent = ((BitmapDrawable)getResources().getDrawable(R.drawable.default_team_picture_thumb)).getBitmap();
+        ByteArrayOutputStream markerStream = new ByteArrayOutputStream();
+        bitmapMarkerToSent = Bitmap.createScaledBitmap(bitmapMarkerToSent, pictureSize, pictureSize, false);
+        bitmapMarkerToSent.compress(Bitmap.CompressFormat.PNG, 100, markerStream);
+        byte[] bitmapMarkerData = markerStream.toByteArray();
+        this.markerParseFile = new ParseFile("marker.png", bitmapMarkerData);
+        markerParseFile.saveInBackground(new SaveCallback() {
+			public void done(ParseException e) {
+				if (e != null) {
+					Toast.makeText(context, "Error saving: " + e.getMessage(), Toast.LENGTH_LONG).show();
+				}
+			}
+		});        
         
         // Choose picture button
         Button folderButton = (Button) this.findViewById(R.id.choose_pic);
@@ -133,24 +147,42 @@ public class SignUpActivity extends Activity {
 				
 				// If the e-mail is invalid
       	        // Declaring pattern and matcher we need to compare
-      	   		Pattern p = Pattern.compile(".+@.+\\.[a-z]+");
+				String regExpn =
+			             "^(([\\w-]+\\.)+[\\w-]+|([a-zA-Z]{1}|[\\w-]{2,}))@"
+			                 +"((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
+			                   +"[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\."
+			                   +"([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
+			                   +"[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|"
+			                   +"([a-zA-Z]+[\\w-]+\\.)+[a-zA-Z]{2,4})$";
+
+
+				Pattern p = Pattern.compile(regExpn,Pattern.CASE_INSENSITIVE);
       	   		Matcher m = p.matcher(s_email);
       	   		if (!m.matches()) {
       	   			Toast.makeText(context, R.string.wrong_mail_pattern, Toast.LENGTH_SHORT).show();
       	   			return;
       	   		}
-				
-      	   		// If nothing is wrong, add new User to DataBase
+      	   		
+      	   		// If nothing is wrong, add new User to DataBase and sand e-mail
              	newUser = new ParseUser();
              	newUser.setUsername(s_username);
              	newUser.setPassword(s_password);
              	newUser.setEmail(s_email);
              	newUser.put("avatar", avatarParseFile);
+             	newUser.put("marker", markerParseFile);
              	newUser.signUpInBackground(new SignUpCallback() {
              		public void done(ParseException e) {
              			if (e == null) {
              				// Notify the user his account has been created and that his marker will be sent by mail
-                  	   		// Create an alert box
+
+                  	   		// Send an e-mail
+             				SendMailToUser mail = new SendMailToUser(context);
+             				String email = s_email;
+                            String subject = "Welcome !";
+                            String message = context.getResources().getString(R.string.email_to_send, s_username, s_password, "http://www.pouet.fr");
+                            mail.sendMail(email, subject, message);
+                            
+             				// Create an alert box
             				AlertDialog.Builder adb = new AlertDialog.Builder(context);
             				MessageAlert msg_a;
             				
@@ -167,7 +199,6 @@ public class SignUpActivity extends Activity {
             				
             				// Choosing the type of message alert
             				msg_a.msg.setText(context.getResources().getString(R.string.account_created));
-            				
             				
             				// Filling the alert box
             				adb.setView(alertDialogView);
@@ -209,7 +240,7 @@ public class SignUpActivity extends Activity {
     				hasChanged = true;
     				
     				// Replacing the preview by the chosen image
-    				Bitmap avatar = Bitmap.createScaledBitmap((Bitmap) data.getExtras().get("data"), 300, 300, false);
+    				Bitmap avatar = Bitmap.createScaledBitmap((Bitmap) data.getExtras().get("data"), pictureSize, pictureSize, false);
     				avatarView.setImageBitmap(avatar);
     				
     				bitmapToSent = avatar;
@@ -243,7 +274,7 @@ public class SignUpActivity extends Activity {
 						}
 						// Replacing the preview image by the chosen image
 						
-	    				Bitmap avatarPicked = Bitmap.createScaledBitmap(bm, 300, 300, false);
+	    				Bitmap avatarPicked = Bitmap.createScaledBitmap(bm, pictureSize, pictureSize, false);
 						avatarView.setImageBitmap(avatarPicked);
 						
 						bitmapToSent = avatarPicked;

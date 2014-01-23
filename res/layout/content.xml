@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-    
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
@@ -55,14 +54,9 @@
 	        android:layout_below="@id/pager"
 	        style="@style/topLine" />
 
-     <TextView
-	        android:id="@+id/top_line_light"
-	        android:layout_below="@id/name"
-	        style="@style/topLineLight" />
-     
      <FrameLayout 
         android:id="@+id/maincontainer"
-        android:layout_below="@+id/top_line_light"
+        android:layout_below="@+id/name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
     </FrameLayout>
