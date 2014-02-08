@@ -1,5 +1,8 @@
 package com.qualcomm.QCARSamples.FlashMe;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -15,15 +18,22 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
+import com.parse.ParseRelation;
 
 public class GameParseAdapter extends ParseQueryAdapter<ParseObject>{
 
 	public GameParseAdapter(Context context, final ParseObject user) {
 		super(context, new ParseQueryAdapter.QueryFactory<ParseObject>() {
 			public ParseQuery<ParseObject> create() {
-				ParseQuery<ParseObject> teamsQuery = new ParseQuery<ParseObject>("Game");
-				//teamsQuery.whereEqualTo("players", user);
-				return teamsQuery;
+				// Define queries
+				ParseQuery<ParseObject> gamesQuery = user.getRelation("games").getQuery();
+				ParseQuery<ParseObject> createdGamesQuery = ParseQuery.getQuery("Game");
+				createdGamesQuery.whereEqualTo("createdBy", user);
+				// Compound queries
+				List<ParseQuery<ParseObject>> queries = new ArrayList<ParseQuery<ParseObject>>();
+				queries.add(gamesQuery);
+				queries.add(createdGamesQuery);
+				return ParseQuery.or(queries);
 			}
 		});
 	}
