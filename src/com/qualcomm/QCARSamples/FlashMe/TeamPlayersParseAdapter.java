@@ -43,6 +43,20 @@ public class TeamPlayersParseAdapter extends ParseQueryAdapter<ParseObject>{
 		this.loadObjects();
 	}
 	
+	public boolean isCreator(){
+		String s_teamCreator = "";
+		try {
+			s_teamCreator = team.getParseUser("createdBy").fetchIfNeeded().getUsername();
+		} catch (ParseException e) {
+			Toast.makeText(getContext(), "Error : " + e.toString(), Toast.LENGTH_LONG).show();
+			e.printStackTrace();
+		}
+		if(s_teamCreator.equals(user.getUsername())){
+			return true;
+		}
+		return false;
+	}
+	
 	@Override
 	public View getItemView(final ParseObject player, View v, ViewGroup parent) {
 		

@@ -149,7 +149,9 @@ public class GamesFragment extends ListFragment {
 		state = 0;
 		gameName= "";
 		inputValue.setHint("New game name");
-		addButton.setText("CREATE");		
+		addButton.setText("CREATE");
+		inputValue.setVisibility(View.VISIBLE);
+		addButton.setVisibility(View.VISIBLE);
 		backButton.setVisibility(View.INVISIBLE);
 		
 		setListAdapter(gameParseAdapter);
@@ -157,8 +159,15 @@ public class GamesFragment extends ListFragment {
 	
 	public void setDetailAdapter(GameTeamsParseAdapter gameTeamsParseAdapter) {
 		state = 1;
-		inputValue.setHint("Team name");
-		addButton.setText("ADD");	
+		
+		if(gameTeamsParseAdapter.isCreator()){
+			inputValue.setHint("Team name");
+			addButton.setText("ADD");
+		}
+		else {
+			inputValue.setVisibility(View.INVISIBLE);
+			addButton.setVisibility(View.INVISIBLE);
+		}
 		backButton.setVisibility(View.VISIBLE);
 		
 		gameTeamsParseAdapter.addOnQueryLoadListener(new OnQueryLoadListener<ParseObject>() {
