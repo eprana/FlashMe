@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@+id/delete_bt"
-        android:layout_marginRight="14.5sp"
+        android:layout_marginRight="10sp"
         android:background="@null"
         android:contentDescription="@string/next_bt"
         android:focusable="false"

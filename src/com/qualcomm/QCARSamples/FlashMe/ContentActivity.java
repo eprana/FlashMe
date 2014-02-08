@@ -136,7 +136,7 @@ public class ContentActivity extends Activity implements
 	 	actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         
 	 	for(TabAction tab : tabs) {
-	 		actionBar.addTab(actionBar.newTab().setIcon(tab.icon).setText(tab.text).setTabListener(this));
+	 		actionBar.addTab(actionBar.newTab().setIcon(tab.icon)./*setText(tab.text).*/setTabListener(this));
 	 	}
 	 	mViewPager.setCurrentItem(0);
 	 	

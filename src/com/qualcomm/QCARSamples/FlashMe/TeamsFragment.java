@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -35,7 +36,7 @@ public class TeamsFragment extends ListFragment {
 	// Layout elements
 	private TeamParseAdapter teamParseAdapter;
 	private TeamPlayersParseAdapter teamPlayersParseAdapter;
-	//private ListView teamsList;
+	private ImageButton backButton;
 	private EditText teamName;
 	private Button createTeam;
 	//private Button playButton;
@@ -51,13 +52,13 @@ public class TeamsFragment extends ListFragment {
 		currentUser = ParseUser.getCurrentUser();
 		progress = (ProgressBar) mainView.findViewById(R.id.progressBar);
 		
+		backButton = (ImageButton) mainView.findViewById(R.id.back_bt);
     	teamName = (EditText) mainView.findViewById(R.id.enter_team);
     	createTeam = (Button) mainView.findViewById(R.id.create_team);
     	//playButton = (Button) mainView.findViewById(R.id.play);
     	
     	// Load fragment data
     	teamParseAdapter = new TeamParseAdapter(getActivity(), currentUser);
-    	setListAdapter(teamParseAdapter);
     	teamParseAdapter.addOnQueryLoadListener(new OnQueryLoadListener<ParseObject>() {
 			@Override
 			public void onLoaded(List<ParseObject> arg0, Exception arg1) {
@@ -68,6 +69,14 @@ public class TeamsFragment extends ListFragment {
 				progress.setVisibility(View.VISIBLE);
 			}
     	});
+    	setListAdapter(teamParseAdapter);
+    	
+    	backButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				setGeneralAdapter();
+			}
+		});
     	
     	// Create team button listener
 		createTeam.setOnClickListener(new OnClickListener() {
@@ -110,9 +119,21 @@ public class TeamsFragment extends ListFragment {
 		
 		ParseObject team = ((ParseObject) l.getItemAtPosition(position));
 		teamPlayersParseAdapter = new TeamPlayersParseAdapter(getActivity(), currentUser, team);
-		setListAdapter(teamPlayersParseAdapter);
+		setDetailAdapter(teamPlayersParseAdapter);
+	}
+	
+	public void setGeneralAdapter() {
+		state = 0;
+		backButton.setVisibility(View.INVISIBLE);
+		
+		setListAdapter(teamParseAdapter);
+	}
+	
+	public void setDetailAdapter(TeamPlayersParseAdapter teamPlayersParseAdapter) {
 		state = 1;
-		teamParseAdapter.addOnQueryLoadListener(new OnQueryLoadListener<ParseObject>() {
+		backButton.setVisibility(View.VISIBLE);
+		
+		teamPlayersParseAdapter.addOnQueryLoadListener(new OnQueryLoadListener<ParseObject>() {
 			@Override
 			public void onLoaded(List<ParseObject> arg0, Exception arg1) {
 				progress.setVisibility(View.GONE);
@@ -122,6 +143,7 @@ public class TeamsFragment extends ListFragment {
 				progress.setVisibility(View.VISIBLE);
 			}
     	});
+		setListAdapter(teamPlayersParseAdapter);
 	}
 	
 	// Create team

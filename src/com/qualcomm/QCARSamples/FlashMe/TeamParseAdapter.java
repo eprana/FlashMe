@@ -56,21 +56,7 @@ public class TeamParseAdapter extends ParseQueryAdapter<ParseObject>{
 		// Team details button
 		ImageButton details = (ImageButton)v.findViewById(R.id.details_bt);
 		details.setFocusable(false);
-		details.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-//				Bundle args = new Bundle();
-//				args.putString("team", team.getString("name"));
-//				if(getContext() instanceof ContentActivity)
-//				{
-//					ContentActivity activity = (ContentActivity) getContext();
-//					Fragment teamPlayersFragment = new TeamPlayersFragment();
-//					FragmentTransaction ft = getChildFragmentManager().beginTransaction();
-//					ft.add(R.id.pager, teamPlayersFragment).commit();
-//				}
-			}
-		});
+
 		
 		// Delete team button
 		ImageButton deleteTeam = (ImageButton)v.findViewById(R.id.delete_bt);
