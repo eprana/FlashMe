@@ -32,13 +32,14 @@ public class TeamsFragment extends ListFragment {
 	private static ParseUser currentUser = null;
 	private static ProgressBar progress = null;
 	private int state; // 0:team, 1:detail
+	private String teamName;
 	
 	// Layout elements
 	private TeamParseAdapter teamParseAdapter;
 	private TeamPlayersParseAdapter teamPlayersParseAdapter;
 	private ImageButton backButton;
-	private EditText teamName;
-	private Button createTeam;
+	private EditText inputValue;
+	private Button addButton;
 	//private Button playButton;
 	
 	@Override
@@ -53,8 +54,8 @@ public class TeamsFragment extends ListFragment {
 		progress = (ProgressBar) mainView.findViewById(R.id.progressBar);
 		
 		backButton = (ImageButton) mainView.findViewById(R.id.back_bt);
-    	teamName = (EditText) mainView.findViewById(R.id.enter_team);
-    	createTeam = (Button) mainView.findViewById(R.id.create_team);
+		inputValue = (EditText) mainView.findViewById(R.id.enter_team);
+		addButton = (Button) mainView.findViewById(R.id.create_team);
     	//playButton = (Button) mainView.findViewById(R.id.play);
     	
     	// Load fragment data
@@ -78,23 +79,33 @@ public class TeamsFragment extends ListFragment {
 			}
 		});
     	
-    	// Create team button listener
-		createTeam.setOnClickListener(new OnClickListener() {
+    	// Create team/Add player
+    	addButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				final String s_teamName = teamName.getText().toString();
-				if(s_teamName.equals("")){
+
+				final String s_inputValue = inputValue.getText().toString();
+				if(s_inputValue.equals("")){
 					// Invalid team name
 					Toast.makeText(getActivity(), R.string.empty_team_name, Toast.LENGTH_LONG).show();
 					return;
 				}
 				else {
-					createTeam(s_teamName);
+					switch(state) {
+					case 0:
+						createTeam(s_inputValue);
+						break;
+					case 1:
+						addPlayerToTeam(s_inputValue);
+						break;
+					default:
+						break;
+					}
 				}
 			}
 		});
 		
-		// Create play button listener
+		// Play button listener
 		/*playButton.setOnClickListener(new OnClickListener() {
 			
 			@Overrideb
@@ -118,12 +129,14 @@ public class TeamsFragment extends ListFragment {
 		super.onListItemClick(l, v, position, id);
 		
 		ParseObject team = ((ParseObject) l.getItemAtPosition(position));
+		teamName = team.getString("name");
 		teamPlayersParseAdapter = new TeamPlayersParseAdapter(getActivity(), currentUser, team);
 		setDetailAdapter(teamPlayersParseAdapter);
 	}
 	
 	public void setGeneralAdapter() {
 		state = 0;
+		teamName= "";
 		backButton.setVisibility(View.INVISIBLE);
 		
 		setListAdapter(teamParseAdapter);
@@ -173,11 +186,51 @@ public class TeamsFragment extends ListFragment {
 							}
 						}
 					});
-					teamName.setText("");
+					inputValue.setText("");
 				}
 				else {
 					Toast.makeText(getActivity(), "Error : "+e.getMessage(), Toast.LENGTH_LONG).show();
 				}
+			}
+		});
+	}
+	
+	// Add player to team
+	private void addPlayerToTeam(final String playerName) {
+		// Parse query
+		ParseQuery<ParseObject> teamQuery = ParseQuery.getQuery("Team");
+		teamQuery.whereEqualTo("name", teamName);
+		// Get concerned team
+		teamQuery.getFirstInBackground(new GetCallback<ParseObject>() {
+			@Override
+			public void done(final ParseObject team, ParseException e) {
+				if(e!=null){
+					Toast.makeText(getActivity(), "Error : "+e.getMessage(), Toast.LENGTH_SHORT).show();
+					return;
+				}
+				// Parse Query
+				ParseQuery<ParseUser> playerQuery = ParseUser.getQuery();
+				playerQuery.whereEqualTo("username", playerName);
+				// Get selected player
+				playerQuery.getFirstInBackground(new GetCallback<ParseUser>() {
+					@Override
+					public void done(ParseUser player, ParseException e) {
+						if(e!=null){
+							Toast.makeText(getActivity(), "Sorry, this player doesn't exist.", Toast.LENGTH_SHORT).show();
+							return;
+						}
+						team.getRelation("players").add(player);
+						team.saveInBackground(new SaveCallback() {
+							@Override
+							public void done(ParseException e) {
+								if (e == null) {
+									teamParseAdapter.loadObjects();
+								}
+							}
+						});
+						inputValue.setText("");
+					}
+				});
 			}
 		});
 	}
