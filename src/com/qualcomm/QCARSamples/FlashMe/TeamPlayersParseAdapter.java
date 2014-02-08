@@ -13,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.parse.DeleteCallback;
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -45,15 +44,15 @@ public class TeamPlayersParseAdapter extends ParseQueryAdapter<ParseObject>{
 	public View getItemView(final ParseObject player, View v, ViewGroup parent) {
 		
 		if (v == null) {
-			v = View.inflate(getContext(), R.layout.team_players_list, null);
+			v = View.inflate(getContext(), R.layout.details_list, null);
 		}
  
 		super.getItemView(player, v, parent);
  
-		TextView playerName = (TextView) v.findViewById(R.id.player_name);
+		TextView playerName = (TextView) v.findViewById(R.id.elem_name);
 		playerName.setText(player.getString("username"));
 		
-		final ImageView playerPicture = (ImageView) v.findViewById(R.id.player_picture);
+		final ImageView playerPicture = (ImageView) v.findViewById(R.id.elem_picture);
 		ParseFile file = (ParseFile) player.get("avatar");
 		file.getDataInBackground(new GetDataCallback() {
 			public void done(byte[] data, ParseException e) {

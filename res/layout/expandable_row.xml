@@ -25,7 +25,7 @@
 		    android:layout_alignParentTop="true"
 		    android:layout_toRightOf="@+id/state"
 		    android:background="@null"
-		    android:contentDescription="@string/team_in_list_picture"
+		    android:contentDescription="@string/elem_in_list_picture"
 		    android:src="@drawable/default_team_picture_thumb" />
 
 		<TextView

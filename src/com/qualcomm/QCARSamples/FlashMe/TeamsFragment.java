@@ -31,7 +31,7 @@ public class TeamsFragment extends ListFragment {
 	// Data elements
 	private static ParseUser currentUser = null;
 	private static ProgressBar progress = null;
-	private int state; // 0:team, 1:detail
+	private int state; // 0:teams, 1:detail
 	private String teamName;
 	
 	// Layout elements
@@ -228,7 +228,7 @@ public class TeamsFragment extends ListFragment {
 							@Override
 							public void done(ParseException e) {
 								if (e == null) {
-									teamParseAdapter.loadObjects();
+									teamPlayersParseAdapter.loadObjects();
 								}
 							}
 						});

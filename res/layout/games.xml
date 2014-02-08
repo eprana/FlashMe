@@ -67,7 +67,7 @@
 	    android:layout_weight="20">
     	    	     
 		<ListView 
-		    android:id="@+id/games_list" 
+		    android:id="@android:id/list"
 		    android:groupIndicator="@drawable/group_indicator"
 			android:layout_marginTop="@dimen/medium_mg"
 		    android:layout_width="match_parent"

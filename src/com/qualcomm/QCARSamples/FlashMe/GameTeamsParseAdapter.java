@@ -3,30 +3,37 @@ package com.qualcomm.QCARSamples.FlashMe;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.parse.DeleteCallback;
+import com.parse.GetDataCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
+import com.parse.ParseRelation;
+import com.parse.SaveCallback;
 
-public class TeamParseAdapter extends ParseQueryAdapter<ParseObject>{
+public class GameTeamsParseAdapter extends ParseQueryAdapter<ParseObject>{
 	
-	public TeamParseAdapter(Context context, final ParseObject user) {
+	ParseObject game;
 
+	public GameTeamsParseAdapter(Context context, final ParseObject user, final ParseObject game) {
 		super(context, new ParseQueryAdapter.QueryFactory<ParseObject>() {
 			public ParseQuery<ParseObject> create() {
-				ParseQuery<ParseObject> teamsQuery = new ParseQuery<ParseObject>("Team");
-				teamsQuery.whereEqualTo("players", user);
-				return teamsQuery;
+				ParseRelation<ParseObject> playersQuery = game.getRelation("teams");
+				return playersQuery.getQuery();
 			}
 		});
+		this.game = game;
 	}
 	
 	public void refresh() {
@@ -37,23 +44,28 @@ public class TeamParseAdapter extends ParseQueryAdapter<ParseObject>{
 	public View getItemView(final ParseObject team, View v, ViewGroup parent) {
 		
 		if (v == null) {
-			v = View.inflate(getContext(), R.layout.general_list, null);
+			v = View.inflate(getContext(), R.layout.details_list, null);
 		}
  
 		super.getItemView(team, v, parent);
+ 
+		TextView playerName = (TextView) v.findViewById(R.id.elem_name);
+		playerName.setText(team.getString("username"));
 		
-		// Set team data
-		TextView teamName = (TextView) v.findViewById(R.id.elem_name);
-		teamName.setText(team.getString("name"));
-		TextView teamCreator = (TextView) v.findViewById(R.id.elem_creator);
-		try {
-			teamCreator.setText(team.getParseUser("createdBy").fetchIfNeeded().getUsername());
-		} catch (ParseException e) {
-			Toast.makeText(getContext(), "Error : " + e.toString(), Toast.LENGTH_LONG).show();
-			e.printStackTrace();
-		}
-
-		// Delete team button
+		final ImageView teamPicture = (ImageView) v.findViewById(R.id.elem_picture);
+		ParseFile file = (ParseFile) team.get("avatar");
+		file.getDataInBackground(new GetDataCallback() {
+			public void done(byte[] data, ParseException e) {
+				if (e != null){
+					Toast.makeText(getContext(), "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
+					return;
+				}
+				Bitmap profilePicture = BitmapFactory.decodeByteArray(data, 0, data.length);
+				teamPicture.setImageBitmap(profilePicture);
+			}
+		});
+		
+		// Delete game button
 		ImageButton deleteTeam = (ImageButton)v.findViewById(R.id.delete_bt);
 		deleteTeam.setFocusable(false);
 		deleteTeam.setOnClickListener(new OnClickListener() {
@@ -62,15 +74,15 @@ public class TeamParseAdapter extends ParseQueryAdapter<ParseObject>{
 			public void onClick(View v) {
 				AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
 				alertDialog.setTitle(team.getString("name"));
-				alertDialog.setMessage("Are you sure you want to delete this team ?");
+				alertDialog.setMessage("Are you sure you want to delete "+team.getString("username")+" from this team ?");
 				alertDialog.setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
 						// User wants to delete team
-						team.deleteInBackground(new DeleteCallback() {
-								
+						team.getRelation("players").remove(team);
+						team.saveInBackground(new SaveCallback() {
 							@Override
 							public void done(ParseException e) {
-								refresh();
+								refresh();								
 							}
 						});
 					}
@@ -86,17 +98,5 @@ public class TeamParseAdapter extends ParseQueryAdapter<ParseObject>{
 		});
 		
 		return v;
-	}
-	
-	@Override
-	public void notifyDataSetChanged() {
-		// TODO Auto-generated method stub
-		super.notifyDataSetChanged();
-	}
-	
-	@Override
-	public void notifyDataSetInvalidated() {
-		// TODO Auto-generated method stub
-		super.notifyDataSetInvalidated();
 	}
 }

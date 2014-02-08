@@ -95,8 +95,6 @@
 	<string name="enter_player">Enter a player\'s name</string>
 	<string name="player_in_team_pic">player_picture</string>
 	<string name="delete_player_bt">Delete player</string>
-	<string name="team_in_list_picture">Team in list picture</string>
-	<string name="player_in_list_picture">Player in list picture</string>
 	<string name="delete">delete</string>
 	<string name="delete_team_confirm"><Data><![CDATA[Are you sure you want to delete the team <b>%1$s</b> ?]]> </Data></string>
 	<string name="delete_player_from_team_confirm"><Data><![CDATA[Are you sure you want to delete <b>%1$s</b> from the team <b>%2$s</b> ?]]> </Data></string>
@@ -118,8 +116,10 @@
 	<string name="team_pic">team_picture</string>
 	<string name="delete_team_bt">Delete team</string>
 	<string name="quit_game">Quit game</string>
+	<string name="elem_in_list_picture">Elem in list picture</string>
 	
-	<!-- expandable row -->
+	
+	<!-- details list -->
 	<string name="add_bt">Add element</string>
 	<string name="next_bt">See details</string>
 	<string name="delete_bt">Delete element</string>	
