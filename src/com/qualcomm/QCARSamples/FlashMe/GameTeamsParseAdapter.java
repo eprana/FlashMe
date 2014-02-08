@@ -1,5 +1,8 @@
 package com.qualcomm.QCARSamples.FlashMe;
 
+import java.util.HashMap;
+import java.util.List;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,7 +16,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.FindCallback;
+import com.parse.FunctionCallback;
 import com.parse.GetDataCallback;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -63,14 +69,32 @@ public class GameTeamsParseAdapter extends ParseQueryAdapter<ParseObject>{
 			public void onClick(View v) {
 				AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
 				alertDialog.setTitle(team.getString("name"));
-				alertDialog.setMessage("Are you sure you want to delete "+team.getString("username")+" from this team ?");
+				alertDialog.setMessage("Are you sure you want to delete the team "+team.getString("name")+" from this game ?");
 				alertDialog.setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
 						// User wants to delete team
-						team.getRelation("players").remove(team);
-						team.saveInBackground(new SaveCallback() {
+						game.getRelation("teams").remove(team);
+						game.saveInBackground(new SaveCallback() {
 							@Override
 							public void done(ParseException e) {
+								team.getRelation("players").getQuery().findInBackground(new FindCallback<ParseObject>() {
+									@Override
+									public void done(List<ParseObject> players, ParseException e) {
+										for(ParseObject player : players) {
+											HashMap<String, Object> params = new HashMap<String, Object>();
+											params.put("userId", player.getObjectId());
+											params.put("gameId", game.getObjectId());
+											ParseCloud.callFunctionInBackground("removeGameFromUser", params, new FunctionCallback<String>() {
+												public void done(String result, ParseException e) {
+													if (e != null) {
+														Toast.makeText(getContext(), "Error : "+e.getMessage(), Toast.LENGTH_SHORT).show();
+													}
+												}
+											});
+										}
+										
+									}
+								});
 								refresh();								
 							}
 						});

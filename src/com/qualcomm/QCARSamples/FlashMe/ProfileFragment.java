@@ -1,7 +1,11 @@
 package com.qualcomm.QCARSamples.FlashMe;
 
+import java.util.HashMap;
+
+import com.parse.FunctionCallback;
 import com.parse.GetCallback;
 import com.parse.GetDataCallback;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseQuery;
@@ -63,7 +67,7 @@ public class ProfileFragment extends Fragment {
 		// Load fragment data
 		LoadProfile lp = new LoadProfile(context);
     	lp.execute();
-
+		
 		return mainView;
 	}
 	

@@ -1,0 +1,14 @@
+{
+    "applications": {
+        "FlashMe": {
+            "applicationId": "ysJVmuI4oJDEsyF7YOcQG12WVkLzwQlLrqzt15Fg", 
+            "masterKey": "71INvGXfKSJ5xPbemmSwezOIpFJXxk4VIjc8y9vV"
+        }, 
+        "_default": {
+            "link": "FlashMe"
+        }
+    }, 
+    "global": {
+        "parseVersion": "1.2.16"
+    }
+}

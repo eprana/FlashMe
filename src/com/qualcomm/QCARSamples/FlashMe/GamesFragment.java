@@ -1,10 +1,13 @@
 package com.qualcomm.QCARSamples.FlashMe;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.parse.FindCallback;
+import com.parse.FunctionCallback;
 import com.parse.GetCallback;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -246,7 +249,16 @@ public class GamesFragment extends ListFragment {
 										@Override
 										public void done(List<ParseObject> players, ParseException e) {
 											for(ParseObject player : players) {
-												player.getRelation("games").add(game);
+												HashMap<String, Object> params = new HashMap<String, Object>();
+												params.put("userId", player.getObjectId());
+												params.put("gameId", game.getObjectId());
+												ParseCloud.callFunctionInBackground("addGameToUser", params, new FunctionCallback<String>() {
+													public void done(String result, ParseException e) {
+														if (e != null) {
+															Toast.makeText(getActivity(), "Error : "+e.getMessage(), Toast.LENGTH_SHORT).show();
+														}
+													}
+												});
 											}
 										}
 									});
