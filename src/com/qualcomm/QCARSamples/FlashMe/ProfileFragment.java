@@ -1,11 +1,7 @@
 package com.qualcomm.QCARSamples.FlashMe;
 
-import java.util.HashMap;
-
-import com.parse.FunctionCallback;
 import com.parse.GetCallback;
 import com.parse.GetDataCallback;
-import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseQuery;
@@ -36,7 +32,8 @@ public class ProfileFragment extends Fragment {
 	// Layout elements
 	private static ImageView profilePictureView = null;
 	private static ImageView profileMarkerView = null;
-	private static TextView scoreView;
+	private static TextView totalScoreView;
+	private static TextView bestScoreView;
 	private static TextView victoriesView;
 	private static TextView rankView;
 	private static TextView defeatsView;
@@ -54,15 +51,11 @@ public class ProfileFragment extends Fragment {
 		
 		profilePictureView = (ImageView) mainView.findViewById(R.id.profile_picture);
 		profileMarkerView = (ImageView) mainView.findViewById(R.id.profile_marker);
-		scoreView = (TextView) mainView.findViewById(R.id.score_txt);
+		totalScoreView = (TextView) mainView.findViewById(R.id.total_score);
+		bestScoreView = (TextView) mainView.findViewById(R.id.best_score_txt);
 		rankView = (TextView) mainView.findViewById(R.id.rank_txt);
 		defeatsView = (TextView) mainView.findViewById(R.id.defeats_txt);
 		victoriesView = (TextView) mainView.findViewById(R.id.victories_txt);
-		
-		scoreView.setText(Html.fromHtml(context.getResources().getString(R.string.score_txt, "254")));
-		rankView.setText(Html.fromHtml(context.getResources().getString(R.string.rank_txt, "14")));
-		defeatsView.setText(Html.fromHtml(context.getResources().getString(R.string.deaths_txt, "4")));
-		victoriesView.setText(Html.fromHtml(context.getResources().getString(R.string.vics_txt, "5")));
 				
 		// Load fragment data
 		LoadProfile lp = new LoadProfile(context);
@@ -87,7 +80,7 @@ public class ProfileFragment extends Fragment {
 		
 		@Override
 		protected Void doInBackground(Void... arg0) {
-			loadProfilePictureAndMarker(context);
+			loadProfileData(context);
 			return null;
 		}
 		
@@ -98,7 +91,7 @@ public class ProfileFragment extends Fragment {
 		}
 	}
 	
-	public static void loadProfilePictureAndMarker(final Context context) {
+	public static void loadProfileData(final Context context) {
 		// Parse query for profile picture
 		ParseQuery<ParseUser> query = ParseUser.getQuery();
 		query.whereEqualTo("username", currentUser.getUsername());
@@ -109,6 +102,13 @@ public class ProfileFragment extends Fragment {
 			    	Toast.makeText(context, "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
 			    	return;
 			    }
+
+			    totalScoreView.setText(Html.fromHtml(context.getResources().getString(R.string.total_score_txt )+" : "+ user.getInt("totalScore")));
+			    bestScoreView.setText(Html.fromHtml(context.getResources().getString(R.string.best_score_txt, user.getInt("bestScore"))));
+				rankView.setText(Html.fromHtml(context.getResources().getString(R.string.rank_txt, user.getInt("rank"))));
+				defeatsView.setText(Html.fromHtml(context.getResources().getString(R.string.defeats_txt, user.getInt("defeats"))));
+				victoriesView.setText(Html.fromHtml(context.getResources().getString(R.string.victories_txt, user.getInt("victories"))));
+				
 		    	ParseFile avatarFile = (ParseFile) user.get("avatar");
 				avatarFile.getDataInBackground(new GetDataCallback() {
 					public void done(byte[] data, ParseException e) {
@@ -122,18 +122,18 @@ public class ProfileFragment extends Fragment {
 					}
 				});
 				
-//		    	ParseFile markerFile = (ParseFile) user.get("marker");
-//		    	markerFile.getDataInBackground(new GetDataCallback() {
-//					public void done(byte[] data, ParseException e) {
-//						if (e != null){
-//							Toast.makeText(context, "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
-//							return;
-//						}
-//						Bitmap markerBitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-//						// Setting the marker imageView
-//						profileMarkerView.setImageBitmap(markerBitmap);
-//					}
-//				});
+		    	ParseFile markerFile = (ParseFile) user.get("marker");
+		    	markerFile.getDataInBackground(new GetDataCallback() {
+					public void done(byte[] data, ParseException e) {
+						if (e != null){
+							Toast.makeText(context, "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
+							return;
+						}
+						Bitmap markerBitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+						// Setting the marker imageView
+						profileMarkerView.setImageBitmap(markerBitmap);
+					}
+				});
 			}
 		});
 		

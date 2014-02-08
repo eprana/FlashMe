@@ -18,7 +18,6 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
-import com.parse.ParseRelation;
 import com.parse.ParseUser;
 
 public class GameParseAdapter extends ParseQueryAdapter<ParseObject>{

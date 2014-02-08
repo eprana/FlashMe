@@ -82,8 +82,8 @@
             android:background="@color/dark_blue">
 		 	
 		    <TextView
-			    android:id="@+id/score_line"
-			    android:text="@string/total_score"
+			    android:id="@+id/total_score"
+			    android:text="@string/total_score_txt"
 				android:layout_span="2"
 			    style="@style/topLine" />
 	    </TableRow>
@@ -125,11 +125,11 @@
             android:gravity="center_horizontal">
 	        
 	   	   <TextView 
-		        android:id="@+id/score_txt"
+		        android:id="@+id/best_score_txt"
 				android:layout_height="match_parent"
 				android:layout_width="0dip"
 				android:layout_weight="1" 
-				android:text="@string/score_txt"
+				android:text="@string/best_score_txt"
 				android:paddingBottom="@dimen/medium_mg"
 				android:gravity="center"
 				android:textSize="@dimen/medium_tx"
@@ -141,7 +141,7 @@
 				android:layout_width="0dip" 
 				android:paddingBottom="@dimen/medium_mg" 
 				android:layout_weight="1"
-				android:text="@string/vics_txt"
+				android:text="@string/victories_txt"
 				android:gravity="center"
 				android:textSize="@dimen/medium_tx"
 				style="@style/middle_blue" />
@@ -199,7 +199,7 @@
 				android:layout_height="match_parent"
 				android:layout_width="0dip" 
 				android:layout_weight="1"
-				android:text="@string/deaths_txt"
+				android:text="@string/defeats_txt"
 				android:gravity="center"
 				android:textSize="@dimen/medium_tx"
 				style="@style/middle_blue" />
