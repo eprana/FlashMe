@@ -64,7 +64,6 @@ public class GamesFragment extends ListFragment {
     	
     	// Load fragment data
     	gameParseAdapter = new GameParseAdapter(context, currentUser);
-    	setListAdapter(gameParseAdapter);
     	gameParseAdapter.addOnQueryLoadListener(new OnQueryLoadListener<ParseObject>() {
 
 			@Override
@@ -78,6 +77,14 @@ public class GamesFragment extends ListFragment {
 			}
 
     	});
+    	setListAdapter(gameParseAdapter);
+    	
+    	backButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				setGeneralAdapter();
+			}
+		});
 
     	// Create game button listener
     	addButton.setOnClickListener(new OnClickListener() {
@@ -127,10 +134,12 @@ public class GamesFragment extends ListFragment {
 
 		super.onListItemClick(l, v, position, id);
 		
-		ParseObject game = ((ParseObject) l.getItemAtPosition(position));
-		gameName = game.getString("name");
-		gameTeamsParseAdapter = new GameTeamsParseAdapter(getActivity(), currentUser, game);
-		setDetailAdapter(gameTeamsParseAdapter);
+		if(state == 0) {
+			ParseObject game = ((ParseObject) l.getItemAtPosition(position));
+			gameName = game.getString("name");
+			gameTeamsParseAdapter = new GameTeamsParseAdapter(getActivity(), currentUser, game);
+			setDetailAdapter(gameTeamsParseAdapter);	
+		}
 	}
 	
 	public void setGeneralAdapter() {
@@ -145,7 +154,7 @@ public class GamesFragment extends ListFragment {
 	
 	public void setDetailAdapter(GameTeamsParseAdapter gameTeamsParseAdapter) {
 		state = 1;
-		inputValue.setHint("Game name");
+		inputValue.setHint("Team name");
 		addButton.setText("ADD");	
 		backButton.setVisibility(View.VISIBLE);
 		
@@ -203,43 +212,52 @@ public class GamesFragment extends ListFragment {
 			}
 		});
 	}
-	// Add player to team
-		private void addTeamToGame(final String teamName) {
-			// Parse query
-			ParseQuery<ParseObject> gameQuery = ParseQuery.getQuery("Game");
-			gameQuery.whereEqualTo("name", gameName);
-			// Get concerned team
-			gameQuery.getFirstInBackground(new GetCallback<ParseObject>() {
-				@Override
-				public void done(final ParseObject game, ParseException e) {
-					if(e!=null){
-						Toast.makeText(getActivity(), "Error : "+e.getMessage(), Toast.LENGTH_SHORT).show();
-						return;
-					}
-					// Parse Query
-					ParseQuery<ParseObject> teamQuery = ParseQuery.getQuery("Team");
-					teamQuery.whereEqualTo("username", teamName);
-					// Get selected player
-					teamQuery.getFirstInBackground(new GetCallback<ParseObject>() {
-						@Override
-						public void done(ParseObject team, ParseException e) {
-							if(e!=null){
-								Toast.makeText(getActivity(), "Sorry, this team doesn't exist.", Toast.LENGTH_SHORT).show();
-								return;
-							}
-							team.getRelation("teams").add(team);
-							team.saveInBackground(new SaveCallback() {
-								@Override
-								public void done(ParseException e) {
-									if (e == null) {
-										gameTeamsParseAdapter.loadObjects();
-									}
-								}
-							});
-							inputValue.setText("");
-						}
-					});
+	
+	// Add team to game
+	private void addTeamToGame(final String teamName) {
+		// Parse query
+		ParseQuery<ParseObject> gameQuery = ParseQuery.getQuery("Game");
+		gameQuery.whereEqualTo("name", gameName);
+		// Get concerned game
+		gameQuery.getFirstInBackground(new GetCallback<ParseObject>() {
+			@Override
+			public void done(final ParseObject game, ParseException e) {
+				if(e!=null){
+					Toast.makeText(getActivity(), "Error : "+e.getMessage(), Toast.LENGTH_SHORT).show();
+					return;
 				}
-			});
-		}
+				// Parse Query
+				ParseQuery<ParseObject> teamQuery = ParseQuery.getQuery("Team");
+				teamQuery.whereEqualTo("name", teamName);
+				// Get selected team
+				teamQuery.getFirstInBackground(new GetCallback<ParseObject>() {
+					@Override
+					public void done(final ParseObject team, ParseException e) {
+						if(e!=null){
+							Toast.makeText(getActivity(), "Sorry, this team doesn't exist.", Toast.LENGTH_SHORT).show();
+							return;
+						}
+						game.getRelation("teams").add(team);
+						game.saveInBackground(new SaveCallback() {
+							@Override
+							public void done(ParseException e) {
+								if (e == null) {
+									team.getRelation("players").getQuery().findInBackground(new FindCallback<ParseObject>() {
+										@Override
+										public void done(List<ParseObject> players, ParseException e) {
+											for(ParseObject player : players) {
+												player.getRelation("games").add(game);
+											}
+										}
+									});
+									gameTeamsParseAdapter.loadObjects();
+								}
+							}
+						});
+						inputValue.setText("");
+					}
+				});
+			}
+		});
+	}
 }

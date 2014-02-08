@@ -128,10 +128,12 @@ public class TeamsFragment extends ListFragment {
 
 		super.onListItemClick(l, v, position, id);
 		
-		ParseObject team = ((ParseObject) l.getItemAtPosition(position));
-		teamName = team.getString("name");
-		teamPlayersParseAdapter = new TeamPlayersParseAdapter(getActivity(), currentUser, team);
-		setDetailAdapter(teamPlayersParseAdapter);
+		if(state == 0) {
+			ParseObject team = ((ParseObject) l.getItemAtPosition(position));
+			teamName = team.getString("name");
+			teamPlayersParseAdapter = new TeamPlayersParseAdapter(getActivity(), currentUser, team);
+			setDetailAdapter(teamPlayersParseAdapter);	
+		}
 	}
 	
 	public void setGeneralAdapter() {

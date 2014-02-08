@@ -49,21 +49,10 @@ public class GameTeamsParseAdapter extends ParseQueryAdapter<ParseObject>{
  
 		super.getItemView(team, v, parent);
  
-		TextView playerName = (TextView) v.findViewById(R.id.elem_name);
-		playerName.setText(team.getString("username"));
+		TextView teamName = (TextView) v.findViewById(R.id.elem_name);
+		teamName.setText(team.getString("name"));
 		
-		final ImageView teamPicture = (ImageView) v.findViewById(R.id.elem_picture);
-		ParseFile file = (ParseFile) team.get("avatar");
-		file.getDataInBackground(new GetDataCallback() {
-			public void done(byte[] data, ParseException e) {
-				if (e != null){
-					Toast.makeText(getContext(), "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
-					return;
-				}
-				Bitmap profilePicture = BitmapFactory.decodeByteArray(data, 0, data.length);
-				teamPicture.setImageBitmap(profilePicture);
-			}
-		});
+		//final ImageView teamPicture = (ImageView) v.findViewById(R.id.elem_picture);
 		
 		// Delete game button
 		ImageButton deleteTeam = (ImageButton)v.findViewById(R.id.delete_bt);
