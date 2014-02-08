@@ -58,6 +58,16 @@ public class GameTeamsParseAdapter extends ParseQueryAdapter<ParseObject>{
 		TextView teamName = (TextView) v.findViewById(R.id.elem_name);
 		teamName.setText(team.getString("name"));
 		
+		TextView teamCreator = (TextView) v.findViewById(R.id.elem_detail);
+		String s_teamCreator = "";
+		try {
+			s_teamCreator = team.getParseUser("createdBy").fetchIfNeeded().getUsername();
+		} catch (ParseException e) {
+			Toast.makeText(getContext(), "Error : " + e.toString(), Toast.LENGTH_LONG).show();
+			e.printStackTrace();
+		}
+		teamCreator.setText(s_teamCreator);
+		
 		//final ImageView teamPicture = (ImageView) v.findViewById(R.id.elem_picture);
 		
 		// Delete game button

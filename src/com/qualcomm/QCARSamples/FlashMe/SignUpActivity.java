@@ -170,6 +170,11 @@ public class SignUpActivity extends Activity {
              	newUser.setEmail(s_email);
              	newUser.put("avatar", avatarParseFile);
              	newUser.put("marker", markerParseFile);
+             	newUser.put("totalScore", 0);
+             	newUser.put("bestScore", 0);
+             	newUser.put("rank", 0);
+             	newUser.put("victories", 0);
+             	newUser.put("defeats", 0);
              	newUser.signUpInBackground(new SignUpCallback() {
              		public void done(ParseException e) {
              			if (e == null) {

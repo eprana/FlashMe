@@ -22,6 +22,16 @@
 	    android:layout_toRightOf="@+id/elem_picture"
 	    android:paddingLeft="14.5sp"
 	    android:textSize="@dimen/medium_tx" />
+	
+	<TextView
+	    android:id="@+id/elem_detail"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignBottom="@+id/elem_picture"
+	    android:layout_alignLeft="@+id/elem_name"
+	    android:layout_below="@+id/elem_name"
+	    android:paddingLeft="14.5sp"
+	    android:textSize="@dimen/small_tx" />
 
     <ImageButton
         android:id="@+id/delete_bt"

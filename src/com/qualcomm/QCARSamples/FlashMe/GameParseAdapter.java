@@ -55,12 +55,14 @@ public class GameParseAdapter extends ParseQueryAdapter<ParseObject>{
 		gameName.setText(game.getString("name"));
 		
 		TextView gameCreator = (TextView) v.findViewById(R.id.elem_creator);
+		String s_gameCreator = "";
 		try {
-			gameCreator.setText(game.getParseUser("createdBy").fetchIfNeeded().getUsername());
+			s_gameCreator = game.getParseUser("createdBy").fetchIfNeeded().getUsername();
 		} catch (ParseException e) {
 			Toast.makeText(getContext(), "Error : " + e.toString(), Toast.LENGTH_LONG).show();
 			e.printStackTrace();
 		}
+		gameCreator.setText(s_gameCreator);
 		
 		// Delete team button
 		ImageButton deleteGame = (ImageButton)v.findViewById(R.id.delete_bt);

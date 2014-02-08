@@ -20,11 +20,13 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
 import com.parse.ParseRelation;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 public class TeamPlayersParseAdapter extends ParseQueryAdapter<ParseObject>{
 	
 	ParseObject team;
+	ParseUser user;
 
 	public TeamPlayersParseAdapter(Context context, final ParseObject user, final ParseObject team) {
 		super(context, new ParseQueryAdapter.QueryFactory<ParseObject>() {
@@ -34,6 +36,7 @@ public class TeamPlayersParseAdapter extends ParseQueryAdapter<ParseObject>{
 			}
 		});
 		this.team = team;
+		this.user = (ParseUser) user;
 	}
 	
 	public void refresh() {
@@ -51,6 +54,9 @@ public class TeamPlayersParseAdapter extends ParseQueryAdapter<ParseObject>{
  
 		TextView playerName = (TextView) v.findViewById(R.id.elem_name);
 		playerName.setText(player.getString("username"));
+		
+		TextView playerScore = (TextView) v.findViewById(R.id.elem_detail);
+		playerScore.setText(String.valueOf(player.getInt("bestScore")));
 		
 		final ImageView playerPicture = (ImageView) v.findViewById(R.id.elem_picture);
 		ParseFile file = (ParseFile) player.get("avatar");
