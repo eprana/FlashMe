@@ -57,7 +57,6 @@ public class TeamParseAdapter extends ParseQueryAdapter<ParseObject>{
 		ImageButton details = (ImageButton)v.findViewById(R.id.details_bt);
 		details.setFocusable(false);
 
-		
 		// Delete team button
 		ImageButton deleteTeam = (ImageButton)v.findViewById(R.id.delete_bt);
 		deleteTeam.setFocusable(false);

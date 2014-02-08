@@ -1,14 +1,19 @@
 package com.qualcomm.QCARSamples.FlashMe;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.DeleteCallback;
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -16,8 +21,11 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
 import com.parse.ParseRelation;
+import com.parse.SaveCallback;
 
 public class TeamPlayersParseAdapter extends ParseQueryAdapter<ParseObject>{
+	
+	ParseObject team;
 
 	public TeamPlayersParseAdapter(Context context, final ParseObject user, final ParseObject team) {
 		super(context, new ParseQueryAdapter.QueryFactory<ParseObject>() {
@@ -26,6 +34,7 @@ public class TeamPlayersParseAdapter extends ParseQueryAdapter<ParseObject>{
 				return playersQuery.getQuery();
 			}
 		});
+		this.team = team;
 	}
 	
 	public void refresh() {
@@ -54,6 +63,38 @@ public class TeamPlayersParseAdapter extends ParseQueryAdapter<ParseObject>{
 				}
 				Bitmap profilePicture = BitmapFactory.decodeByteArray(data, 0, data.length);
 				playerPicture.setImageBitmap(profilePicture);
+			}
+		});
+		
+		// Delete team button
+		ImageButton deletePlayer = (ImageButton)v.findViewById(R.id.delete_bt);
+		deletePlayer.setFocusable(false);
+		deletePlayer.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+				alertDialog.setTitle(team.getString("name"));
+				alertDialog.setMessage("Are you sure you want to delete "+player.getString("username")+" from this team ?");
+				alertDialog.setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						// User wants to delete team
+						team.getRelation("players").remove(player);
+						team.saveInBackground(new SaveCallback() {
+							@Override
+							public void done(ParseException e) {
+								refresh();								
+							}
+						});
+					}
+				});
+				alertDialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						// User cancelled
+					}
+				});
+				alertDialog.create();
+				alertDialog.show();
 			}
 		});
 		
