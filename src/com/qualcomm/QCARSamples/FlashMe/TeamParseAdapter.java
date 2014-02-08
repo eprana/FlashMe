@@ -1,24 +1,17 @@
 package com.qualcomm.QCARSamples.FlashMe;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.DeleteCallback;
-import com.parse.GetDataCallback;
 import com.parse.ParseException;
-import com.parse.ParseFile;
-import com.parse.ParseImageView;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
@@ -61,22 +54,27 @@ public class TeamParseAdapter extends ParseQueryAdapter<ParseObject>{
 		}
 		
 		// Team details button
-		ImageButton details = (ImageButton)v.findViewById(R.id.next_bt);
+		ImageButton details = (ImageButton)v.findViewById(R.id.details_bt);
+		details.setFocusable(false);
 		details.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				Bundle args = new Bundle();
-				args.putString("team", team.getString("name"));
-				if(getContext() instanceof ContentActivity)
-				{
-					ContentActivity activity = (ContentActivity) getContext();
-				}
+//				Bundle args = new Bundle();
+//				args.putString("team", team.getString("name"));
+//				if(getContext() instanceof ContentActivity)
+//				{
+//					ContentActivity activity = (ContentActivity) getContext();
+//					Fragment teamPlayersFragment = new TeamPlayersFragment();
+//					FragmentTransaction ft = getChildFragmentManager().beginTransaction();
+//					ft.add(R.id.pager, teamPlayersFragment).commit();
+//				}
 			}
 		});
 		
 		// Delete team button
 		ImageButton deleteTeam = (ImageButton)v.findViewById(R.id.delete_bt);
+		deleteTeam.setFocusable(false);
 		deleteTeam.setOnClickListener(new OnClickListener() {
 			
 			@Override

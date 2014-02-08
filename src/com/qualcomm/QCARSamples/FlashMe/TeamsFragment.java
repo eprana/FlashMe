@@ -12,7 +12,6 @@ import com.parse.SaveCallback;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,34 +25,20 @@ import android.widget.Toast;
 
 public class TeamsFragment extends ListFragment {
 	
-	private OnTeamSelectedListener listener;
-	
 	public static String TAG="TAG_TEAMS";
 	
 	// Data elements
 	private static ParseUser currentUser = null;
 	private static ProgressBar progress = null;
+	private int state; // 0:team, 1:detail
 	
 	// Layout elements
 	private TeamParseAdapter teamParseAdapter;
-	private ListView teamsList;
+	private TeamPlayersParseAdapter teamPlayersParseAdapter;
+	//private ListView teamsList;
 	private EditText teamName;
 	private Button createTeam;
 	//private Button playButton;
-	
-	public interface OnTeamSelectedListener {
-		public void onTeamSelected(int index);
-	}
-	
-	public void setOnTeamSelectedListener(OnTeamSelectedListener listener) {
-		this.listener = listener;
-	}
-	
-	@Override
-	public void onListItemClick(ListView l, View v, int position, long id) {
-		listener.onTeamSelected(position);
-		super.onListItemClick(l, v, position, id);
-	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -62,6 +47,7 @@ public class TeamsFragment extends ListFragment {
 		Context context = mainView.getContext();
 		
 		// Initialize members
+		state = 0;
 		currentUser = ParseUser.getCurrentUser();
 		progress = (ProgressBar) mainView.findViewById(R.id.progressBar);
 		
@@ -70,21 +56,17 @@ public class TeamsFragment extends ListFragment {
     	//playButton = (Button) mainView.findViewById(R.id.play);
     	
     	// Load fragment data
-    	teamsList = (ListView) mainView.findViewById(R.id.teams_list);
     	teamParseAdapter = new TeamParseAdapter(getActivity(), currentUser);
-    	teamsList.setAdapter(teamParseAdapter);
+    	setListAdapter(teamParseAdapter);
     	teamParseAdapter.addOnQueryLoadListener(new OnQueryLoadListener<ParseObject>() {
-
 			@Override
 			public void onLoaded(List<ParseObject> arg0, Exception arg1) {
 				progress.setVisibility(View.GONE);
 			}
-
 			@Override
 			public void onLoading() {
 				progress.setVisibility(View.VISIBLE);
 			}
-
     	});
     	
     	// Create team button listener
@@ -121,8 +103,28 @@ public class TeamsFragment extends ListFragment {
     	return mainView;
 	}
 	
-	// Create team button
+	@Override
+	public void onListItemClick(ListView l, View v, int position, long id) {
+
+		super.onListItemClick(l, v, position, id);
+		
+		ParseObject team = ((ParseObject) l.getItemAtPosition(position));
+		teamPlayersParseAdapter = new TeamPlayersParseAdapter(getActivity(), currentUser, team);
+		setListAdapter(teamPlayersParseAdapter);
+		state = 1;
+		teamParseAdapter.addOnQueryLoadListener(new OnQueryLoadListener<ParseObject>() {
+			@Override
+			public void onLoaded(List<ParseObject> arg0, Exception arg1) {
+				progress.setVisibility(View.GONE);
+			}
+			@Override
+			public void onLoading() {
+				progress.setVisibility(View.VISIBLE);
+			}
+    	});
+	}
 	
+	// Create team
 	private void createTeam(final String name) {
 		// Parse query
 		ParseQuery<ParseObject> teamQuery = ParseQuery.getQuery("Team");
@@ -157,37 +159,4 @@ public class TeamsFragment extends ListFragment {
 			}
 		});
 	}
-	
-	/*private void createJavaTeam(ParseObject parseTeam) {
-		// Create Java Object
-		final Team javaTeam = new Team(parseTeam.getString("name"), currentUser.getUsername(), getResources().getDrawable(R.drawable.default_team_picture_thumb));
-		teams.add(javaTeam);
-		// Add relation with current user
-		ParseRelation<ParseObject> teamsRelation = parseTeam.getRelation("players");
-		teamsRelation.add(currentUser);
-		parseTeam.saveInBackground(new SaveCallback() {
-			@Override
-			public void done(ParseException e) {
-				if (e != null) {
-					Toast.makeText(getActivity(), "Error : "+e.getMessage(), Toast.LENGTH_LONG).show();
-					return;
-				}
-				// Get player's avatar
-				ParseFile avatarFile = currentUser.getParseFile("avatar");
-				try {
-					byte[] avatarByteArray = avatarFile.getData();
-					Bitmap avatarBitmap = BitmapFactory.decodeByteArray(avatarByteArray, 0, avatarByteArray.length);
-					avatarBitmap = Bitmap.createScaledBitmap(avatarBitmap, 110, 110, false);
-					// Add player to the team
-					javaTeam.addPlayer(new Player(currentUser.getUsername(), avatarBitmap));
-				} catch (ParseException e1) {
-					Toast.makeText(getActivity(), "Error : "+e1.getMessage(), Toast.LENGTH_LONG).show();
-					e1.printStackTrace();
-				}
-				
-				// Update view
-				expandableList.setAdapter(teamAdapter);
-			}
-		});
-	}*/
 }

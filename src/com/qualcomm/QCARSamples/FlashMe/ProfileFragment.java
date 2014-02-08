@@ -63,7 +63,7 @@ public class ProfileFragment extends Fragment {
 		// Load fragment data
 		LoadProfile lp = new LoadProfile(context);
     	lp.execute();
-    	
+
 		return mainView;
 	}
 	
@@ -117,32 +117,34 @@ public class ProfileFragment extends Fragment {
 						profilePictureView.setImageBitmap(avatarBitmap);
 					}
 				});
+				
+//		    	ParseFile markerFile = (ParseFile) user.get("marker");
+//		    	markerFile.getDataInBackground(new GetDataCallback() {
+//					public void done(byte[] data, ParseException e) {
+//						if (e != null){
+//							Toast.makeText(context, "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
+//							return;
+//						}
+//						Bitmap markerBitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+//						// Setting the marker imageView
+//						profileMarkerView.setImageBitmap(markerBitmap);
+//					}
+//				});
 			}
 		});
 		
-		// Parse query for profile picture
-		ParseQuery<ParseUser> markerQuery = ParseUser.getQuery();
-		markerQuery.whereEqualTo("username", currentUser.getUsername());
-		markerQuery.getFirstInBackground(new GetCallback<ParseUser>() {
-			// Find current user
-			public void done(ParseUser user, ParseException e) {
-			    if (e != null) {
-			    	Toast.makeText(context, "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
-			    	return;
-			    }
-		    	ParseFile markerFile = (ParseFile) user.get("marker");
-		    	markerFile.getDataInBackground(new GetDataCallback() {
-					public void done(byte[] data, ParseException e) {
-						if (e != null){
-							Toast.makeText(context, "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
-							return;
-						}
-						Bitmap markerBitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-						// Setting the marker imageView
-						profileMarkerView.setImageBitmap(markerBitmap);
-					}
-				});
-			}
-		});
+//		// Parse query for marker
+//		ParseQuery<ParseUser> markerQuery = ParseUser.getQuery();
+//		markerQuery.whereEqualTo("username", currentUser.getUsername());
+//		markerQuery.getFirstInBackground(new GetCallback<ParseUser>() {
+//			// Find current user
+//			public void done(ParseUser user, ParseException e) {
+//			    if (e != null) {
+//			    	Toast.makeText(context, "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
+//			    	return;
+//			    }
+//
+//			}
+//		});
 	}
 }
