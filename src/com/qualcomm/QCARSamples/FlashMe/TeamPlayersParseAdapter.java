@@ -71,38 +71,52 @@ public class TeamPlayersParseAdapter extends ParseQueryAdapter<ParseObject>{
 			}
 		});
 		
+		String s_teamCreator = "";
+		try {
+			s_teamCreator = team.getParseUser("createdBy").fetchIfNeeded().getUsername();
+		} catch (ParseException e) {
+			Toast.makeText(getContext(), "Error : " + e.toString(), Toast.LENGTH_LONG).show();
+			e.printStackTrace();
+		}
+		
 		// Delete team button
 		ImageButton deletePlayer = (ImageButton)v.findViewById(R.id.delete_bt);
 		deletePlayer.setFocusable(false);
-		deletePlayer.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
-				alertDialog.setTitle(team.getString("name"));
-				alertDialog.setMessage("Are you sure you want to delete "+player.getString("username")+" from this team ?");
-				alertDialog.setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						// User wants to delete team
-						team.getRelation("players").remove(player);
-						team.saveInBackground(new SaveCallback() {
-							@Override
-							public void done(ParseException e) {
-								refresh();								
-							}
-						});
-					}
-				});
-				alertDialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						// User cancelled
-					}
-				});
-				alertDialog.create();
-				alertDialog.show();
-			}
-		});
 		
+		if(!s_teamCreator.equals(user.getUsername()) && !player.getString("username").equals(user.getUsername())){
+			deletePlayer.setEnabled(false);
+			deletePlayer.setVisibility(View.INVISIBLE);
+		}
+		else {
+			deletePlayer.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+					alertDialog.setTitle(team.getString("name"));
+					alertDialog.setMessage("Are you sure you want to delete "+player.getString("username")+" from this team ?");
+					alertDialog.setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int id) {
+							// User wants to delete team
+							team.getRelation("players").remove(player);
+							team.saveInBackground(new SaveCallback() {
+								@Override
+								public void done(ParseException e) {
+									refresh();								
+								}
+							});
+						}
+					});
+					alertDialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int id) {
+							// User cancelled
+						}
+					});
+					alertDialog.create();
+					alertDialog.show();
+				}
+			});
+		}		
 		return v;
 	}
 }

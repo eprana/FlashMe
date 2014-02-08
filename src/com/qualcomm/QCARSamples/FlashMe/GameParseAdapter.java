@@ -19,9 +19,12 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
 import com.parse.ParseRelation;
+import com.parse.ParseUser;
 
 public class GameParseAdapter extends ParseQueryAdapter<ParseObject>{
 
+	ParseUser user;
+	
 	public GameParseAdapter(Context context, final ParseObject user) {
 		super(context, new ParseQueryAdapter.QueryFactory<ParseObject>() {
 			public ParseQuery<ParseObject> create() {
@@ -36,6 +39,7 @@ public class GameParseAdapter extends ParseQueryAdapter<ParseObject>{
 				return ParseQuery.or(queries);
 			}
 		});
+		this.user = (ParseUser) user;
 	}
 	
 	public void refresh() {
@@ -67,34 +71,41 @@ public class GameParseAdapter extends ParseQueryAdapter<ParseObject>{
 		// Delete team button
 		ImageButton deleteGame = (ImageButton)v.findViewById(R.id.delete_bt);
 		deleteGame.setFocusable(false);
-		deleteGame.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
-				alertDialog.setTitle(game.getString("name"));
-				alertDialog.setMessage("Are you sure you want to delete this game ?");
-				alertDialog.setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						// User wants to delete game
-						game.deleteInBackground(new DeleteCallback() {
-								
-							@Override
-							public void done(ParseException e) {
-								refresh();
-							}
-						});
-					}
-				});
-				alertDialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						// User cancelled
-					}
-				});
-				alertDialog.create();
-				alertDialog.show();
-			}
-		});
+		
+		if(!s_gameCreator.equals(user.getUsername())){
+			deleteGame.setEnabled(false);
+			deleteGame.setVisibility(View.INVISIBLE);
+		}
+		else {
+			deleteGame.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+					alertDialog.setTitle(game.getString("name"));
+					alertDialog.setMessage("Are you sure you want to delete this game ?");
+					alertDialog.setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int id) {
+							// User wants to delete game
+							game.deleteInBackground(new DeleteCallback() {
+									
+								@Override
+								public void done(ParseException e) {
+									refresh();
+								}
+							});
+						}
+					});
+					alertDialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int id) {
+							// User cancelled
+						}
+					});
+					alertDialog.create();
+					alertDialog.show();
+				}
+			});
+		}
 		
 		return v;
 	}

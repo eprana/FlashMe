@@ -26,11 +26,13 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
 import com.parse.ParseRelation;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 public class GameTeamsParseAdapter extends ParseQueryAdapter<ParseObject>{
 	
 	ParseObject game;
+	ParseUser user;
 
 	public GameTeamsParseAdapter(Context context, final ParseObject user, final ParseObject game) {
 		super(context, new ParseQueryAdapter.QueryFactory<ParseObject>() {
@@ -40,6 +42,7 @@ public class GameTeamsParseAdapter extends ParseQueryAdapter<ParseObject>{
 			}
 		});
 		this.game = game;
+		this.user = (ParseUser) user;
 	}
 	
 	public void refresh() {
@@ -70,56 +73,70 @@ public class GameTeamsParseAdapter extends ParseQueryAdapter<ParseObject>{
 		
 		//final ImageView teamPicture = (ImageView) v.findViewById(R.id.elem_picture);
 		
+		String s_gameCreator = "";
+		try {
+			s_gameCreator = game.getParseUser("createdBy").fetchIfNeeded().getUsername();
+		} catch (ParseException e) {
+			Toast.makeText(getContext(), "Error : " + e.toString(), Toast.LENGTH_LONG).show();
+			e.printStackTrace();
+		}
+		
 		// Delete game button
 		ImageButton deleteTeam = (ImageButton)v.findViewById(R.id.delete_bt);
-		deleteTeam.setFocusable(false);
-		deleteTeam.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
-				alertDialog.setTitle(team.getString("name"));
-				alertDialog.setMessage("Are you sure you want to delete the team "+team.getString("name")+" from this game ?");
-				alertDialog.setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						// User wants to delete team
-						game.getRelation("teams").remove(team);
-						game.saveInBackground(new SaveCallback() {
-							@Override
-							public void done(ParseException e) {
-								team.getRelation("players").getQuery().findInBackground(new FindCallback<ParseObject>() {
-									@Override
-									public void done(List<ParseObject> players, ParseException e) {
-										for(ParseObject player : players) {
-											HashMap<String, Object> params = new HashMap<String, Object>();
-											params.put("userId", player.getObjectId());
-											params.put("gameId", game.getObjectId());
-											ParseCloud.callFunctionInBackground("removeGameFromUser", params, new FunctionCallback<String>() {
-												public void done(String result, ParseException e) {
-													if (e != null) {
-														Toast.makeText(getContext(), "Error : "+e.getMessage(), Toast.LENGTH_SHORT).show();
-													}
-												}
-											});
-										}
-										
-									}
-								});
-								refresh();								
-							}
-						});
-					}
-				});
-				alertDialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						// User cancelled
-					}
-				});
-				alertDialog.create();
-				alertDialog.show();
-			}
-		});
 		
+		if(!s_gameCreator.equals(user.getUsername()) && !s_teamCreator.equals(user.getUsername())){
+			deleteTeam.setEnabled(false);
+			deleteTeam.setVisibility(View.INVISIBLE);
+		}
+		else {
+			deleteTeam.setFocusable(false);
+			deleteTeam.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+					alertDialog.setTitle(team.getString("name"));
+					alertDialog.setMessage("Are you sure you want to delete the team "+team.getString("name")+" from this game ?");
+					alertDialog.setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int id) {
+							// User wants to delete team
+							game.getRelation("teams").remove(team);
+							game.saveInBackground(new SaveCallback() {
+								@Override
+								public void done(ParseException e) {
+									team.getRelation("players").getQuery().findInBackground(new FindCallback<ParseObject>() {
+										@Override
+										public void done(List<ParseObject> players, ParseException e) {
+											for(ParseObject player : players) {
+												HashMap<String, Object> params = new HashMap<String, Object>();
+												params.put("userId", player.getObjectId());
+												params.put("gameId", game.getObjectId());
+												ParseCloud.callFunctionInBackground("removeGameFromUser", params, new FunctionCallback<String>() {
+													public void done(String result, ParseException e) {
+														if (e != null) {
+															Toast.makeText(getContext(), "Error : "+e.getMessage(), Toast.LENGTH_SHORT).show();
+														}
+													}
+												});
+											}
+											
+										}
+									});
+									refresh();								
+								}
+							});
+						}
+					});
+					alertDialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int id) {
+							// User cancelled
+						}
+					});
+					alertDialog.create();
+					alertDialog.show();
+				}
+			});
+		}		
 		return v;
 	}
 }
