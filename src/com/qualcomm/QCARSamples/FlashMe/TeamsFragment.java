@@ -137,6 +137,8 @@ public class TeamsFragment extends ListFragment {
 	public void setGeneralAdapter() {
 		state = 0;
 		teamName= "";
+		inputValue.setHint("New team name");
+		addButton.setText("CREATE");		
 		backButton.setVisibility(View.INVISIBLE);
 		
 		setListAdapter(teamParseAdapter);
@@ -144,6 +146,8 @@ public class TeamsFragment extends ListFragment {
 	
 	public void setDetailAdapter(TeamPlayersParseAdapter teamPlayersParseAdapter) {
 		state = 1;
+		inputValue.setHint("Player name");
+		addButton.setText("ADD");	
 		backButton.setVisibility(View.VISIBLE);
 		
 		teamPlayersParseAdapter.addOnQueryLoadListener(new OnQueryLoadListener<ParseObject>() {
