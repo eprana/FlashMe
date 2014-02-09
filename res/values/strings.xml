@@ -90,9 +90,10 @@
 	<!-- my teams -->
 	<string name="my_teams">My teams</string>
 	<string name="enter_team">New team name</string>
+	<string name="enter_player_auto">Player name</string>
 	<string name="empty_team_name">You must enter a valid team name.</string>
+	<string name="empty_player_name">You must enter a valid player name.</string>
 	<string name="create">CREATE</string>
-	<string name="enter_player">Player name</string>
 	<string name="player_in_team_pic">player_picture</string>
 	<string name="delete_player_bt">Delete player</string>
 	<string name="delete">delete</string>
@@ -105,12 +106,10 @@
 	<string name="no_contextual_menu">no_contextual_menu</string>
 	<string name="play">PLAY</string>
 	
-	<!--  my team's players -->
-	<string name="empty_player_name">You must enter a valid player name.</string>
-	
 	<!-- my games -->
 	<string name="my_games">My games</string>
 	<string name="enter_game">New game name</string>
+	<string name="enter_team_auto">Team name</string>
 	<string name="empty_game_name">You must enter a valid game name.</string>
 	<string name="delete_game_confirm"><Data><![CDATA[Are you sure you want to delete the game <b>%1$s</b> ?]]> </Data></string>
 	<string name="team_pic">team_picture</string>

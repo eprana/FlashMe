@@ -185,7 +185,6 @@ public class TeamsFragment extends ListFragment {
 			inputValue.setVisibility(View.INVISIBLE);
 			addButton.setVisibility(View.INVISIBLE);
 		}
-		
 		backButton.setVisibility(View.VISIBLE);
 		
 		teamPlayersParseAdapter.addOnQueryLoadListener(new OnQueryLoadListener<ParseObject>() {
@@ -270,7 +269,7 @@ public class TeamsFragment extends ListFragment {
 								}
 							}
 						});
-						inputValue.setText("");
+						autocompleteValue.setText("");
 					}
 				});
 			}

@@ -50,6 +50,14 @@
 		    android:hint="@string/enter_game"
 		    android:inputType="text" />
 	     
+	     <AutoCompleteTextView 
+		    android:id="@+id/autocomplete_team"
+		    android:layout_width="@dimen/button_wd"
+		    android:layout_height="wrap_content"
+		    android:layout_margin="@dimen/medium_mg"
+		    android:hint="@string/enter_team_auto"
+		    android:visibility="gone"/>
+	     
 	     <Button
 		    android:id="@+id/create_game"
 		    style="@style/buttonLightBlue"

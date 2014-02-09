@@ -55,7 +55,7 @@
 		    android:layout_width="@dimen/button_wd"
 		    android:layout_height="wrap_content"
 		    android:layout_margin="@dimen/medium_mg"
-		    android:hint="@string/enter_player"
+		    android:hint="@string/enter_player_auto"
 		    android:visibility="gone"/>
 	     
 	     <Button

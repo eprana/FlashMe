@@ -16,18 +16,16 @@ import com.parse.SaveCallback;
 import com.parse.ParseQueryAdapter.OnQueryLoadListener;
 
 import android.content.Context;
-import android.content.res.Resources.NotFoundException;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -38,14 +36,17 @@ public class GamesFragment extends ListFragment {
 	// Data elements
 	private ParseUser currentUser = null;
 	private static ProgressBar progress = null;
+	private static List<String> teamsList = null;
 	private int state; // 0:games, 1:detail
 	private String gameName;
 	
 	// Layout elements
 	private GameParseAdapter gameParseAdapter;
 	private GameTeamsParseAdapter gameTeamsParseAdapter;
+	private ArrayAdapter<String> teamsAdapter;
 	private ImageButton backButton;
 	private EditText inputValue;
+	private AutoCompleteTextView autocompleteValue;
 	private Button addButton;
 	private Button playButton;
 	
@@ -62,6 +63,21 @@ public class GamesFragment extends ListFragment {
     	
 		backButton = (ImageButton) mainView.findViewById(R.id.back_bt);
     	inputValue = (EditText) mainView.findViewById(R.id.enter_game);
+    	autocompleteValue = (AutoCompleteTextView) mainView.findViewById(R.id.autocomplete_team);
+		ParseQuery<ParseObject> teamsQuery = ParseQuery.getQuery("Team");
+		teamsQuery.findInBackground(new FindCallback<ParseObject>() {
+			@Override
+			public void done(List<ParseObject> teams, ParseException e) {
+				teamsList = new ArrayList<String>();
+				for(ParseObject team: teams) {
+					teamsList.add(team.getString("name"));
+				}
+				String[] teamsArray = new String[teamsList.size()];
+				teamsAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, teamsList.toArray(teamsArray));
+				autocompleteValue.setAdapter(teamsAdapter);
+				autocompleteValue.setThreshold(1);
+			}
+		});
 		addButton = (Button) mainView.findViewById(R.id.create_game);
 		playButton = (Button) mainView.findViewById(R.id.play);
     	
@@ -93,23 +109,31 @@ public class GamesFragment extends ListFragment {
     	addButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				final String s_inputValue = inputValue.getText().toString();
-				if(s_inputValue.equals("")){
-					// Empty edit text
-					Toast.makeText(context, R.string.empty_team_name, Toast.LENGTH_LONG).show();
-					return;
-				}
-				else {
-					switch(state) {
-					case 0:
-						createGame(s_inputValue);
-						break;
-					case 1:
-						addTeamToGame(s_inputValue);
-						break;
-					default:
-						break;
+				switch(state) {
+				case 0:
+					final String s_inputValue = inputValue.getText().toString();
+					if(s_inputValue.equals("")){
+						// Empty edit text
+						Toast.makeText(context, R.string.empty_game_name, Toast.LENGTH_LONG).show();
+						return;
 					}
+					else {
+						createGame(s_inputValue);
+					}
+					break;
+				case 1:
+					final String s_autocompleteValue = autocompleteValue.getText().toString();
+					if(s_autocompleteValue.equals("")){
+						// Empty edit text
+						Toast.makeText(context, R.string.empty_team_name, Toast.LENGTH_LONG).show();
+						return;
+					}
+					else {
+						addTeamToGame(s_autocompleteValue);
+					}
+					break;
+				default:
+					break;
 				}
 			}
 		});
@@ -148,10 +172,10 @@ public class GamesFragment extends ListFragment {
 	public void setGeneralAdapter() {
 		state = 0;
 		gameName= "";
-		inputValue.setHint("New game name");
 		addButton.setText("CREATE");
 		inputValue.setVisibility(View.VISIBLE);
 		addButton.setVisibility(View.VISIBLE);
+		autocompleteValue.setVisibility(View.GONE);
 		backButton.setVisibility(View.INVISIBLE);
 		
 		setListAdapter(gameParseAdapter);
@@ -159,9 +183,9 @@ public class GamesFragment extends ListFragment {
 	
 	public void setDetailAdapter(GameTeamsParseAdapter gameTeamsParseAdapter) {
 		state = 1;
-		
 		if(gameTeamsParseAdapter.isCreator()){
-			inputValue.setHint("Team name");
+			inputValue.setVisibility(View.GONE);
+			autocompleteValue.setVisibility(View.VISIBLE);
 			addButton.setText("ADD");
 		}
 		else {
@@ -275,7 +299,7 @@ public class GamesFragment extends ListFragment {
 								}
 							}
 						});
-						inputValue.setText("");
+						autocompleteValue.setText("");
 					}
 				});
 			}
