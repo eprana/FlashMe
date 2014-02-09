@@ -1,7 +1,9 @@
 package com.qualcomm.QCARSamples.FlashMe;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -17,6 +19,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -31,14 +35,17 @@ public class TeamsFragment extends ListFragment {
 	// Data elements
 	private static ParseUser currentUser = null;
 	private static ProgressBar progress = null;
+	private static List<String> playersList = null;
 	private int state; // 0:teams, 1:detail
 	private String teamName;
 	
 	// Layout elements
 	private TeamParseAdapter teamParseAdapter;
 	private TeamPlayersParseAdapter teamPlayersParseAdapter;
+	private ArrayAdapter<String> playersAdapter;
 	private ImageButton backButton;
 	private EditText inputValue;
+	private AutoCompleteTextView autocompleteValue;
 	private Button addButton;
 	//private Button playButton;
 	
@@ -46,7 +53,7 @@ public class TeamsFragment extends ListFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
 		View mainView = inflater.inflate(R.layout.teams, container, false);
-		Context context = mainView.getContext();
+		final Context context = mainView.getContext();
 		
 		// Initialize members
 		state = 0;
@@ -55,6 +62,21 @@ public class TeamsFragment extends ListFragment {
 		
 		backButton = (ImageButton) mainView.findViewById(R.id.back_bt);
 		inputValue = (EditText) mainView.findViewById(R.id.enter_team);
+		autocompleteValue = (AutoCompleteTextView) mainView.findViewById(R.id.autocomplete_player);
+		ParseQuery<ParseUser> playersQuery = ParseUser.getQuery();
+		playersQuery.findInBackground(new FindCallback<ParseUser>() {
+			@Override
+			public void done(List<ParseUser> players, ParseException e) {
+				playersList = new ArrayList<String>();
+				for(ParseUser player: players) {
+					playersList.add(player.getUsername());
+				}
+				String[] playersArray = new String[playersList.size()];
+				playersAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, playersList.toArray(playersArray));
+				autocompleteValue.setAdapter(playersAdapter);
+				autocompleteValue.setThreshold(1);
+			}
+		});
 		addButton = (Button) mainView.findViewById(R.id.create_team);
     	//playButton = (Button) mainView.findViewById(R.id.play);
     	
@@ -84,23 +106,29 @@ public class TeamsFragment extends ListFragment {
 			@Override
 			public void onClick(View v) {
 
-				final String s_inputValue = inputValue.getText().toString();
-				if(s_inputValue.equals("")){
-					// Invalid team name
-					Toast.makeText(getActivity(), R.string.empty_team_name, Toast.LENGTH_LONG).show();
-					return;
-				}
-				else {
-					switch(state) {
-					case 0:
-						createTeam(s_inputValue);
-						break;
-					case 1:
-						addPlayerToTeam(s_inputValue);
-						break;
-					default:
-						break;
+				switch(state) {
+				case 0:
+					final String s_inputValue = inputValue.getText().toString();
+					if(s_inputValue.equals("")){
+						// Invalid team name
+						Toast.makeText(getActivity(), R.string.empty_team_name, Toast.LENGTH_LONG).show();
 					}
+					else {
+						createTeam(s_inputValue);
+					}
+					break;
+				case 1:
+					final String s_autocompleteValue = autocompleteValue.getText().toString();
+					if(s_autocompleteValue.equals("")){
+						// Invalid team name
+						Toast.makeText(getActivity(), R.string.empty_player_name, Toast.LENGTH_LONG).show();
+					}
+					else {
+						addPlayerToTeam(s_autocompleteValue);
+					}
+					break;
+				default:
+					break;
 				}
 			}
 		});
@@ -124,25 +152,23 @@ public class TeamsFragment extends ListFragment {
 	}
 	
 	@Override
-	public void onListItemClick(ListView l, View v, int position, long id) {
-
-		super.onListItemClick(l, v, position, id);
-		
+	public void onListItemClick(ListView l, View v, int position, long id) {		
 		if(state == 0) {
+			super.onListItemClick(l, v, position, id);
 			ParseObject team = ((ParseObject) l.getItemAtPosition(position));
 			teamName = team.getString("name");
 			teamPlayersParseAdapter = new TeamPlayersParseAdapter(getActivity(), currentUser, team);
-			setDetailAdapter(teamPlayersParseAdapter);	
+			setDetailAdapter(teamPlayersParseAdapter);
 		}
 	}
 	
 	public void setGeneralAdapter() {
 		state = 0;
 		teamName= "";
-		inputValue.setHint("New team name");
 		addButton.setText("CREATE");
 		inputValue.setVisibility(View.VISIBLE);
 		addButton.setVisibility(View.VISIBLE);
+		autocompleteValue.setVisibility(View.GONE);
 		backButton.setVisibility(View.INVISIBLE);
 		
 		setListAdapter(teamParseAdapter);
@@ -151,7 +177,8 @@ public class TeamsFragment extends ListFragment {
 	public void setDetailAdapter(TeamPlayersParseAdapter teamPlayersParseAdapter) {
 		state = 1;
 		if(teamPlayersParseAdapter.isCreator()){
-			inputValue.setHint("Player name");
+			inputValue.setVisibility(View.GONE);
+			autocompleteValue.setVisibility(View.VISIBLE);
 			addButton.setText("ADD");
 		}
 		else {

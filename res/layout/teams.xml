@@ -49,6 +49,14 @@
 		    android:layout_margin="@dimen/medium_mg"
 		    android:hint="@string/enter_team"
 		    android:inputType="text" />
+    	 
+    	 <AutoCompleteTextView 
+		    android:id="@+id/autocomplete_player"
+		    android:layout_width="@dimen/button_wd"
+		    android:layout_height="wrap_content"
+		    android:layout_margin="@dimen/medium_mg"
+		    android:hint="@string/enter_player"
+		    android:visibility="gone"/>
 	     
 	     <Button
 		    android:id="@+id/create_team"
