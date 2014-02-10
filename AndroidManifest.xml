@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="com.qualcomm.QCARSamples.FlashMe"
+      package="com.imac.FlashMe"
       android:versionCode="200"
       android:versionName="2.6">
 
@@ -74,7 +74,7 @@
         android:debuggable="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme"
+        android:theme="@style/AppBaseTheme"
         android:description="@string/app_description" >
 
         <!--
@@ -95,7 +95,7 @@
         <!-- _______________ MAIN ACTIVITY _______________ -->
         <activity android:label="@string/app_name"
                   android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize"
-                  android:name="com.qualcomm.QCARSamples.FlashMe.MainActivity">
+                  android:name="com.imac.FlashMe.MainActivity">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -106,17 +106,22 @@
         
         <!-- _______________ SIGN UP ACTIVITY _______________ -->
         <activity
-            android:name=".SignUpActivity"
+            android:name="com.imac.FlashMe.SignUpActivity"
             android:label="@string/title_activity_sign_up" />
 
         <!-- _______________ CONTENT ACTIVITY _______________ -->        
         <activity
-            android:name=".ContentActivity"
+            android:name="com.imac.FlashMe.ContentActivity"
             android:label="@string/title_activity_content" />
+        
+        <!-- _______________ GAME ACTIVITY _______________ -->        
+        <activity
+            android:name="com.imac.FlashMe.GameActivity"
+            android:label="@string/title_activity_game" />
         
         <!-- _______________ EDIT ACTIVITY _______________ -->        
         <activity
-            android:name=".EditActivity"
+            android:name="com.imac.FlashMe.EditActivity"
             android:label="@string/title_edit_activity" />
       
     </application>

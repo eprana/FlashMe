@@ -5,12 +5,7 @@
     
     <LinearLayout 
         android:id="@+id/fragment_header"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:padding="10sp"
-	    android:orientation="horizontal"
-	    android:gravity="center"
-	    android:background="@color/light_blue" >
+	    style="@style/header" >
 
         <ImageButton
             android:id="@+id/back_bt"
@@ -76,16 +71,13 @@
 		 
 	   	 <TableRow
 	        android:id="@+id/row2"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:gravity="center_horizontal"
-            android:background="@color/dark_blue">
+            style="@style/header">
 		 	
 		    <TextView
 			    android:id="@+id/total_score"
 			    android:text="@string/total_score_txt"
-				android:layout_span="2"
-			    style="@style/topLine" />
+			    android:textColor="@color/white"
+			    android:textSize="@dimen/medium_tx" />
 	    </TableRow>
 	    
 	   	<TableRow
