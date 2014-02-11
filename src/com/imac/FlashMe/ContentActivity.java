@@ -53,7 +53,7 @@ public class ContentActivity extends Activity implements
 	static ParseUser currentUser = null;
 	private ViewPager mViewPager = null;
 	private TabsPagerAdapter mAdapter = null;
-	private TabAction[] tabs = {new TabAction(R.drawable.menu_profile_bt, "Profile"), new TabAction(R.drawable.menu_teams_bt, "Teams"), new TabAction(R.drawable.menu_games_bt, "Games")};
+	private TabAction[] tabs = {new TabAction(R.drawable.menu_profile_bt_in, "Profile"), new TabAction(R.drawable.menu_teams_bt_in, "Teams"), new TabAction(R.drawable.menu_games_bt_in, "Games")};
 	private Context context = null;
 	private LayoutInflater inflater = null;
 	

@@ -63,38 +63,35 @@
 	</LinearLayout>
     
     
-	<RelativeLayout 
+	<RelativeLayout
 	    android:id="@+id/parent_layout"
 	    android:layout_width="match_parent"
 	    android:layout_height="0dip" 
 	    android:layout_weight="20">
-    	    	     
-		<ListView 
-		    android:id="@android:id/list"
-		    android:groupIndicator="@drawable/group_indicator"
-			android:layout_marginTop="@dimen/medium_mg"
+	    
+		<ListView android:id="@android:id/list"
+		    android:layout_marginTop="@dimen/medium_mg"
 		    android:layout_width="match_parent"
 		    android:layout_height="match_parent" >
 		</ListView>
-		
-		<ProgressBar
+	
+	    <ProgressBar
 	        android:id="@+id/progressBar"
-	        style="@android:style/Widget.ProgressBar.Small"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_alignParentTop="true"
 	        android:layout_centerHorizontal="true" />
 
-		<Button
-		    android:id="@+id/play"
-		    style="@style/buttonDarkBlue"
-		    android:layout_width="@dimen/medium_wd"
-		    android:layout_alignParentBottom="true"
-		    android:layout_centerHorizontal="true"
-		    android:layout_margin="@dimen/large_mg"
-		    android:background="@drawable/dark_button"
-		    android:text="@string/play" />
-
+	    <Button
+	        android:id="@+id/play"
+	        style="@style/buttonDarkBlue"
+	        android:layout_width="@dimen/medium_wd"
+	        android:layout_alignParentBottom="true"
+	        android:layout_centerHorizontal="true"
+	        android:layout_margin="@dimen/large_mg"
+	        android:background="@drawable/dark_button"
+	        android:text="@string/play" />
+	   
 	</RelativeLayout>
     
 </LinearLayout>
