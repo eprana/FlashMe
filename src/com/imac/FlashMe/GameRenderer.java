@@ -1,5 +1,6 @@
 package com.imac.FlashMe;
 
+import java.nio.Buffer;
 import java.util.Vector;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -9,8 +10,13 @@ import com.imac.VuforiaApp.SampleApplicationSession;
 import com.imac.VuforiaApp.utils.CubeShaders;
 import com.imac.VuforiaApp.utils.SampleUtils;
 import com.imac.VuforiaApp.utils.Texture;
+import com.qualcomm.vuforia.Marker;
+import com.qualcomm.vuforia.MarkerResult;
+import com.qualcomm.vuforia.MarkerTracker;
 import com.qualcomm.vuforia.Renderer;
 import com.qualcomm.vuforia.State;
+import com.qualcomm.vuforia.Tool;
+import com.qualcomm.vuforia.TrackableResult;
 import com.qualcomm.vuforia.VIDEO_BACKGROUND_REFLECTION;
 import com.qualcomm.vuforia.Vuforia;
 
@@ -65,6 +71,41 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         else {
         	GLES20.glFrontFace(GLES20.GL_CCW);
         }
+        
+        // Did we find any trackables this frame?
+        for (int tIdx = 0; tIdx < state.getNumTrackableResults(); tIdx++)
+        {
+            // Get the trackable:
+            TrackableResult trackableResult = state.getTrackableResult(tIdx);
+            float[] modelViewMatrix = Tool.convertPose2GLMatrix(
+                trackableResult.getPose()).getData();
+            
+            // Choose the texture based on the target name:
+            int textureIndex = 0;
+            
+            // Check the type of the trackable:
+            assert (trackableResult.getType() == MarkerTracker.getClassType());
+            MarkerResult markerResult = (MarkerResult) (trackableResult);
+            Marker marker = (Marker) markerResult.getTrackable();
+            
+            textureIndex = marker.getMarkerId();
+            
+            assert (textureIndex < mTextures.size());
+            Texture thisTexture = mTextures.get(textureIndex);
+            
+            // Select which model to draw:
+            Buffer vertices = null;
+            Buffer normals = null;
+            Buffer indices = null;
+            Buffer texCoords = null;
+            int numIndices = 0;
+            
+            if (marker.getMarkerId() == 0)
+            {
+            	System.out.println("il y a un marqueur !");
+            }
+        }
+
         GLES20.glDisable(GLES20.GL_DEPTH_TEST);
         Renderer.getInstance().end();
 	}

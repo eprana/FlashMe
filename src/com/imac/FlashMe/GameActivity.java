@@ -9,10 +9,12 @@ import com.imac.VuforiaApp.utils.LoadingDialogHandler;
 import com.imac.VuforiaApp.utils.SampleApplicationGLView;
 import com.imac.VuforiaApp.utils.Texture;
 import com.qualcomm.vuforia.CameraDevice;
+import com.qualcomm.vuforia.Marker;
 import com.qualcomm.vuforia.MarkerTracker;
 import com.qualcomm.vuforia.State;
 import com.qualcomm.vuforia.Tracker;
 import com.qualcomm.vuforia.TrackerManager;
+import com.qualcomm.vuforia.Vec2F;
 import com.qualcomm.vuforia.Vuforia;
 
 import android.app.Activity;
@@ -35,6 +37,8 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	
 	private Vector<Texture> mTextures;
     private RelativeLayout mUILayout;
+    
+    private Marker dataSet[];
     
 	private boolean mFlash = false;
     private boolean mContAutofocus = false;
@@ -94,6 +98,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	@Override
 	public boolean doInitTrackers() {
 		boolean result = true;
+		
         TrackerManager trackerManager = TrackerManager.getInstance();
         Tracker trackerBase = trackerManager.initTracker(MarkerTracker.getClassType());
         MarkerTracker markerTracker = (MarkerTracker) (trackerBase);
@@ -113,6 +118,18 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		TrackerManager tManager = TrackerManager.getInstance();
         MarkerTracker markerTracker = (MarkerTracker) tManager.getTracker(MarkerTracker.getClassType());
         if (markerTracker == null) return false;
+        
+        dataSet = new Marker[1];
+	        
+        dataSet[0] = markerTracker.createFrameMarker(0, "MarkerANous", new Vec2F(50, 50));
+        if (dataSet[0] == null)
+        {
+            Log.e(LOGTAG, "Failed to create frame marker MarkerANous.");
+            return false;
+        }
+        
+        Log.i(LOGTAG, "Successfully initialized MarkerTracker.");
+        
         return true;
 	}
 
