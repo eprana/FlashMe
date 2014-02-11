@@ -1,9 +1,5 @@
 package com.imac.FlashMe;
 
-import javax.mail.internet.AddressException;
-
-import com.parse.DeleteCallback;
-import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.imac.FlashMe.R;
 
@@ -13,30 +9,19 @@ import android.support.v13.app.FragmentPagerAdapter;
 import android.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 
-import android.R.menu;
 import android.app.ActionBar;
 import android.app.Activity;
-import android.util.Log;
 import android.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
-import android.widget.ExpandableListView;
-import android.widget.BaseExpandableListAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.Loader;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.widget.ExpandableListView.OnChildClickListener;
 
 public class ContentActivity extends Activity implements 
 	ActionBar.TabListener,

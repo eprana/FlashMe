@@ -20,8 +20,10 @@ import com.qualcomm.vuforia.TrackableResult;
 import com.qualcomm.vuforia.VIDEO_BACKGROUND_REFLECTION;
 import com.qualcomm.vuforia.Vuforia;
 
+import android.app.Activity;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
+import android.widget.Toast;
 
 
 public class GameRenderer implements GLSurfaceView.Renderer {
@@ -79,31 +81,15 @@ public class GameRenderer implements GLSurfaceView.Renderer {
             TrackableResult trackableResult = state.getTrackableResult(tIdx);
             float[] modelViewMatrix = Tool.convertPose2GLMatrix(
                 trackableResult.getPose()).getData();
-            
-            // Choose the texture based on the target name:
-            int textureIndex = 0;
-            
+
             // Check the type of the trackable:
             assert (trackableResult.getType() == MarkerTracker.getClassType());
             MarkerResult markerResult = (MarkerResult) (trackableResult);
             Marker marker = (Marker) markerResult.getTrackable();
+            int markerId = marker.getMarkerId();
             
-            textureIndex = marker.getMarkerId();
-            
-            assert (textureIndex < mTextures.size());
-            Texture thisTexture = mTextures.get(textureIndex);
-            
-            // Select which model to draw:
-            Buffer vertices = null;
-            Buffer normals = null;
-            Buffer indices = null;
-            Buffer texCoords = null;
-            int numIndices = 0;
-            
-            if (marker.getMarkerId() == 0)
-            {
-            	System.out.println("il y a un marqueur !");
-            }
+       		mActivity.marqueurEnVue(markerId);
+       		
         }
 
         GLES20.glDisable(GLES20.GL_DEPTH_TEST);

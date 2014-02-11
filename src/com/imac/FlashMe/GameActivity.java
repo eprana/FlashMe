@@ -21,11 +21,13 @@ import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 public class GameActivity  extends Activity implements SampleApplicationControl {
 	
@@ -48,6 +50,8 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
     
     private LoadingDialogHandler loadingDialogHandler = new LoadingDialogHandler(this);
 	
+    private Handler handler;
+    
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
@@ -56,10 +60,40 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		startLoadingAnimation();
 		vuforiaAppSession.initAR(this, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		initApplicationAR();
+		handler = new Handler();
 		//mTextures = new Vector<Texture>();
 	    //loadTextures();
 		
 	}
+	
+	@Override
+    protected void onDestroy() {
+        Log.d(LOGTAG, "onDestroy");
+        super.onDestroy();
+        try {
+            vuforiaAppSession.stopAR();
+        } catch (SampleApplicationException e) {
+            Log.e(LOGTAG, e.getString());
+        }
+//        mTextures.clear();
+//        mTextures = null;
+        System.gc();
+    }
+	
+	public void marqueurEnVue(final int id) {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                handler.post(new Runnable() { // This thread runs in the UI
+                    @Override
+                    public void run() {
+                    	Toast.makeText(GameActivity.this, "Marqueur "+id+" en vue", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        };
+        new Thread(runnable).start();
+    }
 
 	private void startLoadingAnimation() {
         LayoutInflater inflater = LayoutInflater.from(this);
@@ -119,11 +153,15 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
         MarkerTracker markerTracker = (MarkerTracker) tManager.getTracker(MarkerTracker.getClassType());
         if (markerTracker == null) return false;
         
-        dataSet = new Marker[1];
+        dataSet = new Marker[2];
 	        
-        dataSet[0] = markerTracker.createFrameMarker(0, "MarkerANous", new Vec2F(50, 50));
-        if (dataSet[0] == null)
-        {
+        dataSet[0] = markerTracker.createFrameMarker(0, "Zizi", new Vec2F(50, 50));
+        if (dataSet[0] == null) {
+            Log.e(LOGTAG, "Failed to create frame marker MarkerANous.");
+            return false;
+        }
+        dataSet[1] = markerTracker.createFrameMarker(1, "Xopi", new Vec2F(50, 50));
+        if (dataSet[1] == null) {
             Log.e(LOGTAG, "Failed to create frame marker MarkerANous.");
             return false;
         }
