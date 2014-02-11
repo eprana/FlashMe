@@ -43,17 +43,19 @@ public class ContentActivity extends Activity implements
 	ViewPager.OnPageChangeListener
 	/*TeamsFragment.OnTeamSelectedListener*/ {
 
-	private class TabAction { public int icon; public String text; 
-		public TabAction(int icon, String text) {
+	private class TabAction { public int icon; public int icon_in; public String text; 
+		public TabAction(int icon, int icon_in, String text) {
 			this.icon = icon;
+			this.icon_in = icon_in;
 			this.text = text;
 		}
 	}
 	
 	static ParseUser currentUser = null;
 	private ViewPager mViewPager = null;
+	private ActionBar actionBar = null;
 	private TabsPagerAdapter mAdapter = null;
-	private TabAction[] tabs = {new TabAction(R.drawable.menu_profile_bt_in, "Profile"), new TabAction(R.drawable.menu_teams_bt_in, "Teams"), new TabAction(R.drawable.menu_games_bt_in, "Games")};
+	private TabAction[] tabs = {new TabAction(R.drawable.menu_profile_bt, R.drawable.menu_profile_bt_in, "Profile"), new TabAction(R.drawable.menu_teams_bt, R.drawable.menu_teams_bt_in, "Teams"), new TabAction(R.drawable.menu_games_bt, R.drawable.menu_games_bt_in, "Games")};
 	private Context context = null;
 	private LayoutInflater inflater = null;
 	
@@ -126,7 +128,7 @@ public class ContentActivity extends Activity implements
 	 	
 	 	final FragmentManager fm = getFragmentManager();
 	 	mViewPager = (ViewPager) findViewById(R.id.pager);
-	 	final ActionBar actionBar = getActionBar();
+	 	actionBar = getActionBar();
 	 	mAdapter = new TabsPagerAdapter(fm);
 	 	mViewPager.setAdapter(mAdapter);
 	 	mViewPager.setOffscreenPageLimit(2);
@@ -138,6 +140,7 @@ public class ContentActivity extends Activity implements
         
 	 	for(TabAction tab : tabs) {
 	 		actionBar.addTab(actionBar.newTab().setIcon(tab.icon)./*setText(tab.text).*/setTabListener(this));
+	 		actionBar.getTabAt(0).setIcon(tabs[0].icon_in);
 	 	}
 	 	mViewPager.setCurrentItem(0);
 	 	
@@ -215,6 +218,22 @@ public class ContentActivity extends Activity implements
 	@Override
 	public void onPageSelected(int position) {
 		getActionBar().setSelectedNavigationItem(position);
-		
+		switch(position) {
+		case 0:
+			actionBar.getTabAt(0).setIcon(tabs[0].icon_in);
+			actionBar.getTabAt(1).setIcon(tabs[1].icon);
+			actionBar.getTabAt(2).setIcon(tabs[2].icon);
+			break;
+		case 1:
+			actionBar.getTabAt(0).setIcon(tabs[0].icon);
+			actionBar.getTabAt(1).setIcon(tabs[1].icon_in);
+			actionBar.getTabAt(2).setIcon(tabs[2].icon);
+			break;
+		case 2:
+			actionBar.getTabAt(0).setIcon(tabs[0].icon);
+			actionBar.getTabAt(1).setIcon(tabs[1].icon);
+			actionBar.getTabAt(2).setIcon(tabs[2].icon_in);
+			break;
+		}
 	}
 }
