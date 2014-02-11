@@ -3,7 +3,7 @@
  All Rights Reserved.
  ==============================================================================*/
 
-package com.imac.FlashMe.VuforiaApp.utils;
+package com.imac.VuforiaApp.utils;
 
 public class LineShaders
 {
