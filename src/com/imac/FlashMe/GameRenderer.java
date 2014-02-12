@@ -74,15 +74,14 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         	GLES20.glFrontFace(GLES20.GL_CCW);
         }
         
-        // Did we find any trackables this frame?
-        for (int tIdx = 0; tIdx < state.getNumTrackableResults(); tIdx++)
-        {
-            // Get the trackable:
-            TrackableResult trackableResult = state.getTrackableResult(tIdx);
-            float[] modelViewMatrix = Tool.convertPose2GLMatrix(
-                trackableResult.getPose()).getData();
+        // Loop on found trackables
+        for (int tracakbleId = 0; tracakbleId < state.getNumTrackableResults(); tracakbleId++) {
+        	
+            // Get the trackable
+            TrackableResult trackableResult = state.getTrackableResult(tracakbleId);
+            float[] modelViewMatrix = Tool.convertPose2GLMatrix(trackableResult.getPose()).getData();
 
-            // Check the type of the trackable:
+            // Check its type
             assert (trackableResult.getType() == MarkerTracker.getClassType());
             MarkerResult markerResult = (MarkerResult) (trackableResult);
             Marker marker = (Marker) markerResult.getTrackable();
