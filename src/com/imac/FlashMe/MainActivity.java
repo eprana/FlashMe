@@ -47,7 +47,6 @@ public class MainActivity extends Activity {
 		final EditText username = (EditText) findViewById(R.id.username);
 		final EditText password = (EditText) findViewById(R.id.password);
 		final Button logInButton = (Button) findViewById(R.id.login);
-     	
 		aboutButton = (ImageButton) findViewById(R.id.bobble_help);
 		aboutButton.setOnClickListener(new OnClickListener() {
 			@Override 
@@ -55,6 +54,9 @@ public class MainActivity extends Activity {
 				initiatePopupWindow(aboutButton); 
 			} 
 		});
+		
+		getActionBar().setIcon(R.drawable.ic_menu);
+		getActionBar().setDisplayShowTitleEnabled(false);
 		
 		 // Initialize Parse
 	 	Parse.initialize(this, "ysJVmuI4oJDEsyF7YOcQG12WVkLzwQlLrqzt15Fg", "YTTLp7GRoHYEMzLXa58T2zB7mcTTPWJuB19JcGnJ");

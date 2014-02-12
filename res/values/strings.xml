@@ -22,10 +22,10 @@
 	<string name="close_popup">close_popup</string>
 
 	<!-- activities -->
-    <string name="title_activity_sign_up">SignUpActivity</string>
-    <string name="title_activity_content">ChangingContentActivity</string>
-    <string name="title_activity_game">GameActivity</string>
-    <string name="title_edit_activity">EditActivity</string>
+    <string name="title_activity_sign_up">Sign upy</string>
+    <string name="title_activity_content">Flash me</string>
+    <string name="title_activity_game">Flash me</string>
+    <string name="title_edit_activity">Edit profile</string>
 	
 	<!-- sign up & log in -->
     <string name="mail">E-mail</string>

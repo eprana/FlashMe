@@ -119,7 +119,7 @@ public class ContentActivity extends Activity implements
 	 	mViewPager.setOffscreenPageLimit(2);
 	 	mViewPager.setOnPageChangeListener(this);
 	 	
-	 	//getActionBar().setDisplayShowHomeEnabled(false);
+	 	actionBar.setIcon(R.drawable.ic_menu);
 	 	actionBar.setDisplayShowTitleEnabled(false);
 	 	actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         
