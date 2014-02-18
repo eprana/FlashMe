@@ -87,7 +87,8 @@ public class GameRenderer implements GLSurfaceView.Renderer {
             Marker marker = (Marker) markerResult.getTrackable();
             int markerId = marker.getMarkerId();
             
-       		mActivity.marqueurEnVue(markerId);
+            System.out.println("coucou");
+       		//mActivity.marqueurEnVue(markerId);
        		
         }
 

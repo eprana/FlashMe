@@ -112,8 +112,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
     }
 	
 	// Initializes AR application components.
-    private void initApplicationAR()
-    {
+    private void initApplicationAR() {
         // Create OpenGL ES view:
         int depthSize = 16;
         int stencilSize = 0;

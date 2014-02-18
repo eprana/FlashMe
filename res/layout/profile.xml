@@ -89,21 +89,21 @@
 	    
 	        <ImageView 
 		        android:id="@+id/score_icon"
-				android:layout_height="match_parent"
+				android:layout_height="wrap_content"
 				android:layout_margin="@dimen/medium_mg" 
-				android:layout_width="0dip"
+				android:layout_width="wrap_content"
 				android:layout_weight="1" 
-				android:src="@drawable/best_score_icon"
+				android:src="@drawable/ic_defeats"
 				android:gravity="center"
 				android:contentDescription="@string/score_ic" />
 	        
 	        <ImageView 
 		        android:id="@+id/victories_icon"
-				android:layout_height="match_parent"
+				android:layout_height="wrap_content"
 				android:layout_margin="@dimen/medium_mg" 
-				android:layout_width="0dip" 
+				android:layout_width="wrap_content" 
 				android:layout_weight="1"
-				android:src="@drawable/victories_icon"
+				android:src="@drawable/ic_victories"
 				android:gravity="center"
 				android:contentDescription="@string/vics_ic" />
 
@@ -149,21 +149,21 @@
 	    
 	        <ImageView 
 		        android:id="@+id/rank_icon"
-				android:layout_height="match_parent"
+				android:layout_height="wrap_content"
 				android:layout_margin="@dimen/medium_mg"
-				android:layout_width="0dip"
+				android:layout_width="wrap_content"
 				android:layout_weight="1"
-				android:src="@drawable/rank_icon"
+				android:src="@drawable/ic_rank"
 				android:gravity="center"
 				android:contentDescription="@string/rank_ic" />
 	        
 	        <ImageView 
 		        android:id="@+id/defeats_icon"
-				android:layout_height="match_parent"
+				android:layout_height="wrap_content"
 				android:layout_margin="@dimen/medium_mg"  
-				android:layout_width="0dip" 
+				android:layout_width="wrap_content" 
 				android:layout_weight="1"
-				android:src="@drawable/defeats_icon"
+				android:src="@drawable/ic_defeats"
 				android:gravity="center"
 				android:contentDescription="@string/vics_ic" />
 

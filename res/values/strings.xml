@@ -118,9 +118,20 @@
 	<string name="quit_game">Quit game</string>
 	<string name="elem_in_list_picture">Elem in list picture</string>
 	
-	
 	<!-- details list -->
 	<string name="add_bt">Add element</string>
 	<string name="next_bt">See details</string>
 	<string name="delete_bt">Delete element</string>	
+	
+	<!-- The game -->
+	<string name="ic_life">Life points</string>
+	<string name="ic_munitions">Munitions</string>
+	<string name="ic_time">Remaining time</string>
+	<string name="life">Life points value</string>
+	<string name="munitions">Munitions value</string>
+	<string name="time">Remaining time value</string>
+	<string name="life_value">0</string>
+	<string name="munitions_value">0</string>
+	<string name="time_value">00:00:00</string>
+	
 </resources>

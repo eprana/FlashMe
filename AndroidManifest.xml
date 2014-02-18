@@ -96,14 +96,12 @@
         <activity android:label="@string/app_name"
                   android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize"
                   android:name="com.imac.FlashMe.MainActivity">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
-        
+            
         <!-- _______________ SIGN UP ACTIVITY _______________ -->
         <activity
             android:name="com.imac.FlashMe.SignUpActivity"
@@ -117,8 +115,8 @@
         <!-- _______________ GAME ACTIVITY _______________ -->        
         <activity
             android:name="com.imac.FlashMe.GameActivity"
-            android:label="@string/title_activity_game" />
-        
+            android:label="@string/title_activity_game"/>
+                
         <!-- _______________ EDIT ACTIVITY _______________ -->        
         <activity
             android:name="com.imac.FlashMe.EditActivity"
