@@ -1,5 +1,7 @@
 package com.imac.FlashMe;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import com.imac.VuforiaApp.SampleApplicationControl;
@@ -8,6 +10,12 @@ import com.imac.VuforiaApp.SampleApplicationSession;
 import com.imac.VuforiaApp.utils.LoadingDialogHandler;
 import com.imac.VuforiaApp.utils.SampleApplicationGLView;
 import com.imac.VuforiaApp.utils.Texture;
+import com.parse.FindCallback;
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.qualcomm.vuforia.CameraDevice;
 import com.qualcomm.vuforia.Marker;
 import com.qualcomm.vuforia.MarkerTracker;
@@ -28,6 +36,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -36,8 +45,12 @@ import android.widget.Toast;
 public class GameActivity  extends Activity implements SampleApplicationControl {
 	
 	private static final String LOGTAG = "Game";
+	
+	private ParseUser currentUser;
+	
 	private final Context context = this;
 	private LayoutInflater inflater;
+	private String gameName;
 	private View mainView;
 	private TextView time;
 	private TextView life;
@@ -68,8 +81,9 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		
 		// Get game name passed in extras
 		Intent intent = getIntent();
-		String gameName = intent.getStringExtra("GAME");
-		System.out.println("Starting game "+gameName);
+		gameName = intent.getStringExtra("GAME");
+		
+		currentUser = ParseUser.getCurrentUser();
 		
 		// Get layout elements
 		inflater = LayoutInflater.from(context);
@@ -94,6 +108,41 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	}
 	
 	private void initLayoutValues() {
+		
+		// Create player for the game
+		final ParseObject newPlayer = new ParseObject("Player");
+		newPlayer.put("life", 50);
+		newPlayer.put("munitions", 500);
+		ParseQuery<ParseObject> gameQuery = ParseQuery.getQuery("Game");
+		gameQuery.whereEqualTo("name", gameName);
+		gameQuery.getFirstInBackground(new GetCallback<ParseObject>() {
+			
+			@Override
+			public void done(ParseObject game, ParseException e) {
+				newPlayer.put("game", game);
+				game.getRelation("teams").getQuery().findInBackground(new FindCallback<ParseObject>() {
+					
+					@Override
+					public void done(List<ParseObject> teams, ParseException e) {
+						for(final ParseObject team: teams) {
+							team.getRelation("players").getQuery().findInBackground(new FindCallback<ParseObject>() {
+
+								@Override
+								public void done(List<ParseObject> players, ParseException e) {
+									for(ParseObject player : players) {
+										if(currentUser.getUsername().equals(player.getString("username"))) {
+											newPlayer.put("team", team);
+											player.saveInBackground();
+										}
+									}
+								}
+							});
+						}
+					}
+				});
+			}
+		});
+		
 		time.setText("10:00:00");
 		life.setText("50");
 		munitions.setText("2500");
