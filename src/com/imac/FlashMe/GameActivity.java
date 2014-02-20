@@ -18,6 +18,8 @@ import com.qualcomm.vuforia.Vec2F;
 import com.qualcomm.vuforia.Vuforia;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -26,19 +28,26 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class GameActivity  extends Activity implements SampleApplicationControl {
 	
 	private static final String LOGTAG = "Game";
+	private final Context context = this;
+	private LayoutInflater inflater;
+	private View mainView;
+	private TextView time;
+	private TextView life;
+	private TextView munitions;
 	
 	SampleApplicationSession vuforiaAppSession;
 	private SampleApplicationGLView mGlView;
 	private GameRenderer mRenderer;
 	
 	private Vector<Texture> mTextures;
-    private RelativeLayout mUILayout;
     
     private Marker dataSet[];
     
@@ -56,6 +65,24 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	protected void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
+		
+		// Get game name passed in extras
+		Intent intent = getIntent();
+		String gameName = intent.getStringExtra("GAME");
+		System.out.println("Starting game "+gameName);
+		
+		// Get layout elements
+		inflater = LayoutInflater.from(context);
+		mainView = inflater.inflate(R.layout.camera_overlay, null, false);
+		time = (TextView) mainView.findViewById(R.id.text_time);
+		life = (TextView) mainView.findViewById(R.id.text_life);
+		munitions = (TextView) mainView.findViewById(R.id.text_munitions);
+		
+		initLayoutValues();
+		
+		// Init the game
+		
+		// Init Vuforia
 		vuforiaAppSession = new SampleApplicationSession(this);
 		startLoadingAnimation();
 		vuforiaAppSession.initAR(this, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -64,6 +91,12 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		//mTextures = new Vector<Texture>();
 	    //loadTextures();
 		
+	}
+	
+	private void initLayoutValues() {
+		time.setText("10:00:00");
+		life.setText("50");
+		munitions.setText("2500");
 	}
 	
 	@Override
@@ -96,19 +129,19 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
     }
 
 	private void startLoadingAnimation() {
-        LayoutInflater inflater = LayoutInflater.from(this);
-        mUILayout = (RelativeLayout) inflater.inflate(R.layout.camera_overlay, null, false);
-        mUILayout.setVisibility(View.VISIBLE);
-        mUILayout.setBackgroundColor(Color.BLACK);
+
+        //mUILayout = (RelativeLayout) inflater.inflate(R.layout.camera_overlay, null, false);
+        mainView.setVisibility(View.VISIBLE);
+        mainView.setBackgroundColor(Color.BLACK);
         
         // Gets a reference to the loading dialog
-        loadingDialogHandler.mLoadingDialogContainer = mUILayout.findViewById(R.id.loading_indicator);
+        loadingDialogHandler.mLoadingDialogContainer = mainView.findViewById(R.id.loading_indicator);
         
         // Shows the loading indicator at start
         loadingDialogHandler.sendEmptyMessage(LoadingDialogHandler.SHOW_LOADING_DIALOG);
         
         // Adds the inflated layout to the view
-        addContentView(mUILayout, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        addContentView(mainView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
     }
 	
 	// Initializes AR application components.
@@ -209,13 +242,13 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
             initApplicationAR();
             mRenderer.mIsActive = true;
             addContentView(mGlView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-            mUILayout.bringToFront();
+            mainView.bringToFront();
             
             // Hides the Loading Dialog
             loadingDialogHandler.sendEmptyMessage(LoadingDialogHandler.HIDE_LOADING_DIALOG);
             
             // Sets the layout background to transparent
-            mUILayout.setBackgroundColor(Color.TRANSPARENT);
+            mainView.setBackgroundColor(Color.TRANSPARENT);
             
             try {
                 vuforiaAppSession.startAR(CameraDevice.CAMERA.CAMERA_DEFAULT);

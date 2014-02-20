@@ -69,10 +69,12 @@
 	    android:layout_height="0dip" 
 	    android:layout_weight="20">
 	    
-		<ListView android:id="@android:id/list"
-		    android:layout_marginTop="@dimen/medium_mg"
+		<ListView
+		    android:id="@android:id/list"
+		    android:layout_height="match_parent"
 		    android:layout_width="match_parent"
-		    android:layout_height="match_parent" >
+		    android:layout_marginTop="@dimen/medium_mg" >
+
 		</ListView>
 	
 	    <ProgressBar
@@ -89,8 +91,10 @@
 	        android:layout_alignParentBottom="true"
 	        android:layout_centerHorizontal="true"
 	        android:layout_margin="@dimen/large_mg"
+	        android:layout_marginBottom="@dimen/medium_mg"
 	        android:background="@drawable/dark_button"
-	        android:text="@string/play" />
+	        android:text="@string/play"
+	        android:visibility="invisible"/>
 	   
 	</RelativeLayout>
     

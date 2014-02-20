@@ -80,16 +80,6 @@
 	        android:layout_height="wrap_content"
 	        android:layout_alignParentTop="true"
 	        android:layout_centerHorizontal="true" />
-
-	    <Button
-	        android:id="@+id/play"
-	        style="@style/buttonDarkBlue"
-	        android:layout_width="@dimen/medium_wd"
-	        android:layout_alignParentBottom="true"
-	        android:layout_centerHorizontal="true"
-	        android:layout_margin="@dimen/large_mg"
-	        android:background="@drawable/dark_button"
-	        android:text="@string/play" />
 	   
 	</RelativeLayout>
 

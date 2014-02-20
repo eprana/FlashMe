@@ -145,8 +145,11 @@ public class GamesFragment extends ListFragment {
 			@Override
 			public void onClick(View v) {
 				// Start game
-				Intent intent = new Intent(getActivity(), GameActivity.class);
-				startActivity(intent);
+				if(!gameName.isEmpty()) {
+					Intent intent = new Intent(getActivity(), GameActivity.class);
+					intent.putExtra("GAME", gameName);
+					startActivity(intent);	
+				}
 			}
 		});
 
@@ -174,6 +177,7 @@ public class GamesFragment extends ListFragment {
 		addButton.setVisibility(View.VISIBLE);
 		autocompleteValue.setVisibility(View.GONE);
 		backButton.setVisibility(View.INVISIBLE);
+		playButton.setVisibility(View.INVISIBLE);
 		
 		setListAdapter(gameParseAdapter);
 	}
@@ -190,6 +194,7 @@ public class GamesFragment extends ListFragment {
 			addButton.setVisibility(View.INVISIBLE);
 		}
 		backButton.setVisibility(View.VISIBLE);
+		playButton.setVisibility(View.VISIBLE);
 		
 		gameTeamsParseAdapter.addOnQueryLoadListener(new OnQueryLoadListener<ParseObject>() {
 			@Override
