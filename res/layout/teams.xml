@@ -60,6 +60,7 @@
 		    android:text="@string/create"
 		    android:background="@drawable/light_button"
 		    style="@style/buttonLightBlue" />
+	     
 	</LinearLayout>
     
 	<RelativeLayout
@@ -68,29 +69,38 @@
 	    android:layout_height="0dip" 
 	    android:layout_weight="20">
 	    
-		<ListView android:id="@android:id/list"
+		<ListView 
+		    android:id="@android:id/list"
 		    android:layout_marginTop="@dimen/medium_mg"
 		    android:layout_width="match_parent"
 		    android:layout_height="match_parent" >
 		</ListView>
 	
-	    <ProgressBar
+		<ProgressBar
 	        android:id="@+id/progressBar"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_alignParentTop="true"
 	        android:layout_centerHorizontal="true" />
-
-	    <Button
-	        android:id="@+id/play"
-	        style="@style/buttonDarkBlue"
-	        android:layout_width="@dimen/medium_wd"
-	        android:layout_alignParentBottom="true"
-	        android:layout_centerHorizontal="true"
-	        android:layout_margin="@dimen/large_mg"
-	        android:background="@drawable/dark_button"
-	        android:text="@string/play" />
 	   
+		
 	</RelativeLayout>
+	
+    <LinearLayout 
+        android:layout_width="wrap_content"
+        android:layout_height="0dip"
+        android:orientation="horizontal"
+        android:layout_gravity="center" 
+        android:layout_weight="5">
+        
+	    <Button
+		    android:id="@+id/play"    
+		    android:layout_width="@dimen/medium_wd"
+		    android:text="@string/play"
+		    android:background="@drawable/dark_button"
+		    style="@style/buttonDarkBlue" 
+		    android:layout_margin="@dimen/large_mg"/>
+	                
+    </LinearLayout>
 
 </LinearLayout>
