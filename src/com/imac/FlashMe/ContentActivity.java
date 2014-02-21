@@ -1,5 +1,6 @@
 package com.imac.FlashMe;
 
+import com.parse.DeleteCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -153,9 +154,19 @@ public class ContentActivity extends Activity implements
 	}
 	
 	@Override
-	protected void onStop() {
-		super.onStop();
-		System.out.println("STOP CONTENT ACTIVITY");
+	public void onBackPressed() {
+		AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+		alertDialog.setTitle("Log out");
+		alertDialog.setMessage("Are you sure you want to log out ?");
+		alertDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				// User wants to log out
+				finish();
+			}
+		});
+		alertDialog.setNegativeButton("CANCEL", null);
+		alertDialog.create();
+		alertDialog.show();	
 	}
 	
 	@Override
