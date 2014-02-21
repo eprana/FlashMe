@@ -61,22 +61,18 @@ public class GamesFragment extends ListFragment {
 		// Initialize members
 		state = 0;
 		currentUser = ParseUser.getCurrentUser();
+		teamsList = new ArrayList<String>();
+		
 		progress = (ProgressBar) mainView.findViewById(R.id.progressBar);
-    	
 		backButton = (ImageButton) mainView.findViewById(R.id.back_bt);
     	inputValue = (EditText) mainView.findViewById(R.id.enter_game);
     	autocompleteValue = (AutoCompleteTextView) mainView.findViewById(R.id.autocomplete_team);
+    	
 		ParseQuery<ParseObject> teamsQuery = ParseQuery.getQuery("Team");
 		teamsQuery.findInBackground(new FindCallback<ParseObject>() {
 			@Override
 			public void done(List<ParseObject> teams, ParseException e) {
-				teamsList = new ArrayList<String>();
-				for(ParseObject team: teams) {
-					teamsList.add(team.getString("name"));
-				}
-				String[] teamsArray = new String[teamsList.size()];
-				teamsAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, teamsList.toArray(teamsArray));
-				autocompleteValue.setAdapter(teamsAdapter);
+				initAutoCompleteList(teams);
 				autocompleteValue.setThreshold(1);
 			}
 		});
@@ -167,6 +163,15 @@ public class GamesFragment extends ListFragment {
 			gameTeamsParseAdapter = new GameTeamsParseAdapter(getActivity(), currentUser, game);
 			setDetailAdapter(gameTeamsParseAdapter);	
 		}
+	}
+	
+	private void initAutoCompleteList(List<ParseObject> teams) {
+		for(ParseObject team: teams) {
+			teamsList.add(team.getString("name"));
+		}
+		String[] teamsArray = new String[teamsList.size()];
+		teamsAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, teamsList.toArray(teamsArray));
+		autocompleteValue.setAdapter(teamsAdapter);
 	}
 	
 	public void setGeneralAdapter() {
