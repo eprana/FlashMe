@@ -137,11 +137,7 @@ public class GameTeamsParseAdapter extends ParseQueryAdapter<ParseObject>{
 							});
 						}
 					});
-					alertDialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int id) {
-							// User cancelled
-						}
-					});
+					alertDialog.setNegativeButton("CANCEL", null);
 					alertDialog.create();
 					alertDialog.show();
 				}
