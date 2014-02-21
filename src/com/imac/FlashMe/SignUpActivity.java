@@ -169,6 +169,7 @@ public class SignUpActivity extends Activity {
              	newUser.setUsername(s_username);
              	newUser.setPassword(s_password);
              	newUser.setEmail(s_email);
+             	newUser.put("state", 0);
              	newUser.put("avatar", avatarParseFile);
              	newUser.put("marker", markerParseFile);
              	newUser.put("totalScore", 0);

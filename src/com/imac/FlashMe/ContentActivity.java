@@ -1,6 +1,9 @@
 package com.imac.FlashMe;
 
+import com.parse.GetCallback;
+import com.parse.ParseException;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.imac.FlashMe.R;
 
 import android.app.Fragment;
@@ -129,12 +132,32 @@ public class ContentActivity extends Activity implements
 	 	}
 	 	mViewPager.setCurrentItem(0);
 	 	
-    	// Set username on top of the page
-//	 	currentUser = ParseUser.getCurrentUser();
-//    	TextView userName = (TextView) findViewById(R.id.name);
-//    	userName.setText(currentUser.getUsername());	
+	 	currentUser = ParseUser.getCurrentUser();
+	 	//State 0:offline, 1:online
+	 	currentUser.put("state", 1);
+	 	currentUser.saveInBackground();
 	}
-
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+	 	currentUser.put("state", 0);
+	 	currentUser.saveInBackground();
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+	 	currentUser.put("state", 1);
+	 	currentUser.saveInBackground();
+	}
+	
+	@Override
+	protected void onStop() {
+		super.onStop();
+		System.out.println("STOP CONTENT ACTIVITY");
+	}
+	
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);

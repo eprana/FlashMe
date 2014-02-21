@@ -87,7 +87,7 @@ public class GamesFragment extends ListFragment {
 
 			@Override
 			public void onLoaded(List<ParseObject> arg0, Exception arg1) {
-				progress.setVisibility(View.GONE);
+				progress.setVisibility(View.INVISIBLE);
 			}
 
 			@Override

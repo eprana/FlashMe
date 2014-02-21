@@ -71,6 +71,11 @@ public class MainActivity extends Activity {
 			}
 	 	});
 	 	
+	 	if (!(ParseUser.getCurrentUser() == null)) {
+	 		//ParseUser.getCurrentUser().put("state", 0);
+			ParseUser.logOut();
+	 	}
+	 	
 	 	logInButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
