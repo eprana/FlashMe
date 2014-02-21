@@ -184,13 +184,13 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	@Override
     protected void onDestroy() {
         Log.d(LOGTAG, "onDestroy");
-        super.onDestroy();
         try {
             vuforiaAppSession.stopAR();
         } catch (SampleApplicationException e) {
             Log.e(LOGTAG, e.getString());
         }
         newPlayer.deleteInBackground();
+        super.onDestroy();
 //        mTextures.clear();
 //        mTextures = null;
         System.gc();

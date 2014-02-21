@@ -68,7 +68,7 @@ public class GameParseAdapter extends ParseQueryAdapter<ParseObject>{
 		
 		if(!s_gameCreator.equals(user.getUsername())){
 			deleteGame.setEnabled(false);
-			deleteGame.setVisibility(View.INVISIBLE);
+			deleteGame.setImageResource(R.drawable.delete_bt);
 		}
 		else {
 			deleteGame.setOnClickListener(new OnClickListener() {

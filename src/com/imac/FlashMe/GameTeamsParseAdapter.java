@@ -96,7 +96,7 @@ public class GameTeamsParseAdapter extends ParseQueryAdapter<ParseObject>{
 		
 		if(!s_gameCreator.equals(user.getUsername()) && !s_teamCreator.equals(user.getUsername())){
 			deleteTeam.setEnabled(false);
-			deleteTeam.setVisibility(View.INVISIBLE);
+			deleteTeam.setImageResource(R.drawable.delete_bt);
 		}
 		else {
 			deleteTeam.setFocusable(false);

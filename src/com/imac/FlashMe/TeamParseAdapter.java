@@ -67,7 +67,7 @@ public class TeamParseAdapter extends ParseQueryAdapter<ParseObject>{
 		
 		if(!s_teamCreator.equals(user.getUsername())){
 			deleteTeam.setEnabled(false);
-			deleteTeam.setVisibility(View.INVISIBLE);
+			deleteTeam.setImageResource(R.drawable.delete_bt);
 		}
 		else {
 			deleteTeam.setOnClickListener(new OnClickListener() {
