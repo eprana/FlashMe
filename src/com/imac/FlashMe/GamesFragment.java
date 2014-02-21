@@ -223,6 +223,7 @@ public class GamesFragment extends ListFragment {
 					// Create Parse game
 					final ParseObject newGame = new ParseObject("Game");
 					newGame.put("name", name);
+					newGame.put("state", 0);
 					newGame.put("createdBy", currentUser);
 					newGame.saveInBackground(new SaveCallback() {
 						@Override

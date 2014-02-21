@@ -1,7 +1,11 @@
 package com.imac.FlashMe;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Vector;
 
 import com.imac.VuforiaApp.SampleApplicationControl;
@@ -16,6 +20,7 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.qualcomm.vuforia.CameraDevice;
 import com.qualcomm.vuforia.Marker;
 import com.qualcomm.vuforia.MarkerTracker;
@@ -47,6 +52,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	private static final String LOGTAG = "Game";
 	
 	private ParseUser currentUser;
+	private ParseObject newPlayer;
 	
 	private final Context context = this;
 	private LayoutInflater inflater;
@@ -55,6 +61,8 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	private TextView time;
 	private TextView life;
 	private TextView munitions;
+	private int minutes;
+	private int seconds;
 	
 	SampleApplicationSession vuforiaAppSession;
 	private SampleApplicationGLView mGlView;
@@ -110,7 +118,8 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	private void initLayoutValues() {
 		
 		// Create player for the game
-		final ParseObject newPlayer = new ParseObject("Player");
+		newPlayer = new ParseObject("Player");
+		newPlayer.put("state", 0);
 		newPlayer.put("life", 50);
 		newPlayer.put("munitions", 500);
 		ParseQuery<ParseObject> gameQuery = ParseQuery.getQuery("Game");
@@ -119,20 +128,32 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 			
 			@Override
 			public void done(ParseObject game, ParseException e) {
+				System.out.println("Game : "+game.getString("name"));
 				newPlayer.put("game", game);
 				game.getRelation("teams").getQuery().findInBackground(new FindCallback<ParseObject>() {
 					
 					@Override
 					public void done(List<ParseObject> teams, ParseException e) {
 						for(final ParseObject team: teams) {
+							System.out.println("Team : "+team.getString("name"));
 							team.getRelation("players").getQuery().findInBackground(new FindCallback<ParseObject>() {
 
 								@Override
 								public void done(List<ParseObject> players, ParseException e) {
 									for(ParseObject player : players) {
+										System.out.println("Player : "+player.getString("username"));
 										if(currentUser.getUsername().equals(player.getString("username"))) {
 											newPlayer.put("team", team);
-											player.saveInBackground();
+											newPlayer.saveInBackground( new SaveCallback() {
+												
+												@Override
+												public void done(ParseException e) {
+													newPlayer.put("state", 1);
+													initTimer();
+													life.setText(String.valueOf(newPlayer.getInt("life")));
+													munitions.setText(String.valueOf(newPlayer.getInt("munitions")));
+												}
+											});
 										}
 									}
 								}
@@ -142,10 +163,39 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 				});
 			}
 		});
+	}
+	
+	private void initTimer() {
+		minutes = 10;
+		seconds = 0;
+		time.setText(minutes+":"+seconds);
+		startCountdown();
+	}
+	
+	private void setTimer(int minutesValue, int secondsValue) {
+		time.setText(minutesValue+":"+secondsValue);
+	}
+	
+	private void startCountdown() {
+		TimerTask task = new TimerTask() {
+			@Override
+			public void run() {
+				if(minutes > 0) {
+					if(seconds > 0) {
+						seconds--;
+					}
+					else {
+						seconds = 60;
+					}
+					minutes--;
+				}
+				
+				//setTimer(minutes, seconds);
+			}	
+		};
 		
-		time.setText("10:00:00");
-		life.setText("50");
-		munitions.setText("2500");
+		Timer timer = new Timer();
+		timer.scheduleAtFixedRate(task, 0, 1000);
 	}
 	
 	@Override
@@ -157,6 +207,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
         } catch (SampleApplicationException e) {
             Log.e(LOGTAG, e.getString());
         }
+        newPlayer.deleteInBackground();
 //        mTextures.clear();
 //        mTextures = null;
         System.gc();

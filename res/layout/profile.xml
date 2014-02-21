@@ -163,7 +163,7 @@
 				android:layout_margin="@dimen/medium_mg"  
 				android:layout_width="wrap_content" 
 				android:layout_weight="1"
-				android:src="@drawable/ic_defeats"
+				android:src="@drawable/ic_bestscore"
 				android:gravity="center"
 				android:contentDescription="@string/vics_ic" />
 
