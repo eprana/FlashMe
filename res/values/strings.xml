@@ -125,6 +125,7 @@
 	<string name="delete_bt">Delete element</string>	
 	
 	<!-- The game -->
+	<string name="background">Background image target</string>
 	<string name="ic_life">Life points</string>
 	<string name="ic_munitions">Munitions</string>
 	<string name="ic_time">Remaining time</string>

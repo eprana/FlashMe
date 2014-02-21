@@ -2,8 +2,21 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/camera_overlay_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/background_target">
+    android:layout_height="match_parent" >
+    
+	<FrameLayout android:id="@+id/my_view"  
+	    android:layout_width="match_parent"    
+	    android:layout_height="match_parent">
+	    
+	    <ImageView
+	        android:id="@+id/background"
+	        android:layout_height="match_parent"
+	        android:layout_width="match_parent"
+	        android:src="@drawable/background_target"
+	        android:scaleType="centerCrop"
+	        android:contentDescription="@string/background" />
+	    
+	</FrameLayout>
 
         <ProgressBar
             android:id="@+id/loading_indicator"
