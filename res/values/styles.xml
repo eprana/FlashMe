@@ -160,6 +160,43 @@
     	
     </style>    
     
+    <style name="best_score">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0dip</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:paddingLeft">10sp</item>
+        <item name="android:paddingRight">10sp</item>
+        <item name="android:paddingTop">5sp</item>
+        <item name="android:paddingBottom">5sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@color/light_blue</item>
+    </style>
+    
+    <style name="stats_title">
+    	<item name="android:textSize">@dimen/large_tx</item>
+    	<item name="android:gravity">center</item>
+    	<item name="android:layout_height">match_parent</item>
+    	<item name="android:layout_width">0dip</item>
+    	<item name="android:layout_weight">1</item>
+    	<item name="android:textColor">@color/dark_gray</item>
+    </style>
+    
+    <style name="stats_value">
+        <item name="android:textSize">@dimen/xverylarge_tx</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_height">match_parent</item>
+    	<item name="android:layout_width">0dip</item>
+    	<item name="android:layout_weight">1</item>
+        <item name="android:textColor">@color/text_blue</item>
+    </style>
+    
+    <style name="stats_icon">
+        <item name="android:gravity">center</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+    
     <style name="completed">
         <item name="android:text">.</item>
         <item name="android:textColor">@color/dark_blue</item>

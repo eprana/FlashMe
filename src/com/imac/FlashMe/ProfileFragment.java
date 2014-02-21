@@ -34,10 +34,11 @@ public class ProfileFragment extends Fragment {
 	private static ImageView profilePictureView = null;
 	private static ImageView profileMarkerView = null;
 	private static TextView totalScoreView;
-	private static TextView bestScoreView;
-	private static TextView victoriesView;
-	private static TextView rankView;
-	private static TextView defeatsView;
+	private static TextView totalScoreValue;
+	private static TextView bestScoreValue;
+	private static TextView victoriesValue;
+	private static TextView rankValue;
+	private static TextView defeatsValue;
 	
 	
 	@Override
@@ -53,10 +54,10 @@ public class ProfileFragment extends Fragment {
 		profilePictureView = (ImageView) mainView.findViewById(R.id.profile_picture);
 		profileMarkerView = (ImageView) mainView.findViewById(R.id.profile_marker);
 		totalScoreView = (TextView) mainView.findViewById(R.id.total_score);
-		bestScoreView = (TextView) mainView.findViewById(R.id.best_score_txt);
-		rankView = (TextView) mainView.findViewById(R.id.rank_txt);
-		defeatsView = (TextView) mainView.findViewById(R.id.defeats_txt);
-		victoriesView = (TextView) mainView.findViewById(R.id.victories_txt);
+		bestScoreValue = (TextView) mainView.findViewById(R.id.best_score_value);
+		rankValue = (TextView) mainView.findViewById(R.id.rank_value);
+		defeatsValue = (TextView) mainView.findViewById(R.id.defeats_value);
+		victoriesValue = (TextView) mainView.findViewById(R.id.victories_value);
 				
 		// Load fragment data
 		LoadProfile lp = new LoadProfile(context);
@@ -104,11 +105,11 @@ public class ProfileFragment extends Fragment {
 			    	return;
 			    }
 
-			    totalScoreView.setText(Html.fromHtml(context.getResources().getString(R.string.total_score_txt )+" : "+ user.getInt("totalScore")));
-			    bestScoreView.setText(Html.fromHtml(context.getResources().getString(R.string.best_score_txt, user.getInt("bestScore"))));
-				rankView.setText(Html.fromHtml(context.getResources().getString(R.string.rank_txt, user.getInt("rank"))));
-				defeatsView.setText(Html.fromHtml(context.getResources().getString(R.string.defeats_txt, user.getInt("defeats"))));
-				victoriesView.setText(Html.fromHtml(context.getResources().getString(R.string.victories_txt, user.getInt("victories"))));
+			    totalScoreView.setText("TOTAL SCORE : "+ String.valueOf(user.getInt("totalScore")));
+			    bestScoreValue.setText(String.valueOf(user.getInt("bestScore")));
+				rankValue.setText(String.valueOf(user.getInt("rank")));
+				defeatsValue.setText(String.valueOf(user.getInt("defeats")));
+				victoriesValue.setText(String.valueOf(user.getInt("victories")));
 				
 		    	ParseFile avatarFile = (ParseFile) user.get("avatar");
 				avatarFile.getDataInBackground(new GetDataCallback() {

@@ -27,5 +27,6 @@
     <dimen name="medium_tx">18sp</dimen>
     <dimen name="large_tx">20sp</dimen>
     <dimen name="verylarge_tx">22sp</dimen>
+    <dimen name="xverylarge_tx">28sp</dimen>
     
 </resources>
