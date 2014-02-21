@@ -1,9 +1,13 @@
 package com.imac.FlashMe;
 
+import java.util.List;
+
+import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.imac.FlashMe.R;
@@ -14,7 +18,6 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +37,6 @@ public class ProfileFragment extends Fragment {
 	private static ImageView profilePictureView = null;
 	private static ImageView profileMarkerView = null;
 	private static TextView totalScoreView;
-	private static TextView totalScoreValue;
 	private static TextView bestScoreValue;
 	private static TextView victoriesValue;
 	private static TextView rankValue;
@@ -99,7 +101,7 @@ public class ProfileFragment extends Fragment {
 		query.whereEqualTo("username", currentUser.getUsername());
 		query.getFirstInBackground(new GetCallback<ParseUser>() {
 			// Find current user
-			public void done(ParseUser user, ParseException e) {
+			public void done(final ParseUser user, ParseException e) {
 			    if (e != null) {
 			    	Toast.makeText(context, "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
 			    	return;
@@ -124,16 +126,24 @@ public class ProfileFragment extends Fragment {
 					}
 				});
 				
-		    	ParseFile markerFile = (ParseFile) user.get("marker");
-		    	markerFile.getDataInBackground(new GetDataCallback() {
-					public void done(byte[] data, ParseException e) {
-						if (e != null){
-							Toast.makeText(context, "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
-							return;
-						}
-						Bitmap markerBitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-						// Setting the marker imageView
-						profileMarkerView.setImageBitmap(markerBitmap);
+		    	ParseQuery<ParseObject> markerQuery = ParseQuery.getQuery("Marker");
+		    	markerQuery.whereEqualTo("Id", user.getInt("MarkerId"));
+		    	markerQuery.getFirstInBackground(new GetCallback<ParseObject>() {
+					
+					@Override
+					public void done(ParseObject marker, ParseException e) {
+						ParseFile markerFile = (ParseFile) marker.getParseFile("Image");
+				    	markerFile.getDataInBackground(new GetDataCallback() {
+							public void done(byte[] data, ParseException e) {
+								if (e != null){
+									Toast.makeText(context, "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
+									return;
+								}
+								Bitmap markerBitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+								// Setting the marker imageView
+								profileMarkerView.setImageBitmap(markerBitmap);
+							}
+						});
 					}
 				});
 			}

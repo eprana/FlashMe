@@ -1,11 +1,6 @@
 package com.imac.FlashMe;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.Vector;
 
 import com.imac.VuforiaApp.SampleApplicationControl;
@@ -31,7 +26,9 @@ import com.qualcomm.vuforia.Vec2F;
 import com.qualcomm.vuforia.Vuforia;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
@@ -42,9 +39,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -63,7 +57,6 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	private TextView life;
 	private TextView munitions;
 	private int minutes;
-	private int seconds;
 	
 	SampleApplicationSession vuforiaAppSession;
 	private SampleApplicationGLView mGlView;
@@ -73,14 +66,12 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
     
     private Marker dataSet[];
     
-	private boolean mFlash = false;
-    private boolean mContAutofocus = false;
-    private boolean mIsFrontCameraActive = false;
-    
-    private View mFlashOptionView;
+//	private boolean mFlash = false;
+	private boolean mContAutofocus = false;
+//	private boolean mIsFrontCameraActive = false;
+//	private View mFlashOptionView;
     
     private LoadingDialogHandler loadingDialogHandler = new LoadingDialogHandler(this);
-	
     private Handler handler;
     
 	@Override
@@ -91,8 +82,6 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		// Get game name passed in extras
 		Intent intent = getIntent();
 		gameName = intent.getStringExtra("GAME");
-		
-		currentUser = ParseUser.getCurrentUser();
 		
 		// Get layout elements
 		inflater = LayoutInflater.from(context);
@@ -111,11 +100,45 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		vuforiaAppSession.initAR(this, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		initApplicationAR();
 		
+		currentUser = ParseUser.getCurrentUser();
+	 	//State 0:offline, 1:online
+	 	currentUser.put("state", 1);
+	 	currentUser.saveInBackground();
+		
 		//mTextures = new Vector<Texture>();
 	    //loadTextures();
 		
 	}
 	
+	@Override
+	protected void onPause() {
+		super.onPause();
+	 	currentUser.put("state", 0);
+	 	currentUser.saveInBackground();
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+	 	currentUser.put("state", 1);
+	 	currentUser.saveInBackground();
+	}
+	
+	@Override
+	public void onBackPressed() {
+		AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+		alertDialog.setTitle(gameName);
+		alertDialog.setMessage("Are you sure you want to leave this game ?");
+		alertDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				// User wants to log out
+				finish();
+			}
+		});
+		alertDialog.setNegativeButton("CANCEL", null);
+		alertDialog.create();
+		alertDialog.show();	
+	}
 	private void initLayoutValues() {
 		
 		// Create player for the game
