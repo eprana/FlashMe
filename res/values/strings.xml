@@ -132,6 +132,6 @@
 	<string name="time">Remaining time value</string>
 	<string name="life_value">0</string>
 	<string name="munitions_value">0</string>
-	<string name="time_value">00:00:00</string>
+	<string name="time_value">00:00</string>
 	
 </resources>

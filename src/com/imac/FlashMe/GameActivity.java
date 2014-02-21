@@ -36,6 +36,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -109,7 +110,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		startLoadingAnimation();
 		vuforiaAppSession.initAR(this, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		initApplicationAR();
-		handler = new Handler();
+		
 		//mTextures = new Vector<Texture>();
 	    //loadTextures();
 		
@@ -167,35 +168,17 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	
 	private void initTimer() {
 		minutes = 10;
-		seconds = 0;
-		time.setText(minutes+":"+seconds);
-		startCountdown();
-	}
-	
-	private void setTimer(int minutesValue, int secondsValue) {
-		time.setText(minutesValue+":"+secondsValue);
-	}
-	
-	private void startCountdown() {
-		TimerTask task = new TimerTask() {
-			@Override
-			public void run() {
-				if(minutes > 0) {
-					if(seconds > 0) {
-						seconds--;
-					}
-					else {
-						seconds = 60;
-					}
-					minutes--;
-				}
-				
-				//setTimer(minutes, seconds);
-			}	
-		};
-		
-		Timer timer = new Timer();
-		timer.scheduleAtFixedRate(task, 0, 1000);
+		new CountDownTimer(minutes*60000, 1000) {
+			public void onTick(long millisUntilFinished) {
+				int minutesRemaining = (int) Math.floor((millisUntilFinished/1000)/60);
+				int secondsRemaining = (int) ((millisUntilFinished/1000) - (minutesRemaining*60));
+				time.setText(minutesRemaining+":"+secondsRemaining);
+		     }
+
+		     public void onFinish() {
+		         time.setText("GAME OVER");
+		     }
+		  }.start();
 	}
 	
 	@Override
