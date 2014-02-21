@@ -31,8 +31,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.imac.FlashMe.MessageAlert;
+import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
@@ -41,6 +44,7 @@ import com.imac.FlashMe.R;
 public class SignUpActivity extends Activity {
 
 	private Context context;
+	private LayoutInflater inflater;
 	private ParseUser newUser;
 	private View alertDialogView;
     private static final int CAMERA_REQUEST = 1888; 
@@ -55,22 +59,26 @@ public class SignUpActivity extends Activity {
     private boolean hasBeenCreated = false;
     private DisplayMetrics screen = new DisplayMetrics();
     int pictureSize = 0;
+    
+    private EditText username;
+    private EditText password;
+    private EditText email;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sign_up);
         context = SignUpActivity.this;
-        final LayoutInflater inflater = LayoutInflater.from(context);
+        inflater = LayoutInflater.from(context);
         
         getWindowManager().getDefaultDisplay().getMetrics(screen);
         pictureSize = screen.widthPixels/3;
         
         // Get activity elements
-		final EditText username = (EditText) findViewById(R.id.username);
-		final EditText password = (EditText) findViewById(R.id.password);
-		final EditText email = (EditText) findViewById(R.id.mail);
-        this.avatarView = (ImageView)this.findViewById(R.id.pic_empty);
+		username = (EditText) findViewById(R.id.username);
+		password = (EditText) findViewById(R.id.password);
+		email = (EditText) findViewById(R.id.mail);
+        avatarView = (ImageView)this.findViewById(R.id.pic_empty);
         
         if(!hasChanged){
         	bitmapToSent = ((BitmapDrawable)getResources().getDrawable(R.drawable.default_profile_picture_thumb)).getBitmap();
@@ -81,7 +89,7 @@ public class SignUpActivity extends Activity {
         bitmapToSent.compress(Bitmap.CompressFormat.PNG, 100, stream);
         bitmapToSent = Bitmap.createScaledBitmap(bitmapToSent, pictureSize, pictureSize, false);
         byte[] bitmapdata = stream.toByteArray();
-        this.avatarParseFile = new ParseFile("avatar.png", bitmapdata);
+        avatarParseFile = new ParseFile("avatar.png", bitmapdata);
         avatarParseFile.saveInBackground(new SaveCallback() {
 			public void done(ParseException e) {
 				if (e != null) {
@@ -179,50 +187,34 @@ public class SignUpActivity extends Activity {
              	newUser.put("defeats", 0);
              	newUser.signUpInBackground(new SignUpCallback() {
              		public void done(ParseException e) {
-             			if (e == null) {
-             				// Notify the user his account has been created and that his marker will be sent by mail
-
-                  	   		// Send an e-mail
-             				SendMailToUser mail = new SendMailToUser(context);
-             				String email = s_email;
-                            String subject = "Welcome !";
-                            String message = context.getResources().getString(R.string.email_to_send, s_username, s_password, "http://www.pouet.fr");
-                            mail.sendMail(email, subject, message);
-                            
-             				// Create an alert box
-            				AlertDialog.Builder adb = new AlertDialog.Builder(context);
-            				MessageAlert msg_a;
-            				
-            				if (alertDialogView == null) {
-            					msg_a = new MessageAlert();
-            					alertDialogView = inflater.inflate(R.layout.alert_dialog, null);
-            					msg_a.msg = (TextView)alertDialogView.findViewById(R.id.text_alert);
-            					alertDialogView.setTag(msg_a);
-            				} else {
-            					msg_a = (MessageAlert) alertDialogView.getTag();
-            	            	ViewGroup adbParent = (ViewGroup) alertDialogView.getParent();
-            					adbParent.removeView(alertDialogView);
-            				}
-            				
-            				// Choosing the type of message alert
-            				msg_a.msg.setText(context.getResources().getString(R.string.account_created));
-            				
-            				// Filling the alert box
-            				adb.setView(alertDialogView);
-            				adb.setTitle("Success !");
-            				adb.setPositiveButton("VIEW PROFILE", new DialogInterface.OnClickListener() {
-            		            public void onClick(DialogInterface dialog, int which) {
-            		            	hasBeenCreated = true;
-            		            	Intent intent = new Intent(context, ContentActivity.class);
-            		            	startActivityForResult(intent, CREATE_PROFILE);
-            		        } });
-            				
-            				// Showing the alert box
-            		        adb.create();
-            				adb.show();
-             			} else {
+             			if (e != null) {
 							Toast.makeText(SignUpActivity.this, "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
+							return;
              			}
+         				// Assign markerId to user
+             	    	ParseQuery<ParseObject> nextMarkerId = ParseQuery.getQuery("NextMarkerId");
+             	    	nextMarkerId.getFirstInBackground(new GetCallback<ParseObject>() {
+             				
+             				@Override
+             				public void done(final ParseObject markerId, ParseException e) {
+             					final int id =  markerId.getInt("value");
+             					newUser.put("markerId", id);
+             					newUser.saveInBackground(new SaveCallback() {
+									
+									@Override
+									public void done(ParseException e) {
+										if (e != null) {
+											Toast.makeText(context, "Error saving: " + e.getMessage(), Toast.LENGTH_LONG).show();
+											return;
+										}
+										markerId.put("value", id+1);
+										markerId.saveInBackground();
+				             			sendConfirmationEmail(s_username, s_email, s_password);
+				             			showSuccessAlertBox();
+									}
+								});
+             				}
+             			});
              		}
              	});
         	}
@@ -235,6 +227,47 @@ public class SignUpActivity extends Activity {
       			finish();
       		}
       	});      
+    }
+    
+    private void sendConfirmationEmail(String username, String email, String password) {
+		SendMailToUser mail = new SendMailToUser(context);
+	    String subject = "Welcome !";
+	    String message = context.getResources().getString(R.string.email_to_send, username, password, "http://www.pouet.fr");
+	    mail.sendMail(email, subject, message);
+    }
+    
+    private void showSuccessAlertBox() {
+
+		AlertDialog.Builder adb = new AlertDialog.Builder(context);
+		MessageAlert msg_a;
+		
+		if (alertDialogView == null) {
+			msg_a = new MessageAlert();
+			alertDialogView = inflater.inflate(R.layout.alert_dialog, null);
+			msg_a.msg = (TextView)alertDialogView.findViewById(R.id.text_alert);
+			alertDialogView.setTag(msg_a);
+		} else {
+			msg_a = (MessageAlert) alertDialogView.getTag();
+        	ViewGroup adbParent = (ViewGroup) alertDialogView.getParent();
+			adbParent.removeView(alertDialogView);
+		}
+		
+		// Choosing the type of message alert
+		msg_a.msg.setText(context.getResources().getString(R.string.account_created));
+		
+		// Filling the alert box
+		adb.setView(alertDialogView);
+		adb.setTitle("Success !");
+		adb.setPositiveButton("VIEW PROFILE", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+            	hasBeenCreated = true;
+            	Intent intent = new Intent(context, ContentActivity.class);
+            	startActivityForResult(intent, CREATE_PROFILE);
+        } });
+		
+		// Showing the alert box
+        adb.create();
+		adb.show();
     }
     
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {  

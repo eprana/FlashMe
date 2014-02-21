@@ -30,13 +30,7 @@ public class GameParseAdapter extends ParseQueryAdapter<ParseObject>{
 			public ParseQuery<ParseObject> create() {
 				// Define queries
 				ParseQuery<ParseObject> gamesQuery = user.getRelation("games").getQuery();
-				ParseQuery<ParseObject> createdGamesQuery = ParseQuery.getQuery("Game");
-				createdGamesQuery.whereEqualTo("createdBy", user);
-				// Compound queries
-				List<ParseQuery<ParseObject>> queries = new ArrayList<ParseQuery<ParseObject>>();
-				queries.add(gamesQuery);
-				queries.add(createdGamesQuery);
-				return ParseQuery.or(queries);
+				return gamesQuery;
 			}
 		});
 		this.user = (ParseUser) user;

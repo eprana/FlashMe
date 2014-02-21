@@ -62,14 +62,14 @@ public class MainActivity extends Activity {
 	 	Parse.initialize(this, "ysJVmuI4oJDEsyF7YOcQG12WVkLzwQlLrqzt15Fg", "YTTLp7GRoHYEMzLXa58T2zB7mcTTPWJuB19JcGnJ");
 	 	ParseAnalytics.trackAppOpened(getIntent());
 	 	
-	 	ParseUser.logInInBackground("xopi", "xopi", new LogInCallback() {
-			public void done(ParseUser user, ParseException e) {
-				Intent intent = new Intent(MainActivity.this, ContentActivity.class);
-				intent.putExtra(EXTRA_LOGIN, "xopi");
-				intent.putExtra(EXTRA_PASSWORD, "xopi");
-				startActivityForResult(intent, LOGIN);
-			}
-	 	});
+//	 	ParseUser.logInInBackground("xopi", "xopi", new LogInCallback() {
+//			public void done(ParseUser user, ParseException e) {
+//				Intent intent = new Intent(MainActivity.this, ContentActivity.class);
+//				intent.putExtra(EXTRA_LOGIN, "xopi");
+//				intent.putExtra(EXTRA_PASSWORD, "xopi");
+//				startActivityForResult(intent, LOGIN);
+//			}
+//	 	});
 	 	
 	 	if (!(ParseUser.getCurrentUser() == null)) {
 	 		//ParseUser.getCurrentUser().put("state", 0);
