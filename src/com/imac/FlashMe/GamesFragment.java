@@ -47,6 +47,7 @@ public class GamesFragment extends ListFragment {
 	private GameTeamsParseAdapter gameTeamsParseAdapter;
 	private ArrayAdapter<String> teamsAdapter;
 	private ImageButton backButton;
+	private ImageButton refreshButton;
 	private EditText inputValue;
 	private AutoCompleteTextView autocompleteValue;
 	private Button addButton;
@@ -65,6 +66,7 @@ public class GamesFragment extends ListFragment {
 		
 		progress = (ProgressBar) mainView.findViewById(R.id.progressBar);
 		backButton = (ImageButton) mainView.findViewById(R.id.back_bt);
+		refreshButton = (ImageButton) mainView.findViewById(R.id.refresh_bt);
     	inputValue = (EditText) mainView.findViewById(R.id.enter_game);
     	autocompleteValue = (AutoCompleteTextView) mainView.findViewById(R.id.autocomplete_team);
     	
@@ -100,6 +102,23 @@ public class GamesFragment extends ListFragment {
 			@Override
 			public void onClick(View v) {
 				setGeneralAdapter();
+			}
+		});
+    	
+    	refreshButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				switch(state) {
+				case 0:
+					gameParseAdapter.loadObjects();
+					break;
+				case 1:
+					gameTeamsParseAdapter.loadObjects();
+					break;
+				default:
+					break;
+				}
+				
 			}
 		});
 
