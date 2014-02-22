@@ -200,7 +200,9 @@ public class GamesFragment extends ListFragment {
 	public void setGeneralAdapter() {
 		state = 0;
 		gameName= "";
+		addButton.setBackgroundResource(R.drawable.light_button);
 		addButton.setText("CREATE");
+		addButton.setEnabled(true);
 		inputValue.setVisibility(View.VISIBLE);
 		addButton.setVisibility(View.VISIBLE);
 		autocompleteValue.setVisibility(View.GONE);
@@ -212,15 +214,24 @@ public class GamesFragment extends ListFragment {
 	
 	public void setDetailAdapter(GameTeamsParseAdapter gameTeamsParseAdapter) {
 		state = 1;
+		boolean enable = true;
+		inputValue.setVisibility(View.GONE);
+		autocompleteValue.setVisibility(View.VISIBLE);
+		addButton.setText("ADD");
+		
 		if(gameTeamsParseAdapter.isCreator()){
-			inputValue.setVisibility(View.GONE);
-			autocompleteValue.setVisibility(View.VISIBLE);
-			addButton.setText("ADD");
+			// Display and enable autocomplete
+			addButton.setBackgroundResource(R.drawable.light_button);
 		}
 		else {
-			inputValue.setVisibility(View.INVISIBLE);
-			addButton.setVisibility(View.INVISIBLE);
+			// Display and disable autocomplete
+			enable = false;
+			addButton.setBackgroundResource(R.drawable.locked_button);
 		}
+		
+		autocompleteValue.setEnabled(enable);
+		addButton.setEnabled(enable);
+		
 		backButton.setVisibility(View.VISIBLE);
 		playButton.setVisibility(View.VISIBLE);
 		
