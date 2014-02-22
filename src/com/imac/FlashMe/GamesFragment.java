@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +36,8 @@ import android.widget.Toast;
 
 public class GamesFragment extends ListFragment {
 
+	private static final String LOGTAG = "GamesFragment";
+	
 	// Data elements
 	private ParseUser currentUser = null;
 	private static ProgressBar progress = null;
@@ -56,6 +59,8 @@ public class GamesFragment extends ListFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+		Log.d(LOGTAG, "onCreateView");
+		
 		View mainView = inflater.inflate(R.layout.fragment_games, container, false);
 		final Context context = mainView.getContext();
     	
@@ -173,9 +178,8 @@ public class GamesFragment extends ListFragment {
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-
+		Log.d(LOGTAG, "onListItemClick");
 		super.onListItemClick(l, v, position, id);
-		
 		if(state == 0) {
 			ParseObject game = ((ParseObject) l.getItemAtPosition(position));
 			gameName = game.getString("name");

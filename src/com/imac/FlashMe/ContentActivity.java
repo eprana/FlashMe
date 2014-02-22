@@ -16,6 +16,7 @@ import android.support.v4.view.ViewPager;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,9 +30,10 @@ import android.os.Bundle;
 
 public class ContentActivity extends Activity implements 
 	ActionBar.TabListener,
-	ViewPager.OnPageChangeListener
-	/*TeamsFragment.OnTeamSelectedListener*/ {
+	ViewPager.OnPageChangeListener {
 
+	private static final String LOGTAG = "ContentActivity";
+	
 	private class TabAction { public int icon; public int icon_in; public String text; 
 		public TabAction(int icon, int icon_in, String text) {
 			this.icon = icon;
@@ -49,6 +51,40 @@ public class ContentActivity extends Activity implements
 	private LayoutInflater inflater = null;
 	
 	@Override
+    public void onCreate(Bundle savedInstanceState) {
+		
+		Log.d(LOGTAG, "onCreate");
+        super.onCreate(savedInstanceState);
+        
+	 	setContentView(R.layout.activity_content);
+	 	context = ContentActivity.this;
+	 	inflater = LayoutInflater.from(context);
+	 	
+	 	final FragmentManager fm = getFragmentManager();
+	 	mViewPager = (ViewPager) findViewById(R.id.pager);
+	 	actionBar = getActionBar();
+	 	mAdapter = new TabsPagerAdapter(fm);
+	 	mViewPager.setAdapter(mAdapter);
+	 	mViewPager.setOffscreenPageLimit(2);
+	 	mViewPager.setOnPageChangeListener(this);
+	 	
+	 	actionBar.setIcon(R.drawable.ic_menu);
+	 	actionBar.setDisplayShowTitleEnabled(false);
+	 	actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        
+	 	for(TabAction tab : tabs) {
+	 		actionBar.addTab(actionBar.newTab().setIcon(tab.icon)./*setText(tab.text).*/setTabListener(this));
+	 		actionBar.getTabAt(0).setIcon(tabs[0].icon_in);
+	 	}
+	 	mViewPager.setCurrentItem(0);
+	 	
+	 	currentUser = ParseUser.getCurrentUser();
+	 	//State 0:offline, 1:online
+	 	currentUser.put("state", 1);
+	 	currentUser.saveInBackground();
+	}
+	
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 	    MenuInflater inflater = getMenuInflater();
 	    inflater.inflate(R.layout.actionbar_actions, menu);
@@ -57,7 +93,6 @@ public class ContentActivity extends Activity implements
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle presses on the action bar items
 	    switch (item.getItemId()) {
 	        case R.id.action_edit_profile:
 	        	Intent intent = new Intent(getApplicationContext(), EditActivity.class);
@@ -106,41 +141,10 @@ public class ContentActivity extends Activity implements
 	            return super.onOptionsItemSelected(item);
 	    }
 	}
-
-	@Override
-    public void onCreate(Bundle savedInstanceState) {
-		
-        super.onCreate(savedInstanceState);
-	 	setContentView(R.layout.activity_content);
-	 	context = ContentActivity.this;
-	 	inflater = LayoutInflater.from(context);
-	 	
-	 	final FragmentManager fm = getFragmentManager();
-	 	mViewPager = (ViewPager) findViewById(R.id.pager);
-	 	actionBar = getActionBar();
-	 	mAdapter = new TabsPagerAdapter(fm);
-	 	mViewPager.setAdapter(mAdapter);
-	 	mViewPager.setOffscreenPageLimit(2);
-	 	mViewPager.setOnPageChangeListener(this);
-	 	
-	 	actionBar.setIcon(R.drawable.ic_menu);
-	 	actionBar.setDisplayShowTitleEnabled(false);
-	 	actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        
-	 	for(TabAction tab : tabs) {
-	 		actionBar.addTab(actionBar.newTab().setIcon(tab.icon)./*setText(tab.text).*/setTabListener(this));
-	 		actionBar.getTabAt(0).setIcon(tabs[0].icon_in);
-	 	}
-	 	mViewPager.setCurrentItem(0);
-	 	
-	 	currentUser = ParseUser.getCurrentUser();
-	 	//State 0:offline, 1:online
-	 	currentUser.put("state", 1);
-	 	currentUser.saveInBackground();
-	}
 	
 	@Override
 	protected void onPause() {
+		Log.d(LOGTAG, "onPause");
 		super.onPause();
 	 	currentUser.put("state", 0);
 	 	currentUser.saveInBackground();
@@ -148,6 +152,7 @@ public class ContentActivity extends Activity implements
 	
 	@Override
 	protected void onResume() {
+		Log.d(LOGTAG, "onResume");
 		super.onResume();
 	 	currentUser.put("state", 1);
 	 	currentUser.saveInBackground();
@@ -195,7 +200,6 @@ public class ContentActivity extends Activity implements
 
 		@Override
 		public int getCount() {
-			// TODO Auto-generated method stub
 			return 3;
 		}		
 	}
@@ -207,6 +211,7 @@ public class ContentActivity extends Activity implements
 
 	@Override
 	public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
+		Log.d(LOGTAG, "onTabSelected");
 		mViewPager.setCurrentItem(tab.getPosition());
 	}
 
@@ -214,13 +219,7 @@ public class ContentActivity extends Activity implements
 	public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
 		// TODO Auto-generated method stub
 		
-	}	
-
-//	@Override
-//	public void onTeamSelected(int index) {
-//		// TODO Auto-generated method stub
-//		
-//	}
+	}
 
 	@Override
 	public void onPageScrollStateChanged(int arg0) {
@@ -236,6 +235,7 @@ public class ContentActivity extends Activity implements
 
 	@Override
 	public void onPageSelected(int position) {
+		Log.d(LOGTAG, "onPageSelected");
 		getActionBar().setSelectedNavigationItem(position);
 		switch(position) {
 		case 0:

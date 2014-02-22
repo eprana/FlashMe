@@ -15,7 +15,9 @@ import com.imac.FlashMe.R;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.app.Activity;
 import android.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +33,7 @@ import android.widget.Toast;
 
 public class TeamsFragment extends ListFragment {
 	
-	public static String TAG="TAG_TEAMS";
+	private static final String LOGTAG = "TeamsFragment";
 	
 	// Data elements
 	private static ParseUser currentUser = null;
@@ -54,6 +56,8 @@ public class TeamsFragment extends ListFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+		Log.d(LOGTAG, "onCreateView");
+		
 		View mainView = inflater.inflate(R.layout.fragment_teams, container, false);
 		final Context context = mainView.getContext();
 		
@@ -152,7 +156,9 @@ public class TeamsFragment extends ListFragment {
 	}
 	
 	@Override
-	public void onListItemClick(ListView l, View v, int position, long id) {		
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		Log.d(LOGTAG, "onListItemClick");
+		super.onListItemClick(l, v, position, id);
 		if(state == 0) {
 			super.onListItemClick(l, v, position, id);
 			ParseObject team = ((ParseObject) l.getItemAtPosition(position));
@@ -160,6 +166,24 @@ public class TeamsFragment extends ListFragment {
 			teamPlayersParseAdapter = new TeamPlayersParseAdapter(getActivity(), currentUser, team);
 			setDetailAdapter(teamPlayersParseAdapter);
 		}
+	}
+	
+	@Override
+	public void onAttach(Activity activity) {
+		Log.d(LOGTAG, "onAttach");
+		super.onAttach(activity);
+	}
+	
+	@Override
+	public void onStart() {
+		Log.d(LOGTAG, "onStart");
+		super.onStart();
+	}
+	
+	@Override
+	public void onResume() {
+		Log.d(LOGTAG, "onResume");
+		super.onResume();
 	}
 	
 	private void initAutoCompleteList(List<ParseUser> players) {

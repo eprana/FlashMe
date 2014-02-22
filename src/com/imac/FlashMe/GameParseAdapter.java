@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -65,6 +66,9 @@ public class GameParseAdapter extends ParseQueryAdapter<ParseObject>{
 			e.printStackTrace();
 		}
 		gameCreator.setText(s_gameCreator);
+		
+		ImageView defaultPicture = (ImageView) v.findViewById(R.id.elem_picture);
+		defaultPicture.setImageResource(R.drawable.default_game_picture_thumb);
 		
 		// Delete team button
 		ImageButton deleteGame = (ImageButton)v.findViewById(R.id.delete_bt);

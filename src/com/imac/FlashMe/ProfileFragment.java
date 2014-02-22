@@ -1,8 +1,5 @@
 package com.imac.FlashMe;
 
-import java.util.List;
-
-import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
@@ -18,6 +15,7 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +26,8 @@ import android.widget.Toast;
 
 public class ProfileFragment extends Fragment {
 
-	public static String TAG="TAG_PROFILE";
+	private static final String LOGTAG = "TeamsFragment";
+	
 	// Data elements
 	private static ParseUser currentUser = null;
 	private static ProgressBar progress = null;
@@ -45,6 +44,8 @@ public class ProfileFragment extends Fragment {
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		
+		Log.d(LOGTAG, "onCreateView");
 		
 		View mainView = inflater.inflate(R.layout.fragment_profile, container, false);
 		Context context = mainView.getContext();

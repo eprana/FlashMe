@@ -44,7 +44,7 @@ import android.widget.Toast;
 
 public class GameActivity  extends Activity implements SampleApplicationControl {
 	
-	private static final String LOGTAG = "Game";
+	private static final String LOGTAG = "GameActivity";
 	
 	private ParseUser currentUser;
 	private ParseObject newPlayer;
