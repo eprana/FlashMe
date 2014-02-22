@@ -133,6 +133,7 @@ public class GamesFragment extends ListFragment {
 			public void onClick(View v) {
 				switch(state) {
 				case 0:
+					// Create new game
 					final String s_inputValue = inputValue.getText().toString();
 					if(s_inputValue.equals("")){
 						// Empty edit text
@@ -144,6 +145,7 @@ public class GamesFragment extends ListFragment {
 					}
 					break;
 				case 1:
+					// Add team to game
 					final String s_autocompleteValue = autocompleteValue.getText().toString();
 					if(s_autocompleteValue.equals("")){
 						// Empty edit text
@@ -296,54 +298,114 @@ public class GamesFragment extends ListFragment {
 		// Parse query
 		ParseQuery<ParseObject> gameQuery = ParseQuery.getQuery("Game");
 		gameQuery.whereEqualTo("name", gameName);
-		// Get concerned game
 		gameQuery.getFirstInBackground(new GetCallback<ParseObject>() {
+			// Get requested game
 			@Override
 			public void done(final ParseObject game, ParseException e) {
+				Log.d(LOGTAG, "REQUESTED GAME : "+game.getString("name"));
 				if(e!=null){
 					Toast.makeText(getActivity(), "Error : "+e.getMessage(), Toast.LENGTH_SHORT).show();
 					return;
 				}
-				// Parse Query
-				ParseQuery<ParseObject> teamQuery = ParseQuery.getQuery("Team");
-				teamQuery.whereEqualTo("name", teamName);
-				// Get selected team
-				teamQuery.getFirstInBackground(new GetCallback<ParseObject>() {
+				// Get existing teams in the game
+				game.getRelation("teams").getQuery().findInBackground(new FindCallback<ParseObject>() {
 					@Override
-					public void done(final ParseObject team, ParseException e) {
-						if(e!=null){
-							Toast.makeText(getActivity(), "Sorry, this team doesn't exist.", Toast.LENGTH_SHORT).show();
-							return;
-						}
-						game.getRelation("teams").add(team);
-						game.saveInBackground(new SaveCallback() {
-							@Override
-							public void done(ParseException e) {
-								if (e == null) {
+					public void done(List<ParseObject> teams, ParseException e) {
+						Log.d(LOGTAG, "TEAMS");
+						if(teams.isEmpty()) {
+							ParseQuery<ParseObject> teamQuery = ParseQuery.getQuery("Team");
+							teamQuery.whereEqualTo("name", teamName);
+							teamQuery.getFirstInBackground(new GetCallback<ParseObject>() {
+
+								@Override
+								public void done(final ParseObject team, ParseException e) {
 									team.getRelation("players").getQuery().findInBackground(new FindCallback<ParseObject>() {
 										@Override
 										public void done(List<ParseObject> players, ParseException e) {
-											for(ParseObject player : players) {
-												HashMap<String, Object> params = new HashMap<String, Object>();
-												params.put("userId", player.getObjectId());
-												params.put("gameId", game.getObjectId());
-												ParseCloud.callFunctionInBackground("addGameToUser", params, new FunctionCallback<String>() {
-													public void done(String result, ParseException e) {
-														if (e != null) {
-															Toast.makeText(getActivity(), "Error : "+e.getMessage(), Toast.LENGTH_SHORT).show();
-														}
-													}
-												});
-											}
+											addTeam(game, team, players);
 										}
 									});
-									gameTeamsParseAdapter.loadObjects();
+								}
+								
+							});
+							return;
+						}
+						final ArrayList<String> existingPlayersId = new ArrayList<String>();
+						for(ParseObject team : teams) {
+							Log.d(LOGTAG, team.getString("name"));
+							// For each team get players Id
+							team.getRelation("players").getQuery().findInBackground(new FindCallback<ParseObject>() {
+								@Override
+								public void done(List<ParseObject> players, ParseException e) {
+									Log.d(LOGTAG, "PLAYERS");
+									for(ParseObject player : players) {
+										Log.d(LOGTAG, player.getString("username"));
+										existingPlayersId.add(player.getObjectId());
+									}
+									// Get selected team
+									ParseQuery<ParseObject> teamQuery = ParseQuery.getQuery("Team");
+									teamQuery.whereEqualTo("name", teamName);
+									teamQuery.getFirstInBackground(new GetCallback<ParseObject>() {
+										@Override
+										public void done(final ParseObject selectedTeam, ParseException e) {
+											if(e!=null){
+												Toast.makeText(getActivity(), "Sorry, this team doesn't exist.", Toast.LENGTH_SHORT).show();
+												return;
+											}
+											Log.d(LOGTAG, "REQUESTED TEAM : "+selectedTeam.get("name"));
+											// Get players Id for requested team to add
+											selectedTeam.getRelation("players").getQuery().findInBackground(new FindCallback<ParseObject>() {
+
+												@Override
+												public void done(final List<ParseObject> players, ParseException e) {
+													boolean alreadyInGame = false;
+													String playerId = null;
+													for(ParseObject player : players) {
+														Log.d(LOGTAG, "PLAYERS : "+player.getString("username"));
+														playerId = player.getObjectId();
+														if(existingPlayersId.contains(playerId)){
+															alreadyInGame = true;
+														}
+													}
+													if(alreadyInGame) {
+														Toast.makeText(getActivity(), "Sorry, you are not allowed to add this team. One or more players are already in this game.", Toast.LENGTH_SHORT).show();
+														return;
+													}
+													addTeam(game, selectedTeam, players);
+													autocompleteValue.setText("");
+												}
+											});
+										}
+									});
+								}
+							});
+						}
+					}
+				});
+			}
+		});
+	}
+	
+	private void addTeam(final ParseObject game, ParseObject team, final List<ParseObject> players) {
+		game.getRelation("teams").add(team);
+		game.saveInBackground(new SaveCallback() {
+			@Override
+			public void done(ParseException e) {
+				if (e == null) {
+					for(ParseObject player : players) {
+						HashMap<String, Object> params = new HashMap<String, Object>();
+						params.put("userId", player.getObjectId());
+						params.put("gameId", game.getObjectId());
+						ParseCloud.callFunctionInBackground("addGameToUser", params, new FunctionCallback<String>() {
+							public void done(String result, ParseException e) {
+								if (e != null) {
+									Toast.makeText(getActivity(), "Error : "+e.getMessage(), Toast.LENGTH_SHORT).show();
 								}
 							}
 						});
-						autocompleteValue.setText("");
 					}
-				});
+					gameTeamsParseAdapter.loadObjects();
+				}
 			}
 		});
 	}
