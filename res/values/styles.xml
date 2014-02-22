@@ -198,6 +198,19 @@
         <item name="android:layout_weight">1</item>
     </style>
     
+    <style name="custom_edit_text">
+        <item name="android:layout_width">0dip</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:paddingTop">@dimen/small_mg</item>
+        <item name="android:paddingBottom">@dimen/small_mg</item>
+        <item name="android:paddingLeft">@dimen/large_mg</item>
+        <item name="android:paddingRight">@dimen/large_mg</item>
+        <item name="android:layout_margin">@dimen/medium_mg</item>
+        <item name="android:inputType">text</item>
+        <item name="android:textColorHint">@color/white</item>
+        <item name="android:background">@drawable/edittext_rectangle</item>
+    </style>
     <style name="completed">
         <item name="android:text">.</item>
         <item name="android:textColor">@color/dark_blue</item>

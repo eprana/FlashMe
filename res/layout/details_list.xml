@@ -21,7 +21,8 @@
 	    android:layout_alignLeft="@+id/elem_name"
 	    android:layout_below="@+id/elem_name"
 	    android:paddingLeft="14.5sp"
-	    android:textSize="@dimen/small_tx" />
+	    android:textSize="@dimen/small_tx"
+	    android:textColor="@color/text_gray" />
 
     <ImageButton
         android:id="@+id/delete_bt"

@@ -10,6 +10,7 @@
     <color name="cell_gray">#cccccc</color>
     <color name="light_gray">#e5e3da</color>
     <color name="gray">#7d7d7d</color>
+    <color name="middle_gray">#d3d3d3</color>
     <color name="text_gray">#7d7d7e</color>
     <color name="black">#000000</color>
     

@@ -45,31 +45,30 @@
         android:id="@+id/create_layout"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content" 
-	    android:orientation="horizontal" >
+	    android:orientation="horizontal"
+	    android:padding="@dimen/large_mg"
+	    android:background="@drawable/gray_filled_rectangle" >
 	    
 	     <EditText
 		    android:id="@+id/enter_game"
-		    android:layout_width="@dimen/button_wd"
-		    android:layout_height="wrap_content"
-		    android:layout_margin="@dimen/medium_mg"
 		    android:hint="@string/enter_game"
-		    android:inputType="text" />
+		    style="@style/custom_edit_text" />
 	     
 	     <AutoCompleteTextView 
 		    android:id="@+id/autocomplete_team"
-		    android:layout_width="@dimen/button_wd"
-		    android:layout_height="wrap_content"
-		    android:layout_margin="@dimen/medium_mg"
 		    android:hint="@string/enter_team_auto"
+		    style="@style/custom_edit_text"
 		    android:visibility="gone"/>
 	     
 	     <Button
 		    android:id="@+id/create_game"
 		    style="@style/buttonLightBlue"
 		    android:layout_width="@dimen/medium_wd"
-		    android:layout_marginTop="@dimen/small_mg"
+		    android:layout_gravity="center_vertical"
+		    android:layout_marginRight="@dimen/medium_mg"
 		    android:background="@drawable/light_button"
 		    android:text="@string/create" />
+	     
 	</LinearLayout>
     
 	<RelativeLayout
@@ -77,14 +76,6 @@
 	    android:layout_width="match_parent"
 	    android:layout_height="0dip" 
 	    android:layout_weight="20">
-	    
-		<ListView
-		    android:id="@android:id/list"
-		    android:layout_height="match_parent"
-		    android:layout_width="match_parent"
-		    android:layout_marginTop="@dimen/medium_mg" >
-
-		</ListView>
 	
 	    <ProgressBar
 	        android:id="@+id/progressBar"
@@ -92,6 +83,14 @@
 	        android:layout_height="wrap_content"
 	        android:layout_alignParentTop="true"
 	        android:layout_centerHorizontal="true" />
+
+	    <ListView
+	        android:id="@android:id/list"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:layout_alignParentLeft="true"
+	        android:layout_alignParentTop="true" >
+	    </ListView>
 
 	</RelativeLayout>
 	
