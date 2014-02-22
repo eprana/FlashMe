@@ -92,14 +92,6 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		
 		initLayoutValues();
 		
-		// Init the game
-		
-		// Init Vuforia
-		vuforiaAppSession = new SampleApplicationSession(this);
-		startLoadingAnimation();
-		vuforiaAppSession.initAR(this, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-		initApplicationAR();
-		
 		currentUser = ParseUser.getCurrentUser();
 	 	//State 0:offline, 1:online
 	 	currentUser.put("state", 1);
@@ -152,32 +144,27 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 			
 			@Override
 			public void done(ParseObject game, ParseException e) {
-				System.out.println("Game : "+game.getString("name"));
 				newPlayer.put("game", game);
 				game.getRelation("teams").getQuery().findInBackground(new FindCallback<ParseObject>() {
 					
 					@Override
 					public void done(List<ParseObject> teams, ParseException e) {
 						for(final ParseObject team: teams) {
-							System.out.println("Team : "+team.getString("name"));
 							team.getRelation("players").getQuery().findInBackground(new FindCallback<ParseObject>() {
 
 								@Override
 								public void done(List<ParseObject> players, ParseException e) {
 									for(ParseObject player : players) {
-										System.out.println("Player : "+player.getString("username"));
 										if(currentUser.getUsername().equals(player.getString("username"))) {
 											newPlayer.put("team", team);
 											newPlayer.saveInBackground( new SaveCallback() {
 												
 												@Override
 												public void done(ParseException e) {
-													newPlayer.put("state", 1);
-													initTimer();
-													life.setText(String.valueOf(newPlayer.getInt("life")));
-													munitions.setText(String.valueOf(newPlayer.getInt("munitions")));
+													waitingForPlayers();
 												}
 											});
+											return;
 										}
 									}
 								}
@@ -187,6 +174,29 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 				});
 			}
 		});
+	}
+	
+	private void waitingForPlayers() {
+		life.setText(String.valueOf(newPlayer.getInt("life")));
+		munitions.setText(String.valueOf(newPlayer.getInt("munitions")));
+		
+		AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+		alertDialog.setTitle(gameName);
+		alertDialog.setMessage("Waiting for other players to be ready...");
+		alertDialog.setPositiveButton("START", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+
+				// Init Vuforia
+				vuforiaAppSession = new SampleApplicationSession(GameActivity.this);
+				startLoadingAnimation();
+				vuforiaAppSession.initAR(GameActivity.this, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+				initApplicationAR();
+				
+				initTimer();
+			}
+		});
+		alertDialog.create();
+		alertDialog.show();
 	}
 	
 	private void initTimer() {
