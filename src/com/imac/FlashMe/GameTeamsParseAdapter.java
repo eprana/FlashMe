@@ -6,10 +6,12 @@ import java.util.List;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -80,6 +82,29 @@ public class GameTeamsParseAdapter extends ParseQueryAdapter<ParseObject>{
 			e.printStackTrace();
 		}
 		teamCreator.setText(s_teamCreator);
+		
+		final ImageView teamState = (ImageView) v.findViewById(R.id.elem_state);
+		ParseRelation<ParseObject> teamPlayers = team.getRelation("players");
+		teamPlayers.getQuery().findInBackground(new FindCallback<ParseObject>() {
+			boolean teamIsReady = true;
+			@Override
+			public void done(List<ParseObject> players, ParseException e) {
+				for (ParseObject player : players) {
+					Log.d("GAMETEAMS", "One more player");
+					if (e!=null) {
+						Toast.makeText(getContext(), "Error : " + e.toString(), Toast.LENGTH_LONG).show();
+						return;
+					}
+					if (player.getInt("state") == 0) {
+						System.out.println("ONE PLAYER OFFLINE");
+						teamIsReady = false;
+					}
+				}
+				if(teamIsReady) {
+					teamState.setImageResource(R.drawable.blue_rectangle);
+				}
+			}
+		});
 		
 		//final ImageView teamPicture = (ImageView) v.findViewById(R.id.elem_picture);
 		

@@ -127,7 +127,8 @@
 	<!-- details list -->
 	<string name="add_bt">Add element</string>
 	<string name="next_bt">See details</string>
-	<string name="delete_bt">Delete element</string>	
+	<string name="delete_bt">Delete element</string>
+	<string name="elem_state">Elem state</string>	
 	
 	<!-- The game -->
 	<string name="background">Background image target</string>

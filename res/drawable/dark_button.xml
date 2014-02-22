@@ -6,7 +6,7 @@
                 android:color="#449def" />
             <stroke
                 android:width="@dimen/line_mg"
-                android:color="@color/middle_blue" />
+                android:color="@color/blue" />
             <corners
                 android:radius="@dimen/verysmall_mg" />
             <padding
@@ -19,7 +19,7 @@
     <item>
         <shape>
             <gradient
-                android:startColor="@color/middle_blue"
+                android:startColor="@color/blue"
                 android:endColor="@color/dark_blue"
                 android:angle="270" />
             <stroke

@@ -1,21 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="?android:attr/listPreferredItemHeight">
-
-    <ImageView
-        android:id="@+id/elem_picture"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:background="@null"
-        android:contentDescription="@string/elem_in_list_picture"
-        android:src="@drawable/default_team_picture_thumb" />
     
 	<TextView
 	    android:id="@+id/elem_name"
-	    style="@style/middle_blue"
+	    style="@style/blue"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:layout_alignTop="@+id/elem_picture"
@@ -43,5 +33,27 @@
         android:contentDescription="@string/delete_bt"
         android:focusable="false"
         android:src="@drawable/blue_delete_bt" />
+
+    <ImageView
+        android:id="@+id/elem_picture"
+        android:layout_width="56dp"
+        android:layout_height="wrap_content"
+        android:scaleType="fitCenter"
+        android:layout_alignParentTop="true"
+        android:layout_alignBottom="@+id/delete_bt"
+        android:layout_toRightOf="@+id/elem_state"
+        android:background="@null"
+        android:contentDescription="@string/elem_in_list_picture"
+        android:src="@drawable/default_team_picture_thumb" />
+
+    <ImageView
+        android:id="@+id/elem_state"
+        android:layout_width="6dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignBottom="@+id/delete_bt"
+        android:contentDescription="@string/elem_state"
+        android:src="@drawable/gray_rectangle" />
 	    
 </RelativeLayout>

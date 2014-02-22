@@ -21,7 +21,7 @@
         android:textSize="@dimen/verylarge_tx"
         android:layout_centerHorizontal="true"
         android:text="@string/flash_me"
-        style="@style/middle_blue" />
+        style="@style/blue" />
     
     <ImageView 
         android:id="@+id/logo"
@@ -41,7 +41,7 @@
         android:textSize="@dimen/large_tx"
         android:layout_centerHorizontal="true"
         android:text="@string/if_you_can"
-        style="@style/middle_blue" />
+        style="@style/blue" />
     
 	<EditText
 	    android:id="@+id/username"
@@ -81,7 +81,7 @@
         android:layout_marginTop="@dimen/small_mg"
         android:layout_centerHorizontal="true"
         android:text="@string/or" 
-        style="@style/middle_blue" />
+        style="@style/blue" />
     
     <Button
         android:id="@+id/signup"

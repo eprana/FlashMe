@@ -20,7 +20,7 @@
 		android:layout_width="wrap_content" 
 		android:layout_height="wrap_content" 
 		android:layout_gravity="center"
-		style="@style/middle_blue"
+		style="@style/blue"
 		android:text="@string/popup_title" />
     
 	<TextView 

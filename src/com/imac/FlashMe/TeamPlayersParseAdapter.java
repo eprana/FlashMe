@@ -73,6 +73,11 @@ public class TeamPlayersParseAdapter extends ParseQueryAdapter<ParseObject>{
 		TextView playerScore = (TextView) v.findViewById(R.id.elem_detail);
 		playerScore.setText(String.valueOf(player.getInt("bestScore")));
 		
+		ImageView playerState = (ImageView) v.findViewById(R.id.elem_state);
+		if (player.getInt("state") == 1) {
+			playerState.setImageResource(R.drawable.blue_rectangle);
+		}
+		
 		final ImageView playerPicture = (ImageView) v.findViewById(R.id.elem_picture);
 		ParseFile file = (ParseFile) player.get("avatar");
 		file.getDataInBackground(new GetDataCallback() {
