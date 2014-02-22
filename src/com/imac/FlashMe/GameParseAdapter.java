@@ -75,6 +75,8 @@ public class GameParseAdapter extends ParseQueryAdapter<ParseObject>{
 			deleteGame.setImageResource(R.drawable.delete_bt);
 		}
 		else {
+			deleteGame.setEnabled(true);
+			deleteGame.setImageResource(R.drawable.blue_delete_bt);
 			deleteGame.setOnClickListener(new OnClickListener() {
 				
 				@Override

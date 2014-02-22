@@ -96,6 +96,8 @@ public class TeamParseAdapter extends ParseQueryAdapter<ParseObject>{
 			deleteTeam.setImageResource(R.drawable.delete_bt);
 		}
 		else {
+			deleteTeam.setEnabled(true);
+			deleteTeam.setImageResource(R.drawable.blue_delete_bt);
 			deleteTeam.setOnClickListener(new OnClickListener() {
 				
 				@Override
