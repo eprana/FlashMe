@@ -90,13 +90,11 @@ public class GameTeamsParseAdapter extends ParseQueryAdapter<ParseObject>{
 			@Override
 			public void done(List<ParseObject> players, ParseException e) {
 				for (ParseObject player : players) {
-					Log.d("GAMETEAMS", "One more player");
 					if (e!=null) {
 						Toast.makeText(getContext(), "Error : " + e.toString(), Toast.LENGTH_LONG).show();
 						return;
 					}
 					if (player.getInt("state") == 0) {
-						System.out.println("ONE PLAYER OFFLINE");
 						teamIsReady = false;
 					}
 				}

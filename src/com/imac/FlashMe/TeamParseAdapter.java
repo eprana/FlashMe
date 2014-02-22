@@ -1,5 +1,7 @@
 package com.imac.FlashMe;
 
+import java.util.List;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -7,14 +9,17 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.DeleteCallback;
+import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
+import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.imac.FlashMe.R;
 
@@ -60,6 +65,27 @@ public class TeamParseAdapter extends ParseQueryAdapter<ParseObject>{
 			e.printStackTrace();
 		}
 		teamCreator.setText(s_teamCreator);
+		
+		final ImageView teamState = (ImageView) v.findViewById(R.id.elem_state);
+		ParseRelation<ParseObject> teamPlayers = team.getRelation("players");
+		teamPlayers.getQuery().findInBackground(new FindCallback<ParseObject>() {
+			boolean teamIsReady = true;
+			@Override
+			public void done(List<ParseObject> players, ParseException e) {
+				for (ParseObject player : players) {
+					if (e!=null) {
+						Toast.makeText(getContext(), "Error : " + e.toString(), Toast.LENGTH_LONG).show();
+						return;
+					}
+					if (player.getInt("state") == 0) {
+						teamIsReady = false;
+					}
+				}
+				if(teamIsReady) {
+					teamState.setImageResource(R.drawable.blue_rectangle);
+				}
+			}
+		});
 
 		// Delete team button
 		ImageButton deleteTeam = (ImageButton)v.findViewById(R.id.delete_bt);

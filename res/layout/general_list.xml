@@ -4,11 +4,22 @@
     android:layout_height="?android:attr/listPreferredItemHeight">
 
     <ImageView
+        android:id="@+id/elem_state"
+        android:layout_width="6dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignBottom="@+id/delete_bt"
+        android:contentDescription="@string/elem_state"
+        android:src="@drawable/gray_rectangle" />
+        
+    <ImageView
         android:id="@+id/elem_picture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
+        android:layout_alignBottom="@+id/delete_bt"
+        android:layout_toRightOf="@+id/elem_state"
         android:background="@null"
         android:contentDescription="@string/elem_in_list_picture"
         android:src="@drawable/default_team_picture_thumb" />

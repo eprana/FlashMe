@@ -38,7 +38,7 @@
         android:id="@+id/elem_picture"
         android:layout_width="56dp"
         android:layout_height="wrap_content"
-        android:scaleType="fitCenter"
+        android:scaleType="fitStart"
         android:layout_alignParentTop="true"
         android:layout_alignBottom="@+id/delete_bt"
         android:layout_toRightOf="@+id/elem_state"
