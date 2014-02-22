@@ -67,7 +67,7 @@ public class SignUpActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.sign_up);
+        setContentView(R.layout.activity_sign_up);
         context = SignUpActivity.this;
         inflater = LayoutInflater.from(context);
         

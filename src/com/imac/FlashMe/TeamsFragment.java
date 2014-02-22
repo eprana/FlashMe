@@ -54,7 +54,7 @@ public class TeamsFragment extends ListFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-		View mainView = inflater.inflate(R.layout.teams, container, false);
+		View mainView = inflater.inflate(R.layout.fragment_teams, container, false);
 		final Context context = mainView.getContext();
 		
 		// Initialize members

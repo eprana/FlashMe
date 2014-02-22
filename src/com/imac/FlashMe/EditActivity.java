@@ -58,7 +58,7 @@ public class EditActivity extends Activity {
 	
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.edit_profile);
+		setContentView(R.layout.activity_edit_profile);
 	
 	 	currentUser = ParseUser.getCurrentUser();
 		context = EditActivity.this;

@@ -56,7 +56,7 @@ public class GamesFragment extends ListFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-		View mainView = inflater.inflate(R.layout.games, container, false);
+		View mainView = inflater.inflate(R.layout.fragment_games, container, false);
 		final Context context = mainView.getContext();
     	
 		// Initialize members

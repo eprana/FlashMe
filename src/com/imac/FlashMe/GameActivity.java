@@ -85,7 +85,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		
 		// Get layout elements
 		inflater = LayoutInflater.from(context);
-		mainView = inflater.inflate(R.layout.camera_overlay, null, false);
+		mainView = inflater.inflate(R.layout.activity_game, null, false);
 		time = (TextView) mainView.findViewById(R.id.text_time);
 		life = (TextView) mainView.findViewById(R.id.text_life);
 		munitions = (TextView) mainView.findViewById(R.id.text_munitions);

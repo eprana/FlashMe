@@ -159,7 +159,7 @@ public class MainActivity extends Activity {
 		try { 
 			// Get the instance of the LayoutInflater 
 			LayoutInflater inflater = (LayoutInflater) MainActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE); 
-			View layout = inflater.inflate(R.layout.popup,(ViewGroup) findViewById(R.id.popup)); 
+			View layout = inflater.inflate(R.layout.about_popup,(ViewGroup) findViewById(R.id.popup)); 
 			popup = new PopupWindow(layout, 600, 300, true); 
 			popup.showAtLocation(parentView, Gravity.TOP|Gravity.LEFT, locateView(aboutButton).left, locateView(aboutButton).bottom+10);
 		

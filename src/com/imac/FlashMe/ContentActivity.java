@@ -51,7 +51,7 @@ public class ContentActivity extends Activity implements
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.layout.main_activity_actions, menu);
+	    inflater.inflate(R.layout.actionbar_actions, menu);
 	    return super.onCreateOptionsMenu(menu);
 	}
 	
@@ -111,7 +111,7 @@ public class ContentActivity extends Activity implements
     public void onCreate(Bundle savedInstanceState) {
 		
         super.onCreate(savedInstanceState);
-	 	setContentView(R.layout.content);
+	 	setContentView(R.layout.activity_content);
 	 	context = ContentActivity.this;
 	 	inflater = LayoutInflater.from(context);
 	 	
