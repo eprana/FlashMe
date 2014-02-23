@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent">        
 
     <LinearLayout 
         android:id="@+id/activity_header"
@@ -28,79 +28,86 @@
             android:textSize="@dimen/large_tx" />
 	    
 	</LinearLayout>
-	
-    <ImageView 
-        android:id="@+id/pic_empty"
-        android:layout_below="@+id/activity_header"
-        android:scaleType="centerCrop"
-		android:layout_height="@dimen/button_wd" 
-		android:layout_width="@dimen/button_wd" 
-		android:layout_margin="@dimen/medium_mg"
-		android:src="@drawable/empty_picture_icon" 
-		android:contentDescription="@string/pic_empty"
-		android:layout_centerHorizontal="true" />
     
-    <Button
-        android:id="@+id/choose_pic"
-        android:layout_below="@id/pic_empty" 
-        android:layout_width="@dimen/button_wd"
-        android:layout_centerHorizontal="true"
-        android:text="@string/choose_pic"
-        android:background="@drawable/light_button"
-        style="@style/buttonLightBlue" />
-
-    <TextView
-        android:id="@+id/or"
-        android:layout_below="@id/choose_pic" 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/small_mg"
-        android:layout_centerHorizontal="true"
-        android:text="@string/or" 
-        android:textColor="@color/light_blue" />
+    <RelativeLayout
+        android:id="@+id/wrapper"
+   	    android:layout_width="match_parent"
+   	    android:layout_height="wrap_content"
+   	    android:layout_centerVertical="true" >
         
-   <Button
-        android:id="@+id/take_pic"
-        android:layout_below="@id/or" 
-        android:layout_width="@dimen/button_wd"
-        android:layout_marginTop="@dimen/small_mg"
-        android:layout_centerHorizontal="true"
-        android:text="@string/take_pic"
-        android:background="@drawable/light_button"
-        style="@style/buttonLightBlue" />
-   
-   	<EditText
-	    android:id="@+id/username"
-	    android:layout_below="@id/take_pic"
-	    android:layout_marginTop="@dimen/medium_mg"
-	    android:hint="@string/username"
-  	    android:inputType="text"
-  	    style="@style/gray_edit_text" />
-   	
-   	<EditText
-	    android:id="@+id/mail"
-	    android:layout_below="@id/username"
-	    android:layout_marginTop="@dimen/small_mg"
-	    android:hint="@string/mail"
-  	    android:inputType="text"
-  	    style="@style/gray_edit_text" />
-     
-	<EditText
-	    android:id="@+id/password"
-	    android:layout_below="@id/mail"
-	    android:layout_marginTop="@dimen/small_mg"
-	    android:layout_marginBottom="@dimen/verysmall_mg"
-	    android:hint="@string/password"
-	    android:inputType="textPassword"
-	    style="@style/gray_edit_text" />
+	    <ImageView 
+	        android:id="@+id/pic_empty"
+	        android:scaleType="centerCrop"
+			android:layout_height="@dimen/button_wd" 
+			android:layout_width="@dimen/button_wd" 
+			android:layout_margin="@dimen/medium_mg"
+			android:src="@drawable/empty_picture_icon" 
+			android:contentDescription="@string/pic_empty"
+			android:layout_centerHorizontal="true" />
+	    
+	    <Button
+	        android:id="@+id/choose_pic"
+	        android:layout_below="@id/pic_empty" 
+	        android:layout_width="@dimen/button_wd"
+	        android:layout_centerHorizontal="true"
+	        android:text="@string/choose_pic"
+	        android:background="@drawable/light_button"
+	        style="@style/buttonLightBlue" />
 	
-	<Button
-        android:id="@+id/signup"
-        android:layout_below="@id/password" 
-        android:layout_width="@dimen/button_wd"
-        android:layout_marginTop="@dimen/medium_mg"
-        android:text="@string/signup"
-        android:background="@drawable/dark_button"
-        style="@style/buttonDarkBlue" />
+	    <TextView
+	        android:id="@+id/or"
+	        android:layout_below="@id/choose_pic" 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="@dimen/small_mg"
+	        android:layout_centerHorizontal="true"
+	        android:text="@string/or" 
+	        android:textColor="@color/light_blue" />
+	        
+	   <Button
+	        android:id="@+id/take_pic"
+	        android:layout_below="@id/or" 
+	        android:layout_width="@dimen/button_wd"
+	        android:layout_marginTop="@dimen/small_mg"
+	        android:layout_centerHorizontal="true"
+	        android:text="@string/take_pic"
+	        android:background="@drawable/light_button"
+	        style="@style/buttonLightBlue" />
+	   
+	   	<EditText
+		    android:id="@+id/username"
+		    android:layout_below="@id/take_pic"
+		    android:layout_marginTop="@dimen/medium_mg"
+		    android:hint="@string/username"
+	  	    android:inputType="text"
+	  	    style="@style/gray_edit_text" />
+	   	
+	   	<EditText
+		    android:id="@+id/mail"
+		    android:layout_below="@id/username"
+		    android:layout_marginTop="@dimen/small_mg"
+		    android:hint="@string/mail"
+	  	    android:inputType="text"
+	  	    style="@style/gray_edit_text" />
+	     
+		<EditText
+		    android:id="@+id/password"
+		    android:layout_below="@id/mail"
+		    android:layout_marginTop="@dimen/small_mg"
+		    android:layout_marginBottom="@dimen/verysmall_mg"
+		    android:hint="@string/password"
+		    android:inputType="textPassword"
+		    style="@style/gray_edit_text" />
+		
+		<Button
+	        android:id="@+id/signup"
+	        android:layout_below="@id/password" 
+	        android:layout_width="@dimen/button_wd"
+	        android:layout_marginTop="@dimen/medium_mg"
+	        android:text="@string/signup"
+	        android:background="@drawable/dark_button"
+	        style="@style/buttonDarkBlue" />
+	
+	</RelativeLayout>
 	
 </RelativeLayout>
