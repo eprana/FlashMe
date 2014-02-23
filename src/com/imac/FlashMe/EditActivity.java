@@ -262,6 +262,7 @@ public class EditActivity extends Activity {
 						
 						// Replacing the avatar in the database
 	    				ByteArrayOutputStream streamPicked = new ByteArrayOutputStream();
+	    				
 	    				avatarPicked.compress(Bitmap.CompressFormat.PNG, 100, streamPicked);
 	    				byte[] avatarByteArrayPicked = streamPicked.toByteArray();
 	    				

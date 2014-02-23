@@ -12,81 +12,90 @@
 		android:src="@drawable/about_bt"
 		android:contentDescription="@string/bobble_help"
 		style="@style/translucide" />
-    
-    <TextView
-        android:id="@+id/FlashMe"
-        android:layout_below="@id/bobble_help"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/verylarge_tx"
-        android:layout_centerHorizontal="true"
-        android:text="@string/flash_me"
-        style="@style/blue" />
-    
-    <ImageView 
-        android:id="@+id/logo"
-        android:layout_below="@id/FlashMe"
-		android:layout_height="wrap_content" 
-		android:layout_width="wrap_content" 
-		android:layout_margin="@dimen/small_mg"
-		android:src="@drawable/flashme_logo" 
-		android:contentDescription="@string/logo"
-		android:layout_centerHorizontal="true" />
 
-    <TextView
-        android:id="@+id/ifYouCan"
-        android:layout_below="@id/logo" 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/large_tx"
-        android:layout_centerHorizontal="true"
-        android:text="@string/if_you_can"
-        style="@style/blue" />
-    
-	<EditText
-	    android:id="@+id/username"
-	    android:layout_below="@id/ifYouCan"
-	    android:layout_marginTop="@dimen/large_mg"
-	    android:hint="@string/username"
-  	    android:inputType="text"
-  	    style="@style/gray_edit_text" />
-     
-	<EditText
-	    android:id="@+id/password"
-	    android:layout_below="@id/username"
-	    android:layout_margin="@dimen/small_mg"
-	    android:hint="@string/password"
-	    android:inputType="textPassword"
-	    style="@style/gray_edit_text" />
-      
-	<Button
-	    android:id="@+id/login"
-	    android:layout_below="@id/password" 
-	    android:layout_width="@dimen/button_wd"
-	    android:layout_marginTop="@dimen/large_mg"
-	    android:layout_centerHorizontal="true"
-	    android:text="@string/login"
-	    android:background="@drawable/dark_button"
-	    style="@style/buttonDarkBlue" />
-      
-    <TextView
-        android:id="@+id/or"
-        android:layout_below="@id/login" 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/small_mg"
-        android:layout_centerHorizontal="true"
-        android:text="@string/or" 
-        style="@style/blue" />
-    
-    <Button
-        android:id="@+id/signup"
-        android:layout_below="@id/or" 
-        android:layout_width="@dimen/button_wd"
-	    android:layout_margin="@dimen/small_mg"
-        android:layout_centerHorizontal="true"
-        android:text="@string/signup"
-        android:background="@drawable/light_button"
-        style="@style/buttonLightBlue" />
+   	<RelativeLayout
+   	    android:id="@+id/wrapper"
+   	    android:layout_width="match_parent"
+   	    android:layout_height="wrap_content"
+   	    android:layout_centerVertical="true" >
+
+   	    <TextView
+   	        android:id="@+id/FlashMe"
+   	        style="@style/blue"
+   	        android:layout_width="wrap_content"
+   	        android:layout_height="wrap_content"
+   	        android:layout_centerHorizontal="true"
+   	        android:text="@string/flash_me"
+   	        android:textSize="@dimen/verylarge_tx" />
+
+   	    <ImageView
+   	        android:id="@+id/logo"
+   	        android:layout_width="wrap_content"
+   	        android:layout_height="wrap_content"
+   	        android:layout_below="@id/FlashMe"
+   	        android:layout_centerHorizontal="true"
+   	        android:layout_margin="@dimen/small_mg"
+   	        android:contentDescription="@string/logo"
+   	        android:src="@drawable/flashme_logo" />
+
+   	    <TextView
+   	        android:id="@+id/ifYouCan"
+   	        style="@style/blue"
+   	        android:layout_width="wrap_content"
+   	        android:layout_height="wrap_content"
+   	        android:layout_below="@id/logo"
+   	        android:layout_centerHorizontal="true"
+   	        android:text="@string/if_you_can"
+   	        android:textSize="@dimen/large_tx" />
+
+   	    <EditText
+   	        android:id="@+id/username"
+   	        style="@style/gray_edit_text"
+   	        android:layout_below="@id/ifYouCan"
+   	        android:layout_marginTop="@dimen/large_mg"
+   	        android:hint="@string/username"
+   	        android:inputType="text" >
+
+   	        <requestFocus />
+   	    </EditText>
+
+   	    <EditText
+   	        android:id="@+id/password"
+   	        style="@style/gray_edit_text"
+   	        android:layout_below="@id/username"
+   	        android:layout_margin="@dimen/small_mg"
+   	        android:hint="@string/password"
+   	        android:inputType="textPassword" />
+
+   	    <Button
+   	        android:id="@+id/login"
+   	        style="@style/buttonDarkBlue"
+   	        android:layout_width="@dimen/button_wd"
+   	        android:layout_below="@id/password"
+   	        android:layout_centerHorizontal="true"
+   	        android:layout_marginTop="@dimen/large_mg"
+   	        android:background="@drawable/dark_button"
+   	        android:text="@string/login" />
+
+   	    <TextView
+   	        android:id="@+id/or"
+   	        style="@style/blue"
+   	        android:layout_width="wrap_content"
+   	        android:layout_height="wrap_content"
+   	        android:layout_below="@id/login"
+   	        android:layout_centerHorizontal="true"
+   	        android:layout_marginTop="@dimen/small_mg"
+   	        android:text="@string/or" />
+
+   	    <Button
+   	        android:id="@+id/signup"
+   	        style="@style/buttonLightBlue"
+   	        android:layout_width="@dimen/button_wd"
+   	        android:layout_below="@id/or"
+   	        android:layout_centerHorizontal="true"
+   	        android:layout_margin="@dimen/small_mg"
+   	        android:background="@drawable/light_button"
+   	        android:text="@string/signup" />
+   	</RelativeLayout>
 
 </RelativeLayout>
