@@ -3,7 +3,7 @@
     <item android:state_pressed="true" >
         <shape>
             <solid
-                android:color="@color/light_blue" />
+                android:color="@color/blue" />
             <padding
                 android:left="@dimen/verysmall_mg"
                 android:top="@dimen/verysmall_mg"
@@ -14,7 +14,7 @@
     <item>
         <shape>
             <solid
-                android:color="@color/blue" />
+                android:color="@color/light_blue" />
             <padding
                 android:left="@dimen/verysmall_mg"
                 android:top="@dimen/verysmall_mg"

@@ -197,7 +197,7 @@ public class TeamsFragment extends ListFragment {
 	public void setGeneralAdapter() {
 		state = 0;
 		teamName= "";
-		addButton.setBackgroundResource(R.drawable.light_button);
+		addButton.setBackgroundResource(R.drawable.dark_button);
 		addButton.setText("CREATE");
 		addButton.setEnabled(true);
 		inputValue.setVisibility(View.VISIBLE);
@@ -217,7 +217,7 @@ public class TeamsFragment extends ListFragment {
 		
 		if(teamPlayersParseAdapter.isCreator()){
 			// Display and enable autocomplete
-			addButton.setBackgroundResource(R.drawable.light_button);
+			addButton.setBackgroundResource(R.drawable.dark_button);
 		}
 		else {
 			// Display and disable autocomplete

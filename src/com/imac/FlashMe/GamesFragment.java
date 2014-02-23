@@ -195,14 +195,16 @@ public class GamesFragment extends ListFragment {
 			teamsList.add(team.getString("name"));
 		}
 		String[] teamsArray = new String[teamsList.size()];
-		teamsAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, teamsList.toArray(teamsArray));
-		autocompleteValue.setAdapter(teamsAdapter);
+		if(teamsArray != null) {
+			teamsAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, teamsList.toArray(teamsArray));
+			autocompleteValue.setAdapter(teamsAdapter);
+		}
 	}
 	
 	public void setGeneralAdapter() {
 		state = 0;
 		gameName= "";
-		addButton.setBackgroundResource(R.drawable.light_button);
+		addButton.setBackgroundResource(R.drawable.dark_button);
 		addButton.setText("CREATE");
 		addButton.setEnabled(true);
 		inputValue.setVisibility(View.VISIBLE);
@@ -223,7 +225,7 @@ public class GamesFragment extends ListFragment {
 		
 		if(gameTeamsParseAdapter.isCreator()){
 			// Display and enable autocomplete
-			addButton.setBackgroundResource(R.drawable.light_button);
+			addButton.setBackgroundResource(R.drawable.dark_button);
 		}
 		else {
 			// Display and disable autocomplete

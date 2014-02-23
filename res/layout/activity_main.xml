@@ -46,22 +46,18 @@
 	<EditText
 	    android:id="@+id/username"
 	    android:layout_below="@id/ifYouCan"
-	    android:layout_width="@dimen/button_wd"
-	    android:layout_height="wrap_content"
 	    android:layout_marginTop="@dimen/large_mg"
 	    android:hint="@string/username"
-	    android:layout_centerHorizontal="true"
-  	    android:inputType="text" />
+  	    android:inputType="text"
+  	    style="@style/gray_edit_text" />
      
 	<EditText
 	    android:id="@+id/password"
-	    android:layout_below="@id/username" 
-	    android:layout_width="@dimen/button_wd"
-	    android:layout_height="wrap_content"
+	    android:layout_below="@id/username"
 	    android:layout_margin="@dimen/small_mg"
 	    android:hint="@string/password"
-	    android:layout_centerHorizontal="true"
-	    android:inputType="textPassword" />
+	    android:inputType="textPassword"
+	    style="@style/gray_edit_text" />
       
 	<Button
 	    android:id="@+id/login"

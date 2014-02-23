@@ -30,7 +30,7 @@ public class ProfileFragment extends Fragment {
 	
 	// Data elements
 	private static ParseUser currentUser = null;
-	private static ProgressBar progress = null;
+	//private static ProgressBar progress = null;
 	
 	// Layout elements
 	private static ImageView profilePictureView = null;
@@ -52,10 +52,10 @@ public class ProfileFragment extends Fragment {
     	
 		// Initialize members
 		currentUser = ParseUser.getCurrentUser();
-		progress = (ProgressBar) mainView.findViewById(R.id.progressBar);
+		//progress = (ProgressBar) mainView.findViewById(R.id.progressBar);
 		
 		profilePictureView = (ImageView) mainView.findViewById(R.id.profile_picture);
-		profileMarkerView = (ImageView) mainView.findViewById(R.id.profile_marker);
+		profileMarkerView = (ImageView) mainView.findViewById(R.id.marker_picture);
 		totalScoreView = (TextView) mainView.findViewById(R.id.total_score);
 		bestScoreValue = (TextView) mainView.findViewById(R.id.best_score_value);
 		rankValue = (TextView) mainView.findViewById(R.id.rank_value);
@@ -80,7 +80,7 @@ public class ProfileFragment extends Fragment {
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
-			progress.setVisibility(View.VISIBLE);
+			//progress.setVisibility(View.VISIBLE);
 		}
 		
 		@Override
@@ -92,7 +92,7 @@ public class ProfileFragment extends Fragment {
 		@Override
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
-			progress.setVisibility(View.GONE);
+			//progress.setVisibility(View.GONE);
 		}
 	}
 	

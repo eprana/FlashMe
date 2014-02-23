@@ -52,21 +52,20 @@
 	     <EditText
 		    android:id="@+id/enter_game"
 		    android:hint="@string/enter_game"
-		    style="@style/custom_edit_text" />
+		    style="@style/white_edit_text" />
 	     
 	     <AutoCompleteTextView 
 		    android:id="@+id/autocomplete_team"
 		    android:hint="@string/enter_team_auto"
-		    style="@style/custom_edit_text"
+		    style="@style/white_edit_text"
 		    android:visibility="gone"/>
 	     
 	     <Button
 		    android:id="@+id/create_game"
-		    style="@style/buttonLightBlue"
+		    style="@style/buttonDarkBlue"
 		    android:layout_width="@dimen/medium_wd"
 		    android:layout_gravity="center_vertical"
 		    android:layout_marginRight="@dimen/medium_mg"
-		    android:background="@drawable/light_button"
 		    android:text="@string/create" />
 	     
 	</LinearLayout>

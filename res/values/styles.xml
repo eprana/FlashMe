@@ -139,10 +139,6 @@
         <item name="android:textSize">@dimen/medium_tx</item>
 		<item name="android:layout_centerHorizontal">true</item>
 		<item name="android:layout_centerVertical">true</item>
-        <item name="android:shadowColor">@color/gray</item>
-    	<item name="android:shadowDx">1</item>
-  		<item name="android:shadowDy">1</item>
-    	<item name="android:shadowRadius">2</item>
     	<item name="android:background">@drawable/light_button</item>
     </style>    
     
@@ -152,10 +148,6 @@
         <item name="android:textSize">@dimen/medium_tx</item>
         <item name="android:layout_centerHorizontal">true</item>
 		<item name="android:layout_centerVertical">true</item>
-        <item name="android:shadowColor">@color/black</item>
-    	<item name="android:shadowDx">1</item>
-  		<item name="android:shadowDy">1</item>
-    	<item name="android:shadowRadius">2</item>
     	<item name="android:background">@drawable/dark_button</item>
     	
     </style>    
@@ -172,33 +164,29 @@
     </style>
     
     <style name="stats_title">
-    	<item name="android:textSize">@dimen/verylarge_tx</item>
+    	<item name="android:textSize">@dimen/large_tx</item>
     	<item name="android:gravity">center</item>
-    	<item name="android:layout_height">match_parent</item>
-    	<item name="android:layout_width">0dip</item>
-    	<item name="android:layout_weight">1</item>
+    	<item name="android:layout_height">wrap_content</item>
+    	<item name="android:layout_width">match_parent</item>
     	<item name="android:textColor">@color/text_gray</item>
     </style>
     
     <style name="stats_value">
-        <item name="android:textSize">@dimen/xverylarge_tx</item>
+        <item name="android:textSize">@dimen/verylarge_tx</item>
         <item name="android:gravity">center</item>
-        <item name="android:paddingBottom">@dimen/large_mg</item>
-        <item name="android:layout_height">match_parent</item>
-    	<item name="android:layout_width">0dip</item>
-    	<item name="android:layout_weight">1</item>
+        <item name="android:layout_height">wrap_content</item>
+    	<item name="android:layout_width">match_parent</item>
         <item name="android:textColor">@color/text_blue</item>
     </style>
     
     <style name="stats_icon">
         <item name="android:gravity">center</item>
-        <item name="android:paddingTop">@dimen/large_mg</item>
+        <item name="android:paddingTop">@dimen/small_mg</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">0dip</item>
-        <item name="android:layout_weight">1</item>
+        <item name="android:layout_width">match_parent</item>
     </style>
     
-    <style name="custom_edit_text">
+    <style name="white_edit_text">
         <item name="android:layout_width">0dip</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
@@ -209,9 +197,24 @@
         <item name="android:layout_margin">@dimen/medium_mg</item>
         <item name="android:inputType">text</item>
         <item name="android:textColorHint">@color/white</item>
-        <item name="android:textColor">@drawable/edittext_rectangle</item>
-        <item name="android:background">@drawable/edittext_rectangle</item>
+        <item name="android:textColor">@drawable/edittext_white_rectangle</item>
+        <item name="android:background">@drawable/edittext_white_rectangle</item>
     </style>
+    
+    <style name="gray_edit_text">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">@dimen/button_wd</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:paddingTop">@dimen/small_mg</item>
+        <item name="android:paddingBottom">@dimen/small_mg</item>
+        <item name="android:paddingLeft">@dimen/medium_mg</item>
+        <item name="android:paddingRight">@dimen/medium_mg</item>
+        <item name="android:layout_margin">@dimen/medium_mg</item>
+        <item name="android:textColorHint">@color/light_gray</item>
+        <item name="android:textColor">@drawable/edittext_gray_rectangle</item>
+        <item name="android:background">@drawable/edittext_gray_rectangle</item>
+    </style>
+    
     <style name="completed">
         <item name="android:text">.</item>
         <item name="android:textColor">@color/dark_blue</item>

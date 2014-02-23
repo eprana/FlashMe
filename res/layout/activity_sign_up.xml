@@ -2,26 +2,40 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-    
-    <TextView
-        android:id="@+id/create_account"
-        android:text="@string/create_account"
-        style="@style/topMenu" />
- 
-    <ImageButton
-		android:id="@+id/back_bt"
-		android:contentDescription="@string/back_bt"
-		android:layout_height="wrap_content" 
-		android:layout_width="wrap_content"
-		android:src="@drawable/back_bt"
-		style="@style/topLineButton" />  
+
+    <LinearLayout 
+        android:id="@+id/activity_header"
+	    style="@style/header" >
+
+        <ImageButton
+            android:id="@+id/back_bt"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:contentDescription="@string/back_bt"
+            android:focusable="false"
+            android:src="@drawable/back_bt" />
+
+        <TextView
+            android:id="@+id/top_line_light"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="14.5sp"
+            android:layout_marginRight="29sp"
+            android:gravity="center"
+            android:text="@string/create_account"
+            android:textColor="@color/white"
+            android:textSize="@dimen/large_tx" />
+	    
+	</LinearLayout>
 	
     <ImageView 
         android:id="@+id/pic_empty"
-        android:layout_below="@id/create_account"
-		android:layout_height="wrap_content" 
-		android:layout_width="wrap_content" 
-		android:layout_margin="@dimen/large_mg"
+        android:layout_below="@+id/activity_header"
+        android:scaleType="centerCrop"
+		android:layout_height="@dimen/button_wd" 
+		android:layout_width="@dimen/button_wd" 
+		android:layout_margin="@dimen/medium_mg"
 		android:src="@drawable/empty_picture_icon" 
 		android:contentDescription="@string/pic_empty"
 		android:layout_centerHorizontal="true" />
@@ -43,7 +57,7 @@
         android:layout_marginTop="@dimen/small_mg"
         android:layout_centerHorizontal="true"
         android:text="@string/or" 
-        style="@style/dark_blue" />
+        android:textColor="@color/light_blue" />
         
    <Button
         android:id="@+id/take_pic"
@@ -58,33 +72,27 @@
    	<EditText
 	    android:id="@+id/username"
 	    android:layout_below="@id/take_pic"
-	    android:layout_width="@dimen/button_wd"
-	    android:layout_height="wrap_content"
 	    android:layout_marginTop="@dimen/large_mg"
 	    android:hint="@string/username"
-	    android:layout_centerHorizontal="true"
-  	    android:inputType="text" />
+  	    android:inputType="text"
+  	    style="@style/gray_edit_text" />
    	
    	<EditText
 	    android:id="@+id/mail"
 	    android:layout_below="@id/username"
-	    android:layout_width="@dimen/button_wd"
-	    android:layout_height="wrap_content"
 	    android:layout_marginTop="@dimen/small_mg"
 	    android:hint="@string/mail"
-	    android:layout_centerHorizontal="true"
-  	    android:inputType="text" />
+  	    android:inputType="text"
+  	    style="@style/gray_edit_text" />
      
 	<EditText
 	    android:id="@+id/password"
-	    android:layout_below="@id/mail" 
-	    android:layout_width="@dimen/button_wd"
-	    android:layout_height="wrap_content"
+	    android:layout_below="@id/mail"
 	    android:layout_marginTop="@dimen/small_mg"
 	    android:layout_marginBottom="@dimen/verysmall_mg"
 	    android:hint="@string/password"
-	    android:layout_centerHorizontal="true"
-	    android:inputType="text" />
+	    android:inputType="textPassword"
+	    style="@style/gray_edit_text" />
 	
 	<Button
         android:id="@+id/signup"

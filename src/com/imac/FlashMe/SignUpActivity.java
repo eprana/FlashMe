@@ -54,8 +54,8 @@ public class SignUpActivity extends Activity {
     private final int PICK_IMAGE = 1000;
     private final int CREATE_PROFILE = 1404;
     private boolean hasChanged = false;
-    private Bitmap bitmapToSent;
-    private Bitmap bitmapMarkerToSent;
+    private Bitmap bitmapToSend;
+    private Bitmap bitmapMarkerToSend;
     private boolean hasBeenCreated = false;
     private DisplayMetrics screen = new DisplayMetrics();
     int pictureSize = 0;
@@ -71,6 +71,9 @@ public class SignUpActivity extends Activity {
         context = SignUpActivity.this;
         inflater = LayoutInflater.from(context);
         
+        getActionBar().setIcon(R.drawable.ic_menu);
+		getActionBar().setDisplayShowTitleEnabled(false);
+        
         getWindowManager().getDefaultDisplay().getMetrics(screen);
         pictureSize = screen.widthPixels/3;
         
@@ -81,13 +84,13 @@ public class SignUpActivity extends Activity {
         avatarView = (ImageView)this.findViewById(R.id.pic_empty);
         
         if(!hasChanged){
-        	bitmapToSent = ((BitmapDrawable)getResources().getDrawable(R.drawable.default_profile_picture_thumb)).getBitmap();
+        	bitmapToSend = ((BitmapDrawable)getResources().getDrawable(R.drawable.default_profile_picture_thumb)).getBitmap();
         }
         
-        // filling the database with avatarParseFile
+        // Fill the database with avatarParseFile
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmapToSent.compress(Bitmap.CompressFormat.PNG, 100, stream);
-        bitmapToSent = Bitmap.createScaledBitmap(bitmapToSent, pictureSize, pictureSize, false);
+        bitmapToSend.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        //bitmapToSend = Bitmap.createScaledBitmap(bitmapToSend, bitmapToSend.getWidth(), bitmapToSend.getHeight(), false);
         byte[] bitmapdata = stream.toByteArray();
         avatarParseFile = new ParseFile("avatar.png", bitmapdata);
         avatarParseFile.saveInBackground(new SaveCallback() {
@@ -98,11 +101,11 @@ public class SignUpActivity extends Activity {
 			}
 		}); 
         
-        // sending an empty marker to the database
-        bitmapMarkerToSent = ((BitmapDrawable)getResources().getDrawable(R.drawable.default_team_picture_thumb)).getBitmap();
+        // Send an empty marker to the database
+        bitmapMarkerToSend = ((BitmapDrawable)getResources().getDrawable(R.drawable.default_team_picture_thumb)).getBitmap();
         ByteArrayOutputStream markerStream = new ByteArrayOutputStream();
-        bitmapMarkerToSent = Bitmap.createScaledBitmap(bitmapMarkerToSent, pictureSize, pictureSize, false);
-        bitmapMarkerToSent.compress(Bitmap.CompressFormat.PNG, 100, markerStream);
+        bitmapMarkerToSend = Bitmap.createScaledBitmap(bitmapMarkerToSend, bitmapMarkerToSend.getWidth(), bitmapMarkerToSend.getHeight(), false);
+        //bitmapMarkerToSend.compress(Bitmap.CompressFormat.PNG, 100, markerStream);
         byte[] bitmapMarkerData = markerStream.toByteArray();
         this.markerParseFile = new ParseFile("marker.png", bitmapMarkerData);
         markerParseFile.saveInBackground(new SaveCallback() {
@@ -179,7 +182,7 @@ public class SignUpActivity extends Activity {
              	newUser.setEmail(s_email);
              	newUser.put("state", 0);
              	newUser.put("avatar", avatarParseFile);
-             	newUser.put("marker", markerParseFile);
+             	//newUser.put("marker", markerParseFile);
              	newUser.put("totalScore", 0);
              	newUser.put("bestScore", 0);
              	newUser.put("rank", 0);
@@ -280,14 +283,15 @@ public class SignUpActivity extends Activity {
     				hasChanged = true;
     				
     				// Replacing the preview by the chosen image
-    				Bitmap avatar = Bitmap.createScaledBitmap((Bitmap) data.getExtras().get("data"), pictureSize, pictureSize, false);
+    				//Bitmap avatar = Bitmap.createScaledBitmap((Bitmap) data.getExtras().get("data"), pictureSize, pictureSize, false);
+    				Bitmap avatar = (Bitmap) data.getExtras().get("data");
     				avatarView.setImageBitmap(avatar);
     				
-    				bitmapToSent = avatar;
+    				bitmapToSend = avatar;
     				
     				// Replacing the avatar in the database
     				ByteArrayOutputStream stream = new ByteArrayOutputStream();
-    				bitmapToSent.compress(Bitmap.CompressFormat.PNG, 100, stream);
+    				bitmapToSend.compress(Bitmap.CompressFormat.PNG, 100, stream);
     				byte[] avatarByteArray = stream.toByteArray();
     				
     				avatarParseFile = new ParseFile("avatar.png", avatarByteArray);    				
@@ -314,14 +318,14 @@ public class SignUpActivity extends Activity {
 						}
 						// Replacing the preview image by the chosen image
 						
-	    				Bitmap avatarPicked = Bitmap.createScaledBitmap(bm, pictureSize, pictureSize, false);
-						avatarView.setImageBitmap(avatarPicked);
+	    				//Bitmap avatarPicked = Bitmap.createScaledBitmap(bm, pictureSize, pictureSize, false);
 						
-						bitmapToSent = avatarPicked;
+						avatarView.setImageBitmap(bm);
+						bitmapToSend = bm;
 						
 						// Replacing the avatar in the database
 	    				ByteArrayOutputStream streamPicked = new ByteArrayOutputStream();
-	    				bitmapToSent.compress(Bitmap.CompressFormat.PNG, 100, streamPicked);
+	    				bitmapToSend.compress(Bitmap.CompressFormat.PNG, 100, streamPicked);
 	    				byte[] avatarByteArrayPicked = streamPicked.toByteArray();
 	    				
 	    				avatarParseFile = new ParseFile("avatar.png", avatarByteArrayPicked);
