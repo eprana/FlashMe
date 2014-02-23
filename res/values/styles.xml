@@ -155,8 +155,8 @@
     <style name="total_score">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:paddingTop">2sp</item>
-        <item name="android:paddingBottom">2sp</item>
+        <item name="android:paddingTop">4sp</item>
+        <item name="android:paddingBottom">4sp</item>
         <item name="android:paddingLeft">10sp</item>
         <item name="android:paddingRight">10sp</item>
         <item name="android:gravity">center</item>
@@ -209,7 +209,6 @@
         <item name="android:paddingBottom">@dimen/small_mg</item>
         <item name="android:paddingLeft">@dimen/medium_mg</item>
         <item name="android:paddingRight">@dimen/medium_mg</item>
-        <item name="android:layout_margin">@dimen/medium_mg</item>
         <item name="android:textColorHint">@color/light_gray</item>
         <item name="android:textColor">@drawable/edittext_gray_rectangle</item>
         <item name="android:background">@drawable/edittext_gray_rectangle</item>

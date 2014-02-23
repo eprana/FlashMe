@@ -72,7 +72,7 @@
    	<EditText
 	    android:id="@+id/username"
 	    android:layout_below="@id/take_pic"
-	    android:layout_marginTop="@dimen/large_mg"
+	    android:layout_marginTop="@dimen/medium_mg"
 	    android:hint="@string/username"
   	    android:inputType="text"
   	    style="@style/gray_edit_text" />
@@ -98,7 +98,7 @@
         android:id="@+id/signup"
         android:layout_below="@id/password" 
         android:layout_width="@dimen/button_wd"
-        android:layout_marginTop="@dimen/large_mg"
+        android:layout_marginTop="@dimen/medium_mg"
         android:text="@string/signup"
         android:background="@drawable/dark_button"
         style="@style/buttonDarkBlue" />
