@@ -59,9 +59,12 @@ public class EditActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_edit_profile);
-	
-	 	currentUser = ParseUser.getCurrentUser();
 		context = EditActivity.this;
+		
+		getActionBar().setIcon(R.drawable.ic_menu);
+		getActionBar().setDisplayShowTitleEnabled(false);
+		
+		currentUser = ParseUser.getCurrentUser();
 		avatarView = (ImageView) findViewById(R.id.profile_picture);
 		updateMail = (EditText) findViewById(R.id.new_mail);
 		updatePass = (EditText) findViewById(R.id.new_pass);
@@ -223,7 +226,8 @@ public class EditActivity extends Activity {
     			case CAMERA_REQUEST:
     				
     				// Replacing the preview by the chosen image
-    				Bitmap avatar = Bitmap.createScaledBitmap((Bitmap) data.getExtras().get("data"), 300, 300, false);
+    				//Bitmap avatar = Bitmap.createScaledBitmap((Bitmap) data.getExtras().get("data"), 300, 300, false);
+    				Bitmap avatar = (Bitmap) data.getExtras().get("data");
     				avatarView.setImageBitmap(avatar);
     				
     				// Replacing the avatar in the database
@@ -252,7 +256,8 @@ public class EditActivity extends Activity {
 							e.printStackTrace();
 						}
 						// Replacing the preview image by the chosen image
-	    				Bitmap avatarPicked = Bitmap.createScaledBitmap(bm, 300, 300, false);
+	    				//Bitmap avatarPicked = Bitmap.createScaledBitmap(bm, 300, 300, false);
+						Bitmap avatarPicked = bm;
 						avatarView.setImageBitmap(avatarPicked);
 						
 						// Replacing the avatar in the database
