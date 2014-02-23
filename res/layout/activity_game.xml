@@ -18,81 +18,100 @@
 	    
 	</FrameLayout>
 
-        <ProgressBar
-            android:id="@+id/loading_indicator"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true" />
+    <ProgressBar
+        android:id="@+id/loading_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true" />
 
-        <ImageView
-            android:id="@+id/ic_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_marginTop="25dp"
-            android:layout_marginLeft="25dp"
-            android:contentDescription="@string/ic_time"
-            android:src="@drawable/ic_time" />
-        
-        <ImageView
-            android:id="@+id/ic_life"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_marginBottom="25dp"
-            android:layout_marginLeft="25dp"
-            android:contentDescription="@string/ic_life"
-            android:src="@drawable/ic_life" />
-        
-        <ImageView
-            android:id="@+id/ic_munitions"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginBottom="25dp"
-            android:layout_marginRight="25dp"
-            android:contentDescription="@string/ic_munitions"
-            android:src="@drawable/ic_munitions" />
+    <ImageView
+        android:id="@+id/ic_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="25dp"
+        android:layout_marginLeft="25dp"
+        android:contentDescription="@string/ic_time"
+        android:src="@drawable/ic_time" />
+    
+   	<ImageView
+        android:id="@+id/gauge"
+        android:layout_width="20dp"
+        android:layout_height="300dp"
+        android:layout_marginLeft="25dp"
+        android:contentDescription="@string/gauge"
+        android:src="@drawable/white_border_rectangle"
+        android:layout_centerVertical="true" />
+   	
+   	<ImageView
+        android:id="@+id/gauge_value"
+        android:layout_width="10dp"
+        android:layout_height="0dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginBottom="5dp"
+        android:contentDescription="@string/gauge"
+        android:src="@drawable/blue_rectangle"
+        android:layout_alignBottom="@+id/gauge"/>
+    	    
+    <ImageView
+        android:id="@+id/ic_life"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="25dp"
+        android:layout_marginLeft="25dp"
+        android:contentDescription="@string/ic_life"
+        android:src="@drawable/ic_life" />
+    
+    <ImageView
+        android:id="@+id/ic_munitions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="25dp"
+        android:layout_marginRight="25dp"
+        android:contentDescription="@string/ic_munitions"
+        android:src="@drawable/ic_munitions" />
 
-        <TextView
-            android:id="@+id/text_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/ic_time"
-            android:layout_marginTop="25dp"
-            android:layout_marginLeft="10dp"
-            android:contentDescription="@string/time"
-            android:textSize="@dimen/medium_tx"
-            android:textColor="@color/light_blue"
-            android:text="@string/time_value" />
+    <TextView
+        android:id="@+id/text_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/ic_time"
+        android:layout_marginTop="25dp"
+        android:layout_marginLeft="10dp"
+        android:contentDescription="@string/time"
+        android:textSize="@dimen/medium_tx"
+        android:textColor="@color/light_blue"
+        android:text="@string/time_value" />
 
-        <TextView
-            android:id="@+id/text_life"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/ic_life"
-            android:layout_toRightOf="@+id/ic_life"
-            android:layout_marginLeft="10dp"
-            android:contentDescription="@string/life"
-            android:text="@string/life_value"
-            android:textSize="@dimen/medium_tx"
-            android:textColor="@color/light_blue" />
+    <TextView
+        android:id="@+id/text_life"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/ic_life"
+        android:layout_toRightOf="@+id/ic_life"
+        android:layout_marginLeft="10dp"
+        android:contentDescription="@string/life"
+        android:text="@string/life_value"
+        android:textSize="@dimen/medium_tx"
+        android:textColor="@color/light_blue" />
 
-        <TextView
-            android:id="@+id/text_munitions"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/ic_munitions"
-            android:layout_toLeftOf="@+id/ic_munitions"
-            android:layout_marginRight="10dp"
-            android:contentDescription="@string/munitions"
-            android:text="@string/munitions_value"
-            android:textSize="@dimen/medium_tx"
-            android:textColor="@color/light_blue" />
+    <TextView
+        android:id="@+id/text_munitions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/ic_munitions"
+        android:layout_toLeftOf="@+id/ic_munitions"
+        android:layout_marginRight="10dp"
+        android:contentDescription="@string/munitions"
+        android:text="@string/munitions_value"
+        android:textSize="@dimen/medium_tx"
+        android:textColor="@color/light_blue" />
         
 </RelativeLayout>

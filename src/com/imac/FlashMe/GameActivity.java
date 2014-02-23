@@ -39,6 +39,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +54,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	private LayoutInflater inflater;
 	private String gameName;
 	private View mainView;
+	private ImageView gauge;
 	private TextView time;
 	private TextView life;
 	private TextView munitions;
@@ -72,7 +74,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 //	private View mFlashOptionView;
     
     private LoadingDialogHandler loadingDialogHandler = new LoadingDialogHandler(this);
-    private Handler handler;
+    private Handler handler = new Handler();
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +88,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		// Get layout elements
 		inflater = LayoutInflater.from(context);
 		mainView = inflater.inflate(R.layout.activity_game, null, false);
+		gauge = (ImageView) mainView.findViewById(R.id.gauge_value);
 		time = (TextView) mainView.findViewById(R.id.text_time);
 		life = (TextView) mainView.findViewById(R.id.text_life);
 		munitions = (TextView) mainView.findViewById(R.id.text_munitions);
@@ -229,14 +232,20 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
         System.gc();
     }
 	
-	public void marqueurEnVue(final int id) {
+	public void updateGauge(final int id) {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 handler.post(new Runnable() { // This thread runs in the UI
                     @Override
                     public void run() {
-                    	Toast.makeText(GameActivity.this, "Marqueur "+id+" en vue", Toast.LENGTH_LONG).show();
+                    	
+                    	if(gauge.getLayoutParams().height < 580){
+                    		gauge.getLayoutParams().height += 2;
+                    	}
+                    	else {
+                    		gauge.getLayoutParams().height = 0;
+                    	}
                     }
                 });
             }
