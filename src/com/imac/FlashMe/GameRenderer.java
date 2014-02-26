@@ -23,6 +23,7 @@ import com.qualcomm.vuforia.Vuforia;
 import android.app.Activity;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
+import android.util.Log;
 import android.widget.Toast;
 
 
@@ -87,6 +88,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
             Marker marker = (Marker) markerResult.getTrackable();
             int markerId = marker.getMarkerId();
             
+            Log.d("Zizanie", "DEBUG : Marker" + markerId + "detected");
        		mActivity.updateGauge(markerId);
        		
         }

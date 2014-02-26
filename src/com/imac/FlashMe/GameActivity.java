@@ -1,5 +1,8 @@
 package com.imac.FlashMe;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
@@ -53,6 +56,8 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	private final Context context = this;
 	private LayoutInflater inflater;
 	private String gameName;
+	private ArrayList<String> teamsId = new ArrayList<String>();
+	private ArrayList<Integer> markerId = new ArrayList<Integer>();
 	private View mainView;
 	private ImageView gauge;
 	private TextView time;
@@ -80,10 +85,33 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	protected void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
+		Log.d("Zizanie", "DEBUG : Create GameActivity");
 		
 		// Get game name passed in extras
 		Intent intent = getIntent();
 		gameName = intent.getStringExtra("GAME");
+				
+		// Teams of the game
+		Log.d("Zizanie", "DEBUG : Load teams");
+		ParseQuery<ParseObject> query = ParseQuery.getQuery("Game");
+		query.whereEqualTo("name", gameName);
+		query.getFirstInBackground(new GetCallback<ParseObject>(){
+			@Override
+		    public void done(ParseObject game, ParseException e) {
+		    	game.getRelation("teams").getQuery().findInBackground(new FindCallback<ParseObject>() {
+					@Override
+					public void done(List<ParseObject> teams, ParseException e) {
+						Iterator<ParseObject> it = teams.iterator();
+					      while(it.hasNext()) {
+					    	 ParseObject toto = it.next();
+					         teamsId.add(toto.getObjectId());
+					         Log.d("Zizanie", "DEBUG : " + toto.getObjectId());
+					      }
+					}
+				});
+		    }
+		});
+
 		
 		// Get layout elements
 		inflater = LayoutInflater.from(context);
@@ -95,10 +123,12 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		
 		initLayoutValues();
 		
+		// Parse - currentUser
 		currentUser = ParseUser.getCurrentUser();
 	 	//State 0:offline, 1:online
 	 	currentUser.put("state", 1);
 	 	currentUser.saveInBackground();
+	 	
 		
 		//mTextures = new Vector<Texture>();
 	    //loadTextures();
@@ -306,24 +336,64 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 	@Override
 	public boolean doLoadTrackersData() {
+		Log.d("Zizanie", "DEBUG : doLoadTrackersData");
 		TrackerManager tManager = TrackerManager.getInstance();
-        MarkerTracker markerTracker = (MarkerTracker) tManager.getTracker(MarkerTracker.getClassType());
+        final MarkerTracker markerTracker = (MarkerTracker) tManager.getTracker(MarkerTracker.getClassType());
         if (markerTracker == null) return false;
+        	        
         
-        dataSet = new Marker[2];
-	        
-        dataSet[0] = markerTracker.createFrameMarker(0, "Zizi", new Vec2F(50, 50));
-        if (dataSet[0] == null) {
-            Log.e(LOGTAG, "Failed to create frame marker MarkerANous.");
-            return false;
-        }
-        dataSet[1] = markerTracker.createFrameMarker(1, "Xopi", new Vec2F(50, 50));
-        if (dataSet[1] == null) {
-            Log.e(LOGTAG, "Failed to create frame marker MarkerANous.");
-            return false;
+        final String lastId = teamsId.get(teamsId.size()-1);
+        // Load markers from Parse
+        Log.d("Zizanie", "DEBUG :load markers");
+        Iterator<String> it = teamsId.iterator();
+        while(it.hasNext()) {
+        //for(String teamId : teamsId) {
+        	
+        	// Get the players
+        	ParseQuery<ParseObject> query = ParseQuery.getQuery("Team");
+    		query.whereEqualTo("objectId", it.next());
+    		query.getFirstInBackground(new GetCallback<ParseObject>(){
+    			@Override
+    		    public void done(final ParseObject team, ParseException e) {
+    				if(e!=null){
+    					Log.d("Zizanie", "DEBUG :" + e.getMessage());
+    					return;
+    				}
+    				team.getRelation("players").getQuery().findInBackground(new FindCallback<ParseObject>() {
+    					@Override
+    					public void done(List<ParseObject> players, ParseException e) {
+    						Iterator<ParseObject> it = players.iterator();
+    					      while(it.hasNext()) {
+    					         markerId.add(it.next().getInt("markerId"));
+    					      }
+    					      
+    					      
+    					      if(team.getObjectId().equals(lastId)){
+    					    	   Marker[] dataSet = new Marker[markerId.size()];
+    					   		
+    					           int i = 0;
+    					           for(int id : markerId) {
+    					        	   
+    					        	   
+    					        	   dataSet[i] = markerTracker.createFrameMarker(id, Integer.toString(id), new Vec2F(50, 50));
+    					                if (dataSet[i] == null) {
+    					                    Log.e(LOGTAG, "Failed to create frame marker." + id);
+    					                }
+    					                ++i;
+    					           }
+    					           
+    					           GameActivity.this.dataSet = dataSet;
+    					           
+    					           Log.i(LOGTAG, "Successfully initialized MarkerTracker.");
+    					    	  
+    					      }
+    					}
+    				});
+    		    }
+    		});
         }
         
-        Log.i(LOGTAG, "Successfully initialized MarkerTracker.");
+     
         
         return true;
 	}
