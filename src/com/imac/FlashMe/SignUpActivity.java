@@ -5,8 +5,6 @@ import java.io.FileNotFoundException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.mail.internet.AddressException;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -20,12 +18,9 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -138,7 +133,6 @@ public class SignUpActivity extends Activity {
             }
         });
 
-        final ImageButton backButton = (ImageButton) findViewById(R.id.back_bt);
         final Button signUpButton = (Button) findViewById(R.id.signup);
      	
         // Click on sign up button
@@ -221,15 +215,7 @@ public class SignUpActivity extends Activity {
              		}
              	});
         	}
-        });  
-   			
-   		backButton.setOnClickListener(new OnClickListener() {
-	      			
-      		@Override
-      		public void onClick(View v) {
-      			finish();
-      		}
-      	});      
+        });    
     }
     
     private void sendConfirmationEmail(String username, String email, String password) {

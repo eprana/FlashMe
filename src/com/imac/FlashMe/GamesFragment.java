@@ -52,7 +52,6 @@ public class GamesFragment extends ListFragment {
 	private GameParseAdapter gameParseAdapter;
 	private GameTeamsParseAdapter gameTeamsParseAdapter;
 	private ArrayAdapter<String> teamsAdapter;
-	private ImageButton backButton;
 	private ImageButton refreshButton;
 	private EditText inputValue;
 	private AutoCompleteTextView autocompleteValue;
@@ -73,7 +72,6 @@ public class GamesFragment extends ListFragment {
 		teamsList = new ArrayList<String>();
 		
 		progress = (ProgressBar) mainView.findViewById(R.id.progressBar);
-		backButton = (ImageButton) mainView.findViewById(R.id.back_bt);
 		refreshButton = (ImageButton) mainView.findViewById(R.id.refresh_bt);
     	inputValue = (EditText) mainView.findViewById(R.id.enter_game);
     	autocompleteValue = (AutoCompleteTextView) mainView.findViewById(R.id.autocomplete_team);
@@ -105,13 +103,6 @@ public class GamesFragment extends ListFragment {
 
     	});
     	setListAdapter(gameParseAdapter);
-    	
-    	backButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				setGeneralAdapter();
-			}
-		});
     	
     	refreshButton.setOnClickListener(new OnClickListener() {
 			@Override
@@ -214,7 +205,6 @@ public class GamesFragment extends ListFragment {
 		inputValue.setVisibility(View.VISIBLE);
 		addButton.setVisibility(View.VISIBLE);
 		autocompleteValue.setVisibility(View.GONE);
-		backButton.setVisibility(View.INVISIBLE);
 		playButton.setVisibility(View.INVISIBLE);
 		
 		setListAdapter(gameParseAdapter);
@@ -240,7 +230,6 @@ public class GamesFragment extends ListFragment {
 		autocompleteValue.setEnabled(enable);
 		addButton.setEnabled(enable);
 		
-		backButton.setVisibility(View.VISIBLE);
 		playButton.setVisibility(View.VISIBLE);
 		
 		gameTeamsParseAdapter.addOnQueryLoadListener(new OnQueryLoadListener<ParseObject>() {
