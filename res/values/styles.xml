@@ -173,6 +173,7 @@
     
     <style name="stats_value">
         <item name="android:textSize">@dimen/verylarge_tx</item>
+        <item name="android:paddingBottom">@dimen/medium_mg</item>
         <item name="android:gravity">center</item>
         <item name="android:layout_height">wrap_content</item>
     	<item name="android:layout_width">match_parent</item>
@@ -181,7 +182,7 @@
     
     <style name="stats_icon">
         <item name="android:gravity">center</item>
-        <item name="android:paddingTop">@dimen/small_mg</item>
+        <item name="android:paddingTop">@dimen/medium_mg</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">match_parent</item>
     </style>

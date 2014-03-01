@@ -8,15 +8,6 @@
         android:id="@+id/activity_header"
 	    style="@style/header" >
 
-        <ImageButton
-            android:id="@+id/back_bt"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@null"
-            android:contentDescription="@string/back_bt"
-            android:focusable="false"
-            android:src="@drawable/back_bt" />
-
         <TextView
             android:id="@+id/top_line_light"
             android:layout_width="match_parent"

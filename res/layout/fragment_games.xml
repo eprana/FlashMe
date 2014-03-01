@@ -8,16 +8,6 @@
         android:id="@+id/fragment_header"
         style="@style/header" >
 
-        <ImageButton
-            android:id="@+id/back_bt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            android:contentDescription="@string/back_bt"
-            android:focusable="false"
-            android:src="@drawable/back_bt"
-            android:visibility="invisible" />
-
         <TextView
             android:id="@+id/top_line_light"
             android:layout_width="0dip"

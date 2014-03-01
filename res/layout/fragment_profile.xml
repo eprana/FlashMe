@@ -5,7 +5,7 @@
     android:orientation="vertical" >
     
     <LinearLayout 
-          android:layout_width="match_parent"
+        android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
         android:id="@+id/fragment_header"
 	    style="@style/header" >
@@ -27,7 +27,7 @@
 	    android:id="@+id/user_pictures"
 	    android:layout_width="match_parent"
 	    android:layout_height="0dp"
-	    android:layout_weight="1"
+	    android:layout_weight="2"
 	    android:orientation="horizontal" >
         
 	    <ImageView
@@ -57,11 +57,9 @@
 	</LinearLayout>
 	
 	<TextView
-	    
-	      android:layout_width="match_parent"
+	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	    android:id="@+id/total_score"
-	    android:layout_below="@+id/user_pictures"
 	    android:text="@string/total_score_txt"
 	    android:textColor="@color/white"
 	    android:textSize="@dimen/verylarge_tx"
@@ -69,10 +67,10 @@
 	
 	<LinearLayout 
 	    android:id="@+id/stats"
-	    android:layout_below="@+id/total_score"
 	    android:baselineAligned="false"
-	    android:layout_height="wrap_content"
+	    android:layout_height="0dp"
 	    android:layout_width="match_parent"
+	    android:layout_weight="3"
 	    android:orientation="horizontal">
 	 	
 	    <RelativeLayout
