@@ -2,6 +2,7 @@ package com.imac.FlashMe;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import com.parse.FindCallback;
@@ -169,10 +170,11 @@ public class GamesFragment extends ListFragment {
 			@Override
 			public void onClick(View v) {
 				// Start game
+				Log.d("Zizanie", "DEBUG : OnClickOnPlayButton");
 				if(!gameName.isEmpty()) {
-					Intent intent = new Intent(getActivity(), GameActivity.class);
-					intent.putExtra("GAME", gameName);
-					startActivity(intent);	
+					final Intent intent = new Intent(getActivity(), GameActivity.class);
+					intent.putExtra("GAME", gameName);			
+					startActivity(intent);
 				}
 			}
 		});

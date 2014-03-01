@@ -17,7 +17,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.parse.LogInCallback;
 import com.parse.Parse;
@@ -61,7 +60,7 @@ public class MainActivity extends Activity {
 		 // Initialize Parse
 	 	Parse.initialize(this, "ysJVmuI4oJDEsyF7YOcQG12WVkLzwQlLrqzt15Fg", "YTTLp7GRoHYEMzLXa58T2zB7mcTTPWJuB19JcGnJ");
 	 	ParseAnalytics.trackAppOpened(getIntent());
-	 	
+
 //	 	ParseUser.logInInBackground("Xopi", "xopi", new LogInCallback() {
 //			public void done(ParseUser user, ParseException e) {
 //				Intent intent = new Intent(MainActivity.this, ContentActivity.class);

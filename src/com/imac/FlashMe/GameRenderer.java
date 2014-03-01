@@ -1,6 +1,5 @@
 package com.imac.FlashMe;
 
-import java.nio.Buffer;
 import java.util.Vector;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -20,10 +19,9 @@ import com.qualcomm.vuforia.TrackableResult;
 import com.qualcomm.vuforia.VIDEO_BACKGROUND_REFLECTION;
 import com.qualcomm.vuforia.Vuforia;
 
-import android.app.Activity;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
-import android.widget.Toast;
+import android.util.Log;
 
 
 public class GameRenderer implements GLSurfaceView.Renderer {
@@ -86,8 +84,10 @@ public class GameRenderer implements GLSurfaceView.Renderer {
             MarkerResult markerResult = (MarkerResult) (trackableResult);
             Marker marker = (Marker) markerResult.getTrackable();
             int markerId = marker.getMarkerId();
+            String markerName = marker.getName();
             
-       		mActivity.updateGauge(markerId);
+            Log.d("Zizanie", "DEBUG : Marker" + markerId + "detected from " + markerName);
+       		mActivity.updateGauge(markerId, markerName);
        		
         }
 
