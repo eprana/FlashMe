@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    <LinearLayout 
+        android:id="@+id/activity_header"
+	    style="@style/header" >
+
+        <TextView
+            android:id="@+id/activity_title"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="14.5sp"
+            android:layout_weight="0.50"
+            android:gravity="center"
+            android:text="@string/team_players"
+            android:textColor="@color/white"
+            android:textSize="@dimen/large_tx" />
+        
+	    <ImageButton
+            android:id="@+id/refresh_bt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="14.5sp"
+            android:background="@null"
+            android:contentDescription="@string/refresh_bt"
+            android:focusable="false"
+            android:src="@drawable/refresh_bt" />
+	    
+	</LinearLayout>
+    
+    <LinearLayout 
+        android:id="@+id/create_layout"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content" 
+	    android:orientation="horizontal"
+	    android:padding="@dimen/large_mg"
+	    android:background="@drawable/gray_filled_rectangle" >
+
+    	 <AutoCompleteTextView 
+		    android:id="@+id/autocomplete_player"
+		    android:hint="@string/enter_player_auto"
+		    style="@style/white_edit_text"/>
+	     
+	     <Button
+		    android:id="@+id/add_player"
+		    android:layout_width="@dimen/medium_wd"
+		    android:layout_gravity="center_vertical"
+		    android:layout_marginRight="@dimen/medium_mg"
+		    android:text="@string/add"
+		    android:textColorHint="@color/white"
+		    style="@style/buttonDarkBlue" />
+	     
+	</LinearLayout>
+    
+	<RelativeLayout
+	    android:id="@+id/parent_layout"
+	    android:layout_width="match_parent"
+	    android:layout_height="0dip" 
+	    android:layout_weight="20">
+	
+		<ProgressBar
+	        android:id="@+id/progressBar"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentTop="true"
+	        android:layout_centerHorizontal="true" />
+
+		<ListView
+		    android:id="@android:id/list"
+		    android:layout_width="match_parent"
+		    android:layout_height="match_parent"
+		    android:layout_alignParentLeft="true"
+		    android:layout_alignParentTop="true" >
+		</ListView>
+	   
+	</RelativeLayout>
+	
+</LinearLayout>

@@ -25,6 +25,8 @@
     <string name="title_activity_sign_up">Sign up</string>
     <string name="title_activity_content">Flash me</string>
     <string name="title_activity_game">Flash me</string>
+    <string name="title_activity_players">Flash me</string>
+    <string name="title_activity_teams">Flash me</string>
     <string name="title_edit_activity">Edit profile</string>
 	
 	<!-- sign up & log in -->
@@ -97,11 +99,13 @@
     
 	<!-- my teams -->
 	<string name="my_teams">My teams</string>
+	<string name="team_players">Team players</string>
 	<string name="enter_team">New team name</string>
 	<string name="enter_player_auto">Player name</string>
 	<string name="empty_team_name">You must enter a valid team name.</string>
 	<string name="empty_player_name">You must enter a valid player name.</string>
-	<string name="create">CREATE</string>
+	<string name="create">Create</string>
+	<string name="add">Add</string>
 	<string name="player_in_team_pic">player_picture</string>
 	<string name="delete_player_bt">Delete player</string>
 	<string name="delete">delete</string>
@@ -116,6 +120,7 @@
 	
 	<!-- my games -->
 	<string name="my_games">My games</string>
+	<string name="game_teams">Game teams</string>
 	<string name="enter_game">New game name</string>
 	<string name="enter_team_auto">Team name</string>
 	<string name="empty_game_name">You must enter a valid game name.</string>
