@@ -39,6 +39,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -241,7 +243,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
                     public void run() {
                     	
                     	if(gauge.getLayoutParams().height < 580){
-                    		gauge.getLayoutParams().height += 2;
+                    		gauge.getLayoutParams().height += 4;
                     	}
                     	else {
                     		gauge.getLayoutParams().height = 0;

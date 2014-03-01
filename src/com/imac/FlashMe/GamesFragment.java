@@ -17,8 +17,10 @@ import com.parse.ParseQueryAdapter.OnQueryLoadListener;
 import com.imac.FlashMe.R;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.app.AlertDialog;
 import android.app.ListFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -370,7 +372,10 @@ public class GamesFragment extends ListFragment {
 														}
 													}
 													if(alreadyInGame) {
-														Toast.makeText(getActivity(), "Sorry, you are not allowed to add this team. One or more players are already in this game.", Toast.LENGTH_SHORT).show();
+														AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+														alertDialog.setTitle(selectedTeam.getString("name"));
+														alertDialog.setMessage("Sorry, you are not allowed to add this team. One or more players are already in this game.");
+														alertDialog.setPositiveButton("OK", null);
 														return;
 													}
 													addTeam(game, selectedTeam, players);

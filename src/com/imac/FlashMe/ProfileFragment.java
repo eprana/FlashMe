@@ -30,7 +30,7 @@ public class ProfileFragment extends Fragment {
 	
 	// Data elements
 	private static ParseUser currentUser = null;
-	//private static ProgressBar progress = null;
+	private static ProgressBar progress = null;
 	
 	// Layout elements
 	private static ImageView profilePictureView = null;
@@ -52,7 +52,7 @@ public class ProfileFragment extends Fragment {
     	
 		// Initialize members
 		currentUser = ParseUser.getCurrentUser();
-		//progress = (ProgressBar) mainView.findViewById(R.id.progressBar);
+		progress = (ProgressBar) mainView.findViewById(R.id.progressBar);
 		
 		profilePictureView = (ImageView) mainView.findViewById(R.id.profile_picture);
 		profileMarkerView = (ImageView) mainView.findViewById(R.id.marker_picture);
@@ -143,6 +143,9 @@ public class ProfileFragment extends Fragment {
 								Bitmap markerBitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
 								// Setting the marker imageView
 								profileMarkerView.setImageBitmap(markerBitmap);
+								progress.setVisibility(View.GONE);
+								profileMarkerView.setVisibility(View.VISIBLE);
+								profilePictureView.setVisibility(View.VISIBLE);
 							}
 						});
 					}
