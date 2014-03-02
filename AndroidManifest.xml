@@ -117,6 +117,12 @@
             android:name="com.imac.FlashMe.TeamPlayersActivity"
             android:label="@string/title_activity_players" />
         
+        <!-- _______________ GAME TEAMS ACTIVITY _______________ -->        
+        <activity
+            android:name="com.imac.FlashMe.GameTeamsActivity"
+            android:label="@string/title_activity_teams" />
+        
+        
         <!-- _______________ GAME ACTIVITY _______________ -->        
         <activity
             android:name="com.imac.FlashMe.GameActivity"

@@ -50,7 +50,7 @@ public class TeamPlayersActivity extends ListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_team_players);
+		setContentView(R.layout.activity_detail);
 		context = TeamPlayersActivity.this;
 		inflater = LayoutInflater.from(context);
 		Intent intent = getIntent();

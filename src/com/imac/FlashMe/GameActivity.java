@@ -60,6 +60,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 	private final Context context = this;
 	private LayoutInflater inflater;
+	private String gameId;
 	private String gameName;
 	private ArrayList<String> teamsId = new ArrayList<String>();
 	private ArrayList<Integer> markerId = new ArrayList<Integer>();
@@ -95,15 +96,16 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 		// Get game name passed in extras
 		Intent intent = getIntent();
-		gameName = intent.getStringExtra("GAME");
+		gameId = intent.getStringExtra("GAME_ID");
 
 		// Teams of the game
 		Log.d("Zizanie", "DEBUG : Load teams");
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Game");
-		query.whereEqualTo("name", gameName);
+		query.whereEqualTo("objectId", gameId);
 		query.getFirstInBackground(new GetCallback<ParseObject>(){
 			@Override
 			public void done(ParseObject game, ParseException e) {
+				gameName = game.getString("name");
 				game.getRelation("teams").getQuery().findInBackground(new FindCallback<ParseObject>() {
 					@Override
 					public void done(List<ParseObject> teams, ParseException e) {
@@ -178,7 +180,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		newPlayer.put("life", 50);
 		newPlayer.put("munitions", 500);
 		ParseQuery<ParseObject> gameQuery = ParseQuery.getQuery("Game");
-		gameQuery.whereEqualTo("name", gameName);
+		gameQuery.whereEqualTo("objectId", gameId);
 		gameQuery.getFirstInBackground(new GetCallback<ParseObject>() {
 
 			@Override
