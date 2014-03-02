@@ -60,12 +60,12 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	private static final String LOGTAG = "GameActivity";
 
 	private ParseUser currentUser;
-	private ParseObject newPlayer;
+	private String gameId;
+	private String gameName;
+	private boolean isCreator;
 
 	private final Context context = this;
 	private LayoutInflater inflater;
-	private String gameId;
-	private String gameName;
 	private ArrayList<String> teamsId = new ArrayList<String>();
 	private ArrayList<Integer> markerId = new ArrayList<Integer>();
 	private HashMap<Integer, String> markerIdToPlayerId = new HashMap<Integer, String>();
@@ -124,6 +124,11 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 			@Override
 			public void done(ParseObject game, ParseException e) {
 				gameName = game.getString("name");
+				try {
+					isCreator = game.getParseUser("createdBy").fetchIfNeeded().getUsername().equals(currentUser.getUsername()) ? true : false;
+				} catch (ParseException e1) {
+					e1.printStackTrace();
+				}
 				// Get teams
 				game.getRelation("teams").getQuery().findInBackground(new FindCallback<ParseObject>() {
 					@Override
@@ -138,7 +143,6 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 								public void done(List<ParseObject> players, ParseException e) {
 									Iterator<ParseObject> it = players.iterator();
 									// Add marker
-									ArrayList<String> playerNames = new ArrayList<String>();
 									while(it.hasNext()) {
 										ParseObject player = it.next();
 										markerIdToPlayerId.put(player.getInt("markerId"), player.getObjectId());
@@ -191,7 +195,6 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		// Init user values
 		Firebase userRef = new Firebase("https://flashme.firebaseio.com/user/"+currentUser.getObjectId());
 		Map<String, Object> toSet = new HashMap<String, Object>();
-		toSet.put("state", "ready");
 		toSet.put("life", "0");
 		toSet.put("munitions", "500");
 		userRef.setValue(toSet);
@@ -209,14 +212,14 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 			@Override
 			public void onDataChange(DataSnapshot snapshot) {
 				Object value = snapshot.getValue();
-		         if (value == null) {
+				if (value == null) {
 		             Log.d(LOGTAG, "User doesn't exist");
-		         } else {
-		             String lifeValue = (String)((Map)value).get("life");
-		             String munitionsValue = (String)((Map)value).get("munitions");
-		             life.setText(lifeValue);
-		             munitions.setText(munitionsValue);
-		         }
+				} else {
+					String lifeValue = (String)((Map)value).get("life");
+					String munitionsValue = (String)((Map)value).get("munitions");
+					life.setText(lifeValue);
+					munitions.setText(munitionsValue);
+				}
 			}
 			
 		});
@@ -236,7 +239,6 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 				startLoadingAnimation();
 				vuforiaAppSession.initAR(GameActivity.this, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 				initApplicationAR();
-
 				initTimer();
 			}
 		});
@@ -246,17 +248,38 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 	private void initTimer() {
 		minutes = 10;
-		new CountDownTimer(minutes*60000, 1000) {
-			public void onTick(long millisUntilFinished) {
-				int minutesRemaining = (int) Math.floor((millisUntilFinished/1000)/60);
-				int secondsRemaining = (int) ((millisUntilFinished/1000) - (minutesRemaining*60));
-				time.setText(minutesRemaining+":"+secondsRemaining);
+		final Firebase gameRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId);
+		if(isCreator) {
+			new CountDownTimer(minutes*60000, 1000) {
+				public void onTick(long millisUntilFinished) {
+					int minutesRemaining = (int) Math.floor((millisUntilFinished/1000)/60);
+					int secondsRemaining = (int) ((millisUntilFinished/1000) - (minutesRemaining*60));
+					gameRef.child("timer").setValue(minutesRemaining+":"+secondsRemaining);
+				}
+	
+				public void onFinish() {
+					time.setText("GAME OVER");
+				}
+			}.start();
+		}
+		gameRef.addValueEventListener(new ValueEventListener() {
+
+			@Override
+			public void onCancelled(FirebaseError e) {
+				Log.d(LOGTAG, e.getMessage());				
 			}
 
-			public void onFinish() {
-				time.setText("GAME OVER");
+			@Override
+			public void onDataChange(DataSnapshot snapshot) {
+				Object value = snapshot.getValue();
+				if (value == null) {
+		             Log.d(LOGTAG, "Game doesn't exist");
+				} else {
+					String timeValue = (String)((Map)value).get("timer");
+					time.setText(timeValue);
+				}			
 			}
-		}.start();
+		});
 	}
 
 	@Override
@@ -267,7 +290,6 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
         } catch (SampleApplicationException e) {
             Log.e(LOGTAG, e.getString());
         }
-        newPlayer.deleteInBackground();
         super.onDestroy();
 //        mTextures.clear();
 //        mTextures = null;
