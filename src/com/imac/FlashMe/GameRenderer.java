@@ -84,10 +84,10 @@ public class GameRenderer implements GLSurfaceView.Renderer {
             MarkerResult markerResult = (MarkerResult) (trackableResult);
             Marker marker = (Marker) markerResult.getTrackable();
             int markerId = marker.getMarkerId();
-            String markerName = marker.getName();
+            String userId = marker.getName();
             
-            Log.d("Zizanie", "DEBUG : Marker" + markerId + "detected from " + markerName);
-       		mActivity.updateGauge(markerId, markerName);
+            Log.d("Zizanie", "DEBUG : Marker" + markerId + "detected from " + userId);
+       		mActivity.updateGauge(markerId, userId);
        		
         }
 

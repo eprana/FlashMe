@@ -9,6 +9,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Vector;
 
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.imac.VuforiaApp.SampleApplicationControl;
 import com.imac.VuforiaApp.SampleApplicationException;
 import com.imac.VuforiaApp.SampleApplicationSession;
@@ -64,7 +68,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	private String gameName;
 	private ArrayList<String> teamsId = new ArrayList<String>();
 	private ArrayList<Integer> markerId = new ArrayList<Integer>();
-	private HashMap<Integer, String> markerIdToplayerId = new HashMap<Integer, String>();
+	private HashMap<Integer, String> markerIdToPlayerId = new HashMap<Integer, String>();
 	private View mainView;
 	private ImageView gauge;
 	private TextView time;
@@ -97,30 +101,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		// Get game name passed in extras
 		Intent intent = getIntent();
 		gameId = intent.getStringExtra("GAME_ID");
-
-		// Teams of the game
-		Log.d("Zizanie", "DEBUG : Load teams");
-		ParseQuery<ParseObject> query = ParseQuery.getQuery("Game");
-		query.whereEqualTo("objectId", gameId);
-		query.getFirstInBackground(new GetCallback<ParseObject>(){
-			@Override
-			public void done(ParseObject game, ParseException e) {
-				gameName = game.getString("name");
-				game.getRelation("teams").getQuery().findInBackground(new FindCallback<ParseObject>() {
-					@Override
-					public void done(List<ParseObject> teams, ParseException e) {
-						Iterator<ParseObject> it = teams.iterator();
-						while(it.hasNext()) {
-							ParseObject toto = it.next();
-							teamsId.add(toto.getObjectId());
-							Log.d("Zizanie", "DEBUG : " + toto.getObjectId());
-						}
-					}
-				});
-			}
-		});
-
-
+		
 		// Get layout elements
 		inflater = LayoutInflater.from(context);
 		mainView = inflater.inflate(R.layout.activity_game, null, false);
@@ -129,14 +110,47 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		life = (TextView) mainView.findViewById(R.id.text_life);
 		munitions = (TextView) mainView.findViewById(R.id.text_munitions);
 
-		initLayoutValues();
-
 		// Parse - currentUser
 		currentUser = ParseUser.getCurrentUser();
 		//State 0:offline, 1:online
 		currentUser.put("state", 1);
 		currentUser.saveInBackground();
 
+		// Get game
+		Log.d("Zizanie", "DEBUG : Load teams");
+		ParseQuery<ParseObject> query = ParseQuery.getQuery("Game");
+		query.whereEqualTo("objectId", gameId);
+		query.getFirstInBackground(new GetCallback<ParseObject>(){
+			@Override
+			public void done(ParseObject game, ParseException e) {
+				gameName = game.getString("name");
+				// Get teams
+				game.getRelation("teams").getQuery().findInBackground(new FindCallback<ParseObject>() {
+					@Override
+					public void done(List<ParseObject> teams, ParseException e) {
+						Iterator<ParseObject> it = teams.iterator();
+						while(it.hasNext()) {
+							ParseObject team = it.next();
+							teamsId.add(team.getObjectId());
+							Log.d("Zizanie", "DEBUG : " + team.getObjectId());
+							team.getRelation("players").getQuery().findInBackground(new FindCallback<ParseObject>() {
+								@Override
+								public void done(List<ParseObject> players, ParseException e) {
+									Iterator<ParseObject> it = players.iterator();
+									// Add marker
+									ArrayList<String> playerNames = new ArrayList<String>();
+									while(it.hasNext()) {
+										ParseObject player = it.next();
+										markerIdToPlayerId.put(player.getInt("markerId"), player.getObjectId());
+									}
+								}
+							});
+						}
+						initFirebaseValues();
+					}
+				});
+			}
+		});
 
 		//mTextures = new Vector<Texture>();
 		//loadTextures();
@@ -172,55 +186,45 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		alertDialog.create();
 		alertDialog.show();	
 	}
-	private void initLayoutValues() {
-
-		// Create player for the game
-		newPlayer = new ParseObject("Player");
-		newPlayer.put("state", 0);
-		newPlayer.put("life", 50);
-		newPlayer.put("munitions", 500);
-		ParseQuery<ParseObject> gameQuery = ParseQuery.getQuery("Game");
-		gameQuery.whereEqualTo("objectId", gameId);
-		gameQuery.getFirstInBackground(new GetCallback<ParseObject>() {
+	private void initFirebaseValues() {
+		
+		// Init user values
+		Firebase userRef = new Firebase("https://flashme.firebaseio.com/user/"+currentUser.getObjectId());
+		Map<String, Object> toSet = new HashMap<String, Object>();
+		toSet.put("state", "ready");
+		toSet.put("life", "0");
+		toSet.put("munitions", "500");
+		userRef.setValue(toSet);
+		
+		life.setText("0");
+        munitions.setText("500");
+		// Add listener
+		userRef.addValueEventListener(new ValueEventListener() {
 
 			@Override
-			public void done(ParseObject game, ParseException e) {
-				newPlayer.put("game", game);
-				game.getRelation("teams").getQuery().findInBackground(new FindCallback<ParseObject>() {
-
-					@Override
-					public void done(List<ParseObject> teams, ParseException e) {
-						for(final ParseObject team: teams) {
-							team.getRelation("players").getQuery().findInBackground(new FindCallback<ParseObject>() {
-
-								@Override
-								public void done(List<ParseObject> players, ParseException e) {
-									for(ParseObject player : players) {
-										if(currentUser.getUsername().equals(player.getString("username"))) {
-											newPlayer.put("team", team);
-											newPlayer.saveInBackground( new SaveCallback() {
-
-												@Override
-												public void done(ParseException e) {
-													waitingForPlayers();
-												}
-											});
-											return;
-										}
-									}
-								}
-							});
-						}
-					}
-				});
+			public void onCancelled(FirebaseError e) {
+				Log.d(LOGTAG, e.getMessage());
 			}
+
+			@Override
+			public void onDataChange(DataSnapshot snapshot) {
+				Object value = snapshot.getValue();
+		         if (value == null) {
+		             Log.d(LOGTAG, "User doesn't exist");
+		         } else {
+		             String lifeValue = (String)((Map)value).get("life");
+		             String munitionsValue = (String)((Map)value).get("munitions");
+		             life.setText(lifeValue);
+		             munitions.setText(munitionsValue);
+		         }
+			}
+			
 		});
+		
+		waitingForPlayers();
 	}
 
 	private void waitingForPlayers() {
-		life.setText(String.valueOf(newPlayer.getInt("life")));
-		munitions.setText(String.valueOf(newPlayer.getInt("munitions")));
-
 		AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
 		alertDialog.setTitle(gameName);
 		alertDialog.setMessage("Waiting for other players to be ready...");
@@ -270,7 +274,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
         System.gc();
     }
 
-	public void updateGauge(final int id, final String playerId) {
+	public void updateGauge(final int markerId, final String playerId) {
 		Runnable runnable = new Runnable() {
 			@Override
 			public void run() {
@@ -353,54 +357,20 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 			return false;
 		}
 
-		// Load markers from Parse
-		final String lastId = teamsId.get(teamsId.size()-1);
-		Iterator<String> it = teamsId.iterator();
+		Marker[] dataSet = new Marker[markerIdToPlayerId.size()];
 
-		// For each team
-		while(it.hasNext()) {
-			// Get the parse team
-			ParseQuery<ParseObject> query = ParseQuery.getQuery("Team");
-			query.whereEqualTo("objectId", it.next());
-			query.getFirstInBackground(new GetCallback<ParseObject>(){
-				@Override
-				public void done(final ParseObject team, ParseException e) {
-					// Get the players
-					team.getRelation("players").getQuery().findInBackground(new FindCallback<ParseObject>() {
-						@Override
-						public void done(List<ParseObject> players, ParseException e) {
-							Iterator<ParseObject> it = players.iterator();
-							// Add marker
-							ArrayList<String> playerNames = new ArrayList<String>();
-							while(it.hasNext()) {
-								ParseObject player = it.next();
-								markerIdToplayerId.put(player.getInt("markerId"), player.getObjectId());
-								//markerId.add(player.getInt("markerId"));
-							}
-
-							// When we found the last player, we create markers
-							if(team.getObjectId().equals(lastId)){
-								//Marker[] dataSet = new Marker[markerId.size()];
-								Marker[] dataSet = new Marker[markerIdToplayerId.size()];
-
-								int i = 0;
-								for (Entry<Integer, String> entry : markerIdToplayerId.entrySet()) {								    
-								    dataSet[i] = markerTracker.createFrameMarker(entry.getKey(), entry.getValue() , new Vec2F(50, 50));
-									if (dataSet[i] == null) {
-										Log.e(LOGTAG, "Failed to create frame marker." + entry.getKey());
-									}
-									++i;
-								}
-
-								GameActivity.this.dataSet = dataSet;
-
-								Log.i(LOGTAG, "Successfully initialized MarkerTracker.");
-							}
-						}
-					});
-				}
-			});
+		int i = 0;
+		for (Entry<Integer, String> entry : markerIdToPlayerId.entrySet()) {								    
+		    dataSet[i] = markerTracker.createFrameMarker(entry.getKey(), entry.getValue() , new Vec2F(50, 50));
+			if (dataSet[i] == null) {
+				Log.e(LOGTAG, "Failed to create frame marker." + entry.getKey());
+			}
+			++i;
 		}
+
+		GameActivity.this.dataSet = dataSet;
+
+		Log.i(LOGTAG, "Successfully initialized MarkerTracker.");
 
 		return true;
 	}
