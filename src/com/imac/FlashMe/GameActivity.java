@@ -12,6 +12,8 @@ import java.util.Vector;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.MutableData;
+import com.firebase.client.Transaction;
 import com.firebase.client.ValueEventListener;
 import com.imac.VuforiaApp.SampleApplicationControl;
 import com.imac.VuforiaApp.SampleApplicationException;
@@ -63,6 +65,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	private String gameId;
 	private String gameName;
 	private boolean isCreator;
+	private int lastMarkerId;
 
 	private final Context context = this;
 	private LayoutInflater inflater;
@@ -115,6 +118,8 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		//State 0:offline, 1:online
 		currentUser.put("state", 1);
 		currentUser.saveInBackground();
+		
+		lastMarkerId = -1;
 
 		// Get game
 		Log.d("Zizanie", "DEBUG : Load teams");
@@ -195,8 +200,8 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		// Init user values
 		Firebase userRef = new Firebase("https://flashme.firebaseio.com/user/"+currentUser.getObjectId());
 		Map<String, Object> toSet = new HashMap<String, Object>();
-		toSet.put("life", "0");
-		toSet.put("munitions", "500");
+		toSet.put("life", 0);
+		toSet.put("munitions", 500);
 		userRef.setValue(toSet);
 		
 		life.setText("0");
@@ -215,8 +220,8 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 				if (value == null) {
 		             Log.d(LOGTAG, "User doesn't exist");
 				} else {
-					String lifeValue = (String)((Map)value).get("life");
-					String munitionsValue = (String)((Map)value).get("munitions");
+					String lifeValue = ((Map)value).get("life").toString();
+					String munitionsValue = ((Map)value).get("munitions").toString();
 					life.setText(lifeValue);
 					munitions.setText(munitionsValue);
 				}
@@ -303,21 +308,55 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 				handler.post(new Runnable() { // This thread runs in the UI
 					@Override
 					public void run() {
-						
-						// Fill the gauge
-						if(gauge.getLayoutParams().height < 580){
-							gauge.getLayoutParams().height += 2;
+						Log.d(LOGTAG, "Marker " + markerId + " detected from " + playerId);
+						// Flashing same marker
+						if(lastMarkerId == markerId) {
+							// Fill the gauge
+							if(gauge.getLayoutParams().height < 580){
+								gauge.getLayoutParams().height += 2;
+							}
+							else {
+								gauge.getLayoutParams().height = 0;
+								setPoints(currentUser.getObjectId(), 10);
+								setPoints(playerId, -10);
+							}
 						}
-						// Empty the gauge
+
+						// Flashing new marker
 						else {
-							Log.d("Zizanie", "DEBUG : you killed player " + playerId);
 							gauge.getLayoutParams().height = 0;
 						}
+						lastMarkerId = markerId;
 					}
 				});
 			}
 		};
 		new Thread(runnable).start();
+	}
+	
+	private void setPoints(String playerId, final int points) {
+		Firebase lifeRef = new Firebase("https://flashme.firebaseio.com/user/"+playerId+"/life");
+		lifeRef.runTransaction(new Transaction.Handler() {
+		    @Override
+		    public Transaction.Result doTransaction(MutableData currentData) {
+		        int currentLife = currentData.getValue(Integer.class);
+		        currentData.setValue(currentLife + points);
+		        return Transaction.success(currentData);
+		    }
+
+		    @Override
+		    public void onComplete(FirebaseError e, boolean committed, DataSnapshot currentData) {
+		        if (e != null) {
+		            Log.d(LOGTAG, e.getMessage());
+		        } else {
+		            if (!committed) {
+		            	Log.d(LOGTAG, "Transaction not comitted");
+		            } else {
+		            	Log.d(LOGTAG, "Transaction succeeded");
+		            }
+		        }
+		    }
+		});
 	}
 
 	private void startLoadingAnimation() {
