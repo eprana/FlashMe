@@ -18,6 +18,7 @@ import com.parse.ParseQueryAdapter.OnQueryLoadListener;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -92,10 +93,19 @@ public class GameTeamsActivity extends ListActivity {
 			@Override
 			public void onClick(View v) {
 				final String s_autocompleteValue = autocompleteValue.getText().toString();
+				int nbTeams = gameTeamsParseAdapter.getCount();
 				if(s_autocompleteValue.equals("")){
 					// Empty edit text
 					Toast.makeText(context, R.string.empty_team_name, Toast.LENGTH_LONG).show();
 					return;
+				}
+				else if(nbTeams > 3) {
+					AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+					alertDialog.setTitle(title.getText());
+					alertDialog.setMessage("You can't add more than 4 teams in a game.");
+					alertDialog.setPositiveButton("OK", null);
+					alertDialog.create();
+					alertDialog.show();
 				}
 				else {
 					addTeamToGame(s_autocompleteValue);
@@ -116,8 +126,17 @@ public class GameTeamsActivity extends ListActivity {
 			@Override
 			public void onClick(View v) {
 				// Start game
-				Log.d("Zizanie", "DEBUG : OnClickOnPlayButton");
+				int nbTeams = gameTeamsParseAdapter.getCount();
 				if(!gameId.isEmpty()) {
+					if(nbTeams < 2) {
+						AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+						alertDialog.setTitle(title.getText());
+						alertDialog.setMessage("You need to have at least 2 teams in the game if you want to play.");
+						alertDialog.setPositiveButton("OK", null);
+						alertDialog.create();
+						alertDialog.show();
+						return;
+					}
 					final Intent intent = new Intent(context, GameActivity.class);
 					intent.putExtra("GAME_ID", gameId);			
 					startActivity(intent);
