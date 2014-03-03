@@ -56,6 +56,7 @@ public class GamesFragment extends ListFragment {
 	private EditText inputValue;
 	private AutoCompleteTextView autocompleteValue;
 	private Button createButton;
+	private ListView gamesList;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -73,8 +74,8 @@ public class GamesFragment extends ListFragment {
 		progress = (ProgressBar) mainView.findViewById(R.id.progressBar);
 		refreshButton = (ImageButton) mainView.findViewById(R.id.refresh_bt);
     	inputValue = (EditText) mainView.findViewById(R.id.enter_game);
-
 		createButton = (Button) mainView.findViewById(R.id.create_game);
+		gamesList = (ListView) mainView.findViewById(android.R.id.list);
     	
     	// Load fragment data
     	gameParseAdapter = new GameParseAdapter(context, currentUser);
@@ -82,12 +83,14 @@ public class GamesFragment extends ListFragment {
 
 			@Override
 			public void onLoaded(List<ParseObject> arg0, Exception arg1) {
+				gamesList.setVisibility(View.VISIBLE);
 				progress.setVisibility(View.INVISIBLE);
 			}
 
 			@Override
 			public void onLoading() {
 				progress.setVisibility(View.VISIBLE);
+				gamesList.setVisibility(View.INVISIBLE);
 			}
 
     	});

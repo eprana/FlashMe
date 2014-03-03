@@ -20,6 +20,16 @@
             android:text="@string/my_profile"
             android:textColor="@color/white"
             android:textSize="@dimen/large_tx" />
+        
+        <ImageButton
+            android:id="@+id/refresh_bt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="14.5sp"
+            android:background="@null"
+            android:contentDescription="@string/refresh_bt"
+            android:focusable="false"
+            android:src="@drawable/refresh_bt" />
 	    
 	</LinearLayout>
 	
@@ -42,6 +52,7 @@
 
 	    <ProgressBar
 	        android:id="@+id/progressBar"
+	        android:layout_weight="1"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content" />
 		 	
@@ -85,7 +96,7 @@
 	        
 	        <ImageView 
 		        android:id="@+id/score_icon"
-				android:src="@drawable/ic_defeats"
+				android:src="@drawable/ic_bestscore"
 				android:contentDescription="@string/score_ic"
 				style="@style/stats_icon" />
 	        
@@ -152,7 +163,7 @@
 	        <ImageView 
 		        android:id="@+id/defeats_icon"
 		        android:layout_below="@+id/victories_value"
-				android:src="@drawable/ic_bestscore"
+				android:src="@drawable/ic_defeats"
 				android:contentDescription="@string/vics_ic"
 				style="@style/stats_icon" />
 	        

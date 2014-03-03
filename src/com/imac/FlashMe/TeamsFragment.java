@@ -42,7 +42,7 @@ public class TeamsFragment extends ListFragment {
 	private ImageButton refreshButton;
 	private EditText inputValue;
 	private Button createButton;
-	//private Button playButton;
+	private ListView teamsList;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -60,17 +60,20 @@ public class TeamsFragment extends ListFragment {
 		refreshButton = (ImageButton) mainView.findViewById(R.id.refresh_bt);
 		inputValue = (EditText) mainView.findViewById(R.id.enter_team);
 		createButton = (Button) mainView.findViewById(R.id.create_team);
+		teamsList = (ListView) mainView.findViewById(android.R.id.list);
     	
     	// Load fragment data
     	teamParseAdapter = new TeamParseAdapter(getActivity(), currentUser);
     	teamParseAdapter.addOnQueryLoadListener(new OnQueryLoadListener<ParseObject>() {
 			@Override
 			public void onLoaded(List<ParseObject> arg0, Exception arg1) {
+				teamsList.setVisibility(View.VISIBLE);
 				progress.setVisibility(View.INVISIBLE);
 			}
 			@Override
 			public void onLoading() {
 				progress.setVisibility(View.VISIBLE);
+				teamsList.setVisibility(View.INVISIBLE);
 			}
     	});
     	setListAdapter(teamParseAdapter);
@@ -147,6 +150,7 @@ public class TeamsFragment extends ListFragment {
 				}
 				else {
 					Toast.makeText(getActivity(), "Error : "+e.getMessage(), Toast.LENGTH_LONG).show();
+					Log.d(LOGTAG, e.getMessage());
 				}
 			}
 		});

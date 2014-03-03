@@ -28,6 +28,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,6 +53,7 @@ public class GameTeamsActivity extends ListActivity {
 	private static ProgressBar progress = null;
 	private ImageButton refreshButton;
 	private Button playButton;
+	private ListView gameTeamsList;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +86,7 @@ public class GameTeamsActivity extends ListActivity {
 		progress = (ProgressBar) this.findViewById(R.id.progressBar);
 		refreshButton = (ImageButton) this.findViewById(R.id.refresh_bt);
 		playButton = (Button) this.findViewById(R.id.play);
+		gameTeamsList = (ListView) this.findViewById(android.R.id.list);
 		
 		addButton.setOnClickListener(new OnClickListener() {
 			@Override
@@ -161,11 +164,13 @@ public class GameTeamsActivity extends ListActivity {
 				gameTeamsParseAdapter.addOnQueryLoadListener(new OnQueryLoadListener<ParseObject>() {
 					@Override
 					public void onLoaded(List<ParseObject> arg0, Exception arg1) {
-						progress.setVisibility(View.GONE);
+						gameTeamsList.setVisibility(View.VISIBLE);
+						progress.setVisibility(View.INVISIBLE);
 					}
 					@Override
 					public void onLoading() {
 						progress.setVisibility(View.VISIBLE);
+						gameTeamsList.setVisibility(View.VISIBLE);
 					}
 		    	});
 				setListAdapter(gameTeamsParseAdapter);

@@ -16,6 +16,7 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -23,6 +24,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,6 +48,7 @@ public class TeamPlayersActivity extends ListActivity {
 	private ArrayAdapter<String> playersAdapter;
 	private static ProgressBar progress = null;
 	private ImageButton refreshButton;
+	private ListView teamPlayersList;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +80,7 @@ public class TeamPlayersActivity extends ListActivity {
 		addButton = (Button) this.findViewById(R.id.add_player);
 		progress = (ProgressBar) this.findViewById(R.id.progressBar);
 		refreshButton = (ImageButton) this.findViewById(R.id.refresh_bt);
+		teamPlayersList = (ListView) this.findViewById(android.R.id.list);
 		
 		addButton.setOnClickListener(new OnClickListener() {
 			@Override
@@ -118,6 +122,11 @@ public class TeamPlayersActivity extends ListActivity {
 		teamQuery.getFirstInBackground(new GetCallback<ParseObject>() {
 			@Override
 			public void done(ParseObject team, ParseException e) {
+				if(e != null) {
+					Toast.makeText(context, "Error : "+e.getMessage(), Toast.LENGTH_SHORT).show();
+					Log.d(LOGTAG, "Get Parse Team : "+e.getMessage());
+					return;
+				}
 				teamPlayersParseAdapter = new TeamPlayersParseAdapter(context, currentUser, team);
 				title.setText(team.getString("name"));
 				boolean enable = true;
@@ -136,11 +145,13 @@ public class TeamPlayersActivity extends ListActivity {
 				teamPlayersParseAdapter.addOnQueryLoadListener(new OnQueryLoadListener<ParseObject>() {
 					@Override
 					public void onLoaded(List<ParseObject> arg0, Exception arg1) {
-						progress.setVisibility(View.GONE);
+						teamPlayersList.setVisibility(View.VISIBLE);
+						progress.setVisibility(View.INVISIBLE);
 					}
 					@Override
 					public void onLoading() {
 						progress.setVisibility(View.VISIBLE);
+						teamPlayersList.setVisibility(View.INVISIBLE);
 					}
 		    	});
 				setListAdapter(teamPlayersParseAdapter);
@@ -159,6 +170,7 @@ public class TeamPlayersActivity extends ListActivity {
 			public void done(final ParseObject team, ParseException e) {
 				if(e!=null){
 					Toast.makeText(context, "Error : "+e.getMessage(), Toast.LENGTH_SHORT).show();
+					Log.d(LOGTAG, "Get Parse Team : "+e.getMessage());
 					return;
 				}
 				// Parse Query
@@ -170,6 +182,7 @@ public class TeamPlayersActivity extends ListActivity {
 					public void done(ParseUser player, ParseException e) {
 						if(e!=null){
 							Toast.makeText(context, "Sorry, this player doesn't exist.", Toast.LENGTH_SHORT).show();
+							Log.d(LOGTAG, "Get Parse User to add : "+e.getMessage());
 							return;
 						}
 						team.getRelation("players").add(player);

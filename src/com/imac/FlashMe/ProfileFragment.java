@@ -97,57 +97,47 @@ public class ProfileFragment extends Fragment {
 	}
 	
 	public static void loadProfileData(final Context context) {
-		// Parse query for profile picture
-		ParseQuery<ParseUser> query = ParseUser.getQuery();
-		query.whereEqualTo("username", currentUser.getUsername());
-		query.getFirstInBackground(new GetCallback<ParseUser>() {
-			// Find current user
-			public void done(final ParseUser user, ParseException e) {
-			    if (e != null) {
-			    	Toast.makeText(context, "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
-			    	return;
-			    }
 
-			    totalScoreView.setText("TOTAL SCORE : "+ String.valueOf(user.getInt("totalScore")));
-			    bestScoreValue.setText(String.valueOf(user.getInt("bestScore")));
-				rankValue.setText(String.valueOf(user.getInt("rank")));
-				defeatsValue.setText(String.valueOf(user.getInt("defeats")));
-				victoriesValue.setText(String.valueOf(user.getInt("victories")));
-				
-		    	ParseFile avatarFile = (ParseFile) user.get("avatar");
-				avatarFile.getDataInBackground(new GetDataCallback() {
+	    totalScoreView.setText("TOTAL SCORE : "+ String.valueOf(currentUser.getInt("totalScore")));
+	    bestScoreValue.setText(String.valueOf(currentUser.getInt("bestScore")));
+		rankValue.setText(String.valueOf(currentUser.getInt("rank")));
+		defeatsValue.setText(String.valueOf(currentUser.getInt("defeats")));
+		victoriesValue.setText(String.valueOf(currentUser.getInt("victories")));
+		
+		// Get profile picture
+    	ParseFile avatarFile = (ParseFile) currentUser.get("avatar");
+		avatarFile.getDataInBackground(new GetDataCallback() {
+			public void done(byte[] data, ParseException e) {
+				if (e != null){
+					Toast.makeText(context, "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
+					return;
+				}
+				Bitmap avatarBitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+				// Setting the profile imageView
+				profilePictureView.setImageBitmap(avatarBitmap);
+			}
+		});
+		
+		// Get marker image
+    	ParseQuery<ParseObject> markerQuery = ParseQuery.getQuery("Marker");
+    	markerQuery.whereEqualTo("Id", currentUser.getInt("MarkerId"));
+    	markerQuery.getFirstInBackground(new GetCallback<ParseObject>() {
+			
+			@Override
+			public void done(ParseObject marker, ParseException e) {
+				ParseFile markerFile = (ParseFile) marker.getParseFile("image");
+		    	markerFile.getDataInBackground(new GetDataCallback() {
 					public void done(byte[] data, ParseException e) {
 						if (e != null){
 							Toast.makeText(context, "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
 							return;
 						}
-						Bitmap avatarBitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-						// Setting the profile imageView
-						profilePictureView.setImageBitmap(avatarBitmap);
-					}
-				});
-				
-		    	ParseQuery<ParseObject> markerQuery = ParseQuery.getQuery("Marker");
-		    	markerQuery.whereEqualTo("Id", user.getInt("MarkerId"));
-		    	markerQuery.getFirstInBackground(new GetCallback<ParseObject>() {
-					
-					@Override
-					public void done(ParseObject marker, ParseException e) {
-						ParseFile markerFile = (ParseFile) marker.getParseFile("image");
-				    	markerFile.getDataInBackground(new GetDataCallback() {
-							public void done(byte[] data, ParseException e) {
-								if (e != null){
-									Toast.makeText(context, "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
-									return;
-								}
-								Bitmap markerBitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-								// Setting the marker imageView
-								profileMarkerView.setImageBitmap(markerBitmap);
-								progress.setVisibility(View.GONE);
-								profileMarkerView.setVisibility(View.VISIBLE);
-								profilePictureView.setVisibility(View.VISIBLE);
-							}
-						});
+						Bitmap markerBitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+						// Setting the marker imageView
+						profileMarkerView.setImageBitmap(markerBitmap);
+						progress.setVisibility(View.GONE);
+						profileMarkerView.setVisibility(View.VISIBLE);
+						profilePictureView.setVisibility(View.VISIBLE);
 					}
 				});
 			}
