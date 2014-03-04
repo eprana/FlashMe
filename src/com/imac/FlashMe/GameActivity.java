@@ -302,6 +302,20 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
     }
 
 	public void updateGauge(final int markerId, final String playerId) {
+		
+//		Firebase munitionsRef = new Firebase("https://flashme.firebaseio.com/user/"+currentUser.getObjectId()+"/munitions");
+//		munitionsRef.addValueEventListener(new ValueEventListener() {
+//		    @Override
+//		    public void onDataChange(DataSnapshot snapshot) {
+//		        Log.d(LOGTAG, "NB MUNITIONS : "+snapshot.getValue());
+//		    }
+//
+//			@Override
+//			public void onCancelled(FirebaseError e) {
+//				Log.d(LOGTAG, e.getMessage());
+//			}
+//		});
+		
 		Runnable runnable = new Runnable() {
 			@Override
 			public void run() {
@@ -309,13 +323,18 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 					@Override
 					public void run() {
 						Log.d(LOGTAG, "Marker " + markerId + " detected from " + playerId);
+						float scale = context.getResources().getDisplayMetrics().density;
+						int maxValue = (int) (300 * scale + 0.5f);
+						int incrementValue = maxValue/10;
 						// Flashing same marker
 						if(lastMarkerId == markerId) {
 							// Fill the gauge
-							if(gauge.getLayoutParams().height < 580){
-								gauge.getLayoutParams().height += 2;
+							if(gauge.getLayoutParams().height < maxValue){
+								gauge.getLayoutParams().height += incrementValue;
+								setMunitions(-1);
 							}
 							else {
+								// Gauge full
 								gauge.getLayoutParams().height = 0;
 								setPoints(currentUser.getObjectId(), 10);
 								setPoints(playerId, -10);
@@ -332,6 +351,31 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 			}
 		};
 		new Thread(runnable).start();
+	}
+	
+	private void setMunitions(final int nbMunitions) {
+		Firebase munitionsRef = new Firebase("https://flashme.firebaseio.com/user/"+currentUser.getObjectId()+"/munitions");
+		munitionsRef.runTransaction(new Transaction.Handler() {
+			@Override
+		    public Transaction.Result doTransaction(MutableData currentData) {
+		        int currentMunitions = currentData.getValue(Integer.class);
+		        currentData.setValue(currentMunitions + nbMunitions);
+		        return Transaction.success(currentData);
+		    }
+
+		    @Override
+		    public void onComplete(FirebaseError e, boolean committed, DataSnapshot currentData) {
+		        if (e != null) {
+		            Log.d(LOGTAG, e.getMessage());
+		        } else {
+		            if (!committed) {
+		            	Log.d(LOGTAG, "Transaction not comitted");
+		            } else {
+		            	Log.d(LOGTAG, "Transaction succeeded");
+		            }
+		        }
+		    }
+		});
 	}
 	
 	private void setPoints(String playerId, final int points) {
