@@ -61,7 +61,7 @@ public class ProfileFragment extends Fragment {
 		rankValue = (TextView) mainView.findViewById(R.id.rank_value);
 		defeatsValue = (TextView) mainView.findViewById(R.id.defeats_value);
 		victoriesValue = (TextView) mainView.findViewById(R.id.victories_value);
-				
+
 		// Load fragment data
 		LoadProfile lp = new LoadProfile(context);
     	lp.execute();
