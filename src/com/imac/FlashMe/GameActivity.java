@@ -15,6 +15,9 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.MutableData;
 import com.firebase.client.Transaction;
 import com.firebase.client.ValueEventListener;
+import com.firebase.simplelogin.SimpleLogin;
+import com.firebase.simplelogin.SimpleLoginAuthenticatedHandler;
+import com.firebase.simplelogin.User;
 import com.imac.VuforiaApp.SampleApplicationControl;
 import com.imac.VuforiaApp.SampleApplicationException;
 import com.imac.VuforiaApp.SampleApplicationSession;
@@ -196,6 +199,21 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		alertDialog.show();	
 	}
 	private void initFirebaseValues() {
+		
+		// Create simple login
+		Firebase appRef = new Firebase("https://flashme.firebaseio.com/");
+		SimpleLogin authClient = new SimpleLogin(appRef);
+		authClient.loginAnonymously(new SimpleLoginAuthenticatedHandler() {
+			@Override
+			public void authenticated(com.firebase.simplelogin.enums.Error e, User u) {
+			    if(e != null) {
+				  Log.d(LOGTAG, "Error while logging in");
+			    }
+			    else {
+			    	Log.d(LOGTAG, "User logged in !");
+			    }				
+			}
+		});
 		
 		// Init user values
 		Firebase userRef = new Firebase("https://flashme.firebaseio.com/user/"+currentUser.getObjectId());
