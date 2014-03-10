@@ -1,20 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-        
-    <LinearLayout 
-        android:id="@+id/activity_header"
-	    style="@style/header" >
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
 
-        <ImageButton
-            android:id="@+id/back_bt"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@null"
-            android:contentDescription="@string/back_bt"
-            android:focusable="false"
-            android:src="@drawable/back_bt" />
+    <LinearLayout
+        android:id="@+id/activity_header"
+        style="@style/header" >
 
         <TextView
             android:id="@+id/top_line_light"
@@ -26,77 +18,74 @@
             android:text="@string/edit_profile"
             android:textColor="@color/white"
             android:textSize="@dimen/large_tx" />
-	    
-	</LinearLayout>
+    </LinearLayout>
 
-    <RelativeLayout
-        android:id="@+id/wrapper"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true" >
+        android:layout_height="match_parent" >
 
-        <ImageView
-            android:id="@+id/profile_picture"
-            android:layout_width="@dimen/button_wd"
-            android:layout_height="@dimen/button_wd"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="@dimen/medium_mg"
-            android:contentDescription="@string/profile_picture"
-            android:scaleType="centerCrop" />
-
-        <Button
-            android:id="@+id/change_pic"
-            style="@style/buttonLightBlue"
-            android:layout_width="@dimen/button_wd"
-            android:layout_below="@id/profile_picture"
-            android:layout_centerHorizontal="true"
-            android:background="@drawable/light_button"
-            android:text="@string/choose_pic" />
-
-        <TextView
-            android:id="@+id/or"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/wrapper"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/change_pic"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/small_mg"
-            android:text="@string/or"
-            android:textColor="@color/light_blue" />
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:orientation="vertical" >
 
-        <Button
-            android:id="@+id/take_new_pic"
-            style="@style/buttonLightBlue"
-            android:layout_width="@dimen/button_wd"
-            android:layout_below="@id/or"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/small_mg"
-            android:background="@drawable/light_button"
-            android:text="@string/take_pic" />
+            <ImageView
+                android:id="@+id/profile_picture"
+                android:layout_width="@dimen/button_wd"
+                android:layout_height="@dimen/button_wd"
+                android:layout_margin="@dimen/medium_mg"
+                android:contentDescription="@string/profile_picture"
+                android:scaleType="centerCrop" />
 
-        <EditText
-            android:id="@+id/new_mail"
-            style="@style/gray_edit_text"
-            android:layout_below="@+id/take_new_pic"
-            android:layout_marginTop="@dimen/medium_mg"
-            android:hint="@string/new_mail"
-            android:inputType="text" />
+            <Button
+                android:id="@+id/change_pic"
+                style="@style/buttonLightBlue"
+                android:layout_width="@dimen/button_wd"
+                android:background="@drawable/light_button"
+                android:text="@string/choose_pic" />
 
-        <EditText
-            android:id="@+id/new_pass"
-            style="@style/gray_edit_text"
-            android:layout_below="@+id/new_mail"
-            android:layout_marginTop="@dimen/small_mg"
-            android:hint="@string/new_pass"
-            android:inputType="text" />
+            <TextView
+                android:id="@+id/or"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/small_mg"
+                android:text="@string/or"
+                android:textColor="@color/light_blue" />
 
-        <Button
-            android:id="@+id/save_changes"
-            style="@style/buttonDarkBlue"
-            android:layout_width="@dimen/button_wd"
-            android:layout_below="@+id/new_pass"
-            android:layout_marginTop="@dimen/medium_mg"
-            android:background="@drawable/dark_button"
-            android:text="@string/save_changes" />
-    </RelativeLayout>
-		 
-</RelativeLayout>
+            <Button
+                android:id="@+id/take_new_pic"
+                style="@style/buttonLightBlue"
+                android:layout_width="@dimen/button_wd"
+                android:layout_marginTop="@dimen/small_mg"
+                android:background="@drawable/light_button"
+                android:text="@string/take_pic" />
+
+            <EditText
+                android:id="@+id/new_mail"
+                style="@style/gray_edit_text"
+                android:layout_marginTop="@dimen/medium_mg"
+                android:hint="@string/new_mail"
+                android:inputType="text" />
+
+            <EditText
+                android:id="@+id/new_pass"
+                style="@style/gray_edit_text"
+                android:layout_marginTop="@dimen/small_mg"
+                android:hint="@string/new_pass"
+                android:inputType="text" />
+
+            <Button
+                android:id="@+id/save_changes"
+                style="@style/buttonDarkBlue"
+                android:layout_width="@dimen/button_wd"
+                android:layout_marginTop="@dimen/medium_mg"
+                android:background="@drawable/dark_button"
+                android:text="@string/save_changes" />
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

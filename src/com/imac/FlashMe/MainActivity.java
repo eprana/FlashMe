@@ -1,11 +1,14 @@
 package com.imac.FlashMe;
 
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Rect;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -17,7 +20,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.parse.LogInCallback;
 import com.parse.Parse;
@@ -25,6 +27,7 @@ import com.parse.ParseAnalytics;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.imac.FlashMe.R;
+import com.imac.VuforiaApp.SampleApplicationSession;
 
 public class MainActivity extends Activity {
 
@@ -61,11 +64,11 @@ public class MainActivity extends Activity {
 		 // Initialize Parse
 	 	Parse.initialize(this, "ysJVmuI4oJDEsyF7YOcQG12WVkLzwQlLrqzt15Fg", "YTTLp7GRoHYEMzLXa58T2zB7mcTTPWJuB19JcGnJ");
 	 	ParseAnalytics.trackAppOpened(getIntent());
-	 	
-//	 	ParseUser.logInInBackground("xopi", "xopi", new LogInCallback() {
+
+//	 	ParseUser.logInInBackground("Xopi", "xopi", new LogInCallback() {
 //			public void done(ParseUser user, ParseException e) {
 //				Intent intent = new Intent(MainActivity.this, ContentActivity.class);
-//				intent.putExtra(EXTRA_LOGIN, "xopi");
+//				intent.putExtra(EXTRA_LOGIN, "Xopi");
 //				intent.putExtra(EXTRA_PASSWORD, "xopi");
 //				startActivityForResult(intent, LOGIN);
 //			}
@@ -80,6 +83,17 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				
+				ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+				NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+				if(!(activeNetworkInfo != null && activeNetworkInfo.isConnected())) {
+					AlertDialog.Builder noInternetDialog = new AlertDialog.Builder(context);
+					noInternetDialog.setTitle("Ooops");
+					noInternetDialog.setMessage("You need internet access to use Flash Me...");
+					noInternetDialog.setPositiveButton("OK", null);
+					noInternetDialog.create();
+					noInternetDialog.show();
+					return;
+				}
 				// Testing the data entered in the fields
 				final String s_username = username.getText().toString();
 				final String s_password = password.getText().toString();

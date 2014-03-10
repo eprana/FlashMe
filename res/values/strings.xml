@@ -25,11 +25,14 @@
     <string name="title_activity_sign_up">Sign up</string>
     <string name="title_activity_content">Flash me</string>
     <string name="title_activity_game">Flash me</string>
+    <string name="title_activity_players">Flash me</string>
+    <string name="title_activity_teams">Flash me</string>
     <string name="title_edit_activity">Edit profile</string>
 	
 	<!-- sign up & log in -->
     <string name="mail">E-mail</string>
     <string name="login_or_pass_empty">Ooops ! You must complete all the entries.</string>
+    <string name="no_internet_access">Ooops ! You need to have an internet access to log in.</string>    
     <string name="wrong_username_or_pass">Seems like you haven\'t created an account yet.</string>
     <string name="wrong_mail_pattern">Ooops! Invalid e-mail.</string>
     <string name="back_bt">back</string>
@@ -96,11 +99,13 @@
     
 	<!-- my teams -->
 	<string name="my_teams">My teams</string>
+	<string name="team_players"></string>
 	<string name="enter_team">New team name</string>
 	<string name="enter_player_auto">Player name</string>
 	<string name="empty_team_name">You must enter a valid team name.</string>
 	<string name="empty_player_name">You must enter a valid player name.</string>
-	<string name="create">CREATE</string>
+	<string name="create">Create</string>
+	<string name="add">Add</string>
 	<string name="player_in_team_pic">player_picture</string>
 	<string name="delete_player_bt">Delete player</string>
 	<string name="delete">delete</string>
@@ -115,6 +120,7 @@
 	
 	<!-- my games -->
 	<string name="my_games">My games</string>
+	<string name="game_teams">Game teams</string>
 	<string name="enter_game">New game name</string>
 	<string name="enter_team_auto">Team name</string>
 	<string name="empty_game_name">You must enter a valid game name.</string>

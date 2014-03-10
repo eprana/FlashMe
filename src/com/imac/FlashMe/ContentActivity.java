@@ -67,7 +67,6 @@ public class ContentActivity extends Activity implements
 	@Override
     public void onCreate(Bundle savedInstanceState) {
 		
-		Log.d(LOGTAG, "onCreate");
         super.onCreate(savedInstanceState);
         
 	 	setContentView(R.layout.activity_content);
@@ -96,6 +95,7 @@ public class ContentActivity extends Activity implements
 	 	//State 0:offline, 1:online
 	 	currentUser.put("state", 1);
 	 	currentUser.saveInBackground();
+	 	
 	}
 	
 	@Override

@@ -47,7 +47,6 @@ public class EditActivity extends Activity {
 	private EditText updateMail;
 	private EditText updatePass;
 	private Button saveChanges;
-	private ImageButton backButton;
 	private String s_password;
 	private String s_mail;
 	private View alertDialogView;
@@ -69,7 +68,6 @@ public class EditActivity extends Activity {
 		updateMail = (EditText) findViewById(R.id.new_mail);
 		updatePass = (EditText) findViewById(R.id.new_pass);
 		saveChanges = (Button) findViewById(R.id.save_changes);
-		backButton = (ImageButton) findViewById(R.id.back_bt);
 		layoutInflater = getLayoutInflater();
 		avatarParseFile = null;
 		
@@ -207,15 +205,6 @@ public class EditActivity extends Activity {
 				
 			}
 		});
-		
-		backButton.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				finish();
-			}
-		});
-		
 	}	
 	
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {  

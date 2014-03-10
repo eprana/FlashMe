@@ -39,7 +39,7 @@
    	<ImageView
         android:id="@+id/gauge"
         android:layout_width="20dp"
-        android:layout_height="300dp"
+        android:layout_height="310dp"
         android:layout_marginLeft="25dp"
         android:contentDescription="@string/gauge"
         android:src="@drawable/white_border_rectangle"
