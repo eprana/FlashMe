@@ -28,8 +28,8 @@ import android.widget.Toast;
 
 public class SendMailToUser {
 	
-    private final static String applimail = "flashme.app@gmail.com";
-    private final static String applipass = "flashmeapp";
+    private final static String applimail = "flashme.ifyoucan@gmail.com";
+    private final static String applipass = "flashmetamere";
     private Context context;
     private int exception = 0;
     private View alertDialogView;

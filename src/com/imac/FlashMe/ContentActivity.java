@@ -1,8 +1,14 @@
 package com.imac.FlashMe;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.parse.DeleteCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.imac.FlashMe.R;
@@ -17,15 +23,21 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 
 public class ContentActivity extends Activity implements 
@@ -33,6 +45,8 @@ public class ContentActivity extends Activity implements
 	ViewPager.OnPageChangeListener {
 
 	private static final String LOGTAG = "ContentActivity";
+	private final int EDIT_PROFILE = 3000;
+	private boolean firstLoad = true;
 	
 	private class TabAction { public int icon; public int icon_in; public String text; 
 		public TabAction(int icon, int icon_in, String text) {
@@ -95,8 +109,9 @@ public class ContentActivity extends Activity implements
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
 	        case R.id.action_edit_profile:
+	        	firstLoad = false;
 	        	Intent intent = new Intent(getApplicationContext(), EditActivity.class);
-	        	startActivity(intent);
+	        	startActivityForResult(intent, EDIT_PROFILE);
 	            return true;
 	        case R.id.action_send_marker:
 	        	// Create an alert box
@@ -156,6 +171,11 @@ public class ContentActivity extends Activity implements
 		super.onResume();
 	 	currentUser.put("state", 1);
 	 	currentUser.saveInBackground();
+	 	if(!firstLoad){
+		 	finish();
+		 	Intent intent = new Intent(context, ContentActivity.class);
+		 	startActivity(intent);
+	 	}
 	}
 	
 	@Override
@@ -187,17 +207,22 @@ public class ContentActivity extends Activity implements
 		
 		@Override
 		public Fragment getItem(int index) {
+			Fragment fragment;
 			switch(index) {
 			case 0:
-				return new ProfileFragment();
+				fragment = new ProfileFragment();
+				return fragment;
 			case 1:
-				return new TeamsFragment();
+				fragment = new TeamsFragment();
+				return fragment;
 			case 2:
-				return new GamesFragment();
+				fragment = new GamesFragment();
+				//map.put(index, fragment);
+				return fragment;
 			}
 			return null;
 		}
-
+		
 		@Override
 		public int getCount() {
 			return 3;
