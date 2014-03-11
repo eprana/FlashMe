@@ -103,6 +103,9 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 		super.onCreate(savedInstanceState);
 		Log.d("Zizanie", "DEBUG : Create GameActivity");
+		
+		mTextures = new Vector<Texture>();
+		loadTextures();
 
 		// Get game name passed in extras
 		Intent intent = getIntent();
@@ -168,6 +171,13 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		//loadTextures();
 
 	}
+	
+	private void loadTextures() {
+        mTextures.add(Texture.loadTextureFromApk("Texture/purple_logo.png",getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("Texture/purple_logo.png",getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("Texture/purple_logo.png",getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("Texture/purple_logo.png",getAssets()));
+    }
 
 	@Override
 	protected void onPause() {
@@ -314,8 +324,8 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
             Log.e(LOGTAG, e.getString());
         }
         super.onDestroy();
-//        mTextures.clear();
-//        mTextures = null;
+        mTextures.clear();
+        mTextures = null;
         System.gc();
     }
 
@@ -448,9 +458,8 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		mGlView.init(translucent, depthSize, stencilSize);
 
 		mRenderer = new GameRenderer(this, vuforiaAppSession);
-		//mRenderer.setTextures(mTextures);
+		mRenderer.setTextures(mTextures);
 		mGlView.setRenderer(mRenderer);
-
 	}
 
 

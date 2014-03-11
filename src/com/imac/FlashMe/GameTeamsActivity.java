@@ -128,15 +128,15 @@ public class GameTeamsActivity extends ListActivity {
 				// Start game
 				int nbTeams = gameTeamsParseAdapter.getCount();
 				if(!gameId.isEmpty()) {
-					if(nbTeams < 2) {
-						AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-						alertDialog.setTitle(title.getText());
-						alertDialog.setMessage("You need to have at least 2 teams in the game if you want to play.");
-						alertDialog.setPositiveButton("OK", null);
-						alertDialog.create();
-						alertDialog.show();
-						return;
-					}
+//					if(nbTeams < 2) {
+//						AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+//						alertDialog.setTitle(title.getText());
+//						alertDialog.setMessage("You need to have at least 2 teams in the game if you want to play.");
+//						alertDialog.setPositiveButton("OK", null);
+//						alertDialog.create();
+//						alertDialog.show();
+//						return;
+//					}
 					final Intent intent = new Intent(context, GameActivity.class);
 					intent.putExtra("GAME_ID", gameId);			
 					startActivity(intent);
