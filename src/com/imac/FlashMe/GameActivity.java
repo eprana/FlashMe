@@ -42,6 +42,7 @@ import com.qualcomm.vuforia.Vuforia;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -69,6 +70,9 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	private String gameName;
 	private boolean isCreator;
 	private int lastMarkerId;
+	
+	private Firebase appRef;
+	private float nbPlayersReady;
 
 	private final Context context = this;
 	private LayoutInflater inflater;
@@ -158,7 +162,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 								}
 							});
 						}
-						initFirebaseValues();
+						createFirebaseUser();
 					}
 				});
 			}
@@ -198,32 +202,20 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		alertDialog.create();
 		alertDialog.show();	
 	}
-	private void initFirebaseValues() {
+	private void createFirebaseUser() {
+
+		appRef = new Firebase("https://flashme.firebaseio.com/");
 		
-		// Create simple login
-		Firebase appRef = new Firebase("https://flashme.firebaseio.com/");
-		SimpleLogin authClient = new SimpleLogin(appRef);
-		authClient.loginAnonymously(new SimpleLoginAuthenticatedHandler() {
-			@Override
-			public void authenticated(com.firebase.simplelogin.enums.Error e, User u) {
-			    if(e != null) {
-				  Log.d(LOGTAG, "Error while logging in");
-			    }
-			    else {
-			    	Log.d(LOGTAG, "User logged in !");
-			    }				
-			}
-		});
-		
-		// Init user values
+		// Create user
 		Firebase userRef = new Firebase("https://flashme.firebaseio.com/user/"+currentUser.getObjectId());
-		Map<String, Object> toSet = new HashMap<String, Object>();
-		toSet.put("life", 0);
-		toSet.put("munitions", 500);
-		userRef.setValue(toSet);
+		Map<String, Object> userData = new HashMap<String, Object>();
+		userData.put("life", 0);
+		userData.put("munitions", 500);
+		userRef.setValue(userData);
 		
 		life.setText("0");
         munitions.setText("500");
+        
 		// Add listener
 		userRef.addValueEventListener(new ValueEventListener() {
 
@@ -247,26 +239,60 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 			
 		});
 		
+		// Create connection
+		final Firebase presenceRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/presence");
+		final Firebase connectedRef = new Firebase("https://flashme.firebaseio.com/.info/connected");
+		connectedRef.addValueEventListener(new ValueEventListener() {
+		    @Override
+		    public void onDataChange(DataSnapshot snapshot) {
+		        boolean isConnected = snapshot.getValue(Boolean.class);
+		        if (isConnected) {
+		            Firebase presence = presenceRef.push();
+		            presence.setValue(Boolean.TRUE);
+		            presence.onDisconnect().removeValue();
+		        }
+		    }
+
+		    @Override
+		    public void onCancelled(FirebaseError e) {
+		        Log.d(LOGTAG, e.getMessage()+" : Listener was cancelled at .info/connected");
+		    }
+		});
+		
 		waitingForPlayers();
 	}
 
-	private void waitingForPlayers() {
-		AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-		alertDialog.setTitle(gameName);
-		alertDialog.setMessage("Waiting for other players to be ready...");
-		alertDialog.setPositiveButton("START", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int id) {
+	private void updateNbPlayers() {
+		final Firebase presenceRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/presence");
+		presenceRef.addValueEventListener(new ValueEventListener() {
 
-				// Init Vuforia
-				vuforiaAppSession = new SampleApplicationSession(GameActivity.this);
-				startLoadingAnimation();
-				vuforiaAppSession.initAR(GameActivity.this, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-				initApplicationAR();
-				initTimer();
+			@Override
+			public void onCancelled(FirebaseError e) {
+				Log.d(LOGTAG, e.getMessage());
 			}
+
+			@Override
+			public void onDataChange(DataSnapshot snapshot) {
+				Log.d(LOGTAG, "NB PLAYERS : "+snapshot.getChildrenCount());
+				nbPlayersReady = snapshot.getChildrenCount();
+			}
+			
 		});
-		alertDialog.create();
-		alertDialog.show();
+	}
+	private void waitingForPlayers() {
+		ProgressDialog progressDialog = ProgressDialog.show(context, gameName, "Waiting for other players to be ready...", true);
+		progressDialog.show();
+		updateNbPlayers();
+//		while(nbPlayersReady != 2/*markerId.size()*/){
+//			Log.d(LOGTAG, "Waiting for players");
+//		}
+		progressDialog.dismiss();
+		// Init Vuforia
+		vuforiaAppSession = new SampleApplicationSession(GameActivity.this);
+		startLoadingAnimation();
+		vuforiaAppSession.initAR(GameActivity.this, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		initApplicationAR();
+		initTimer();
 	}
 
 	private void initTimer() {
