@@ -6,7 +6,8 @@ import java.util.Vector;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import com.imac.RenderingObjects.PurpleLogoObject;
+import com.imac.RenderingObjects.LogoObject;
+import com.imac.RenderingObjects.PictoObject;
 import com.imac.VuforiaApp.SampleApplicationSession;
 import com.imac.VuforiaApp.utils.CubeShaders;
 import com.imac.VuforiaApp.utils.SampleUtils;
@@ -46,8 +47,10 @@ public class GameRenderer implements GLSurfaceView.Renderer {
 	
 	// Constants:
     static private float logoScale = 25.0f;
+    static private float logoRotate = 25.0f;
 	
-	private PurpleLogoObject logoObject = new PurpleLogoObject();
+	private LogoObject logoObject = new LogoObject();
+    private PictoObject pictoObject = new PictoObject();
     
     public GameRenderer(GameActivity activity, SampleApplicationSession session) {
             mActivity = activity;
@@ -114,6 +117,8 @@ public class GameRenderer implements GLSurfaceView.Renderer {
     }
     
 	void renderFrame() {
+		
+		logoRotate += 2;
 	
 	    // Clear color and depth buffer
 		GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
@@ -173,35 +178,35 @@ public class GameRenderer implements GLSurfaceView.Renderer {
             
             switch (marker.getMarkerId())
             {
-                case 0:
-                    vertices = logoObject.getVertices();
-                    normals = logoObject.getNormals();
-                    texCoords = logoObject.getTexCoords();
-                    numIndices = logoObject.getNumObjectIndex();
-                    numVertices = logoObject.getNumObjectVertex();
-                    break;
-//                case 1:
-//                    vertices = cObject.getVertices();
-//                    normals = cObject.getNormals();
-//                    indices = cObject.getIndices();
-//                    texCoords = cObject.getTexCoords();
-//                    numIndices = cObject.getNumObjectIndex();
-//                    break;
-//                case 2:
-//                    vertices = aObject.getVertices();
-//                    normals = aObject.getNormals();
-//                    indices = aObject.getIndices();
-//                    texCoords = aObject.getTexCoords();
-//                    numIndices = aObject.getNumObjectIndex();
-//                    break;
-                default:
-                    vertices = logoObject.getVertices();
-                    normals = logoObject.getNormals();
-                    texCoords = logoObject.getTexCoords();
-                    numIndices = logoObject.getNumObjectIndex();
-                    numVertices = logoObject.getNumObjectVertex();
-                    break;
-            }
+            case 0: // Death
+                vertices = pictoObject.getVertices();
+                normals = pictoObject.getNormals();
+                texCoords = pictoObject.getTexCoords();
+                numIndices = pictoObject.getNumObjectIndex();
+                numVertices = pictoObject.getNumObjectVertex();
+                break;
+            case 1: // Weapon
+                vertices = pictoObject.getVertices();
+                normals = pictoObject.getNormals();
+                texCoords = pictoObject.getTexCoords();
+                numIndices = pictoObject.getNumObjectIndex();
+                numVertices = pictoObject.getNumObjectVertex();
+                break;
+            case 2: 
+                vertices = logoObject.getVertices();
+                normals = logoObject.getNormals();
+                texCoords = logoObject.getTexCoords();
+                numIndices = logoObject.getNumObjectIndex();
+                numVertices = logoObject.getNumObjectVertex();
+                break;
+            default:
+                vertices = logoObject.getVertices();
+                normals = logoObject.getNormals();
+                texCoords = logoObject.getTexCoords();
+                numIndices = logoObject.getNumObjectIndex();
+                numVertices = logoObject.getNumObjectVertex();
+                break;
+        }
 			
 			float[] modelViewProjection = new float[16];
             
@@ -211,6 +216,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
             Matrix.translateM(modelViewMatrix, 0, 0.f,
                 0.f, 0.f);
             Matrix.scaleM(modelViewMatrix, 0, logoScale, logoScale, logoScale);
+            Matrix.rotateM(modelViewMatrix, 0, logoRotate, 0.f, 1.0f, 0.f);
             Matrix.multiplyMM(modelViewProjection, 0, vuforiaAppSession
                 .getProjectionMatrix().getData(), 0, modelViewMatrix, 0);
 				
