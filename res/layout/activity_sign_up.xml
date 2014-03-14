@@ -70,6 +70,7 @@
 			    android:layout_marginTop="@dimen/medium_mg"
 			    android:hint="@string/username"
 		  	    android:inputType="text"
+		  	    android:maxLength="8"
 		  	    style="@style/gray_edit_text" />
 		   	
 		   	<EditText
@@ -85,6 +86,7 @@
 			    android:layout_marginBottom="@dimen/verysmall_mg"
 			    android:hint="@string/password"
 			    android:inputType="textPassword"
+			    android:maxLength="8"
 			    style="@style/gray_edit_text" />
 			
 			<Button

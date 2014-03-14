@@ -151,6 +151,18 @@ public class SignUpActivity extends Activity {
 					return;
 				}
 				
+				// If the username is too short (4 to 8 characters)
+				if(s_username.length() < 4){
+					Toast.makeText(context, R.string.login_too_short, Toast.LENGTH_SHORT).show();
+					return;
+				}
+				
+				// If the password is too short or too long (4 to 8)
+				if(s_password.length() < 4){
+					Toast.makeText(context, R.string.password_too_short, Toast.LENGTH_SHORT).show();
+					return;
+				}
+				
 				// If the e-mail is invalid
       	        // Declaring pattern and matcher we need to compare
 				String regExpn =
