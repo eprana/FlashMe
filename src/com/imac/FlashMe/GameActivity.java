@@ -107,6 +107,9 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 		super.onCreate(savedInstanceState);
 		Log.d("Zizanie", "DEBUG : Create GameActivity");
+		
+		mTextures = new Vector<Texture>();
+		loadTextures();
 
 		// Get game name passed in extras
 		Intent intent = getIntent();
@@ -168,10 +171,24 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 			}
 		});
 
-		//mTextures = new Vector<Texture>();
-		//loadTextures();
-
 	}
+	
+	private void loadTextures() {
+		mTextures.add(Texture.loadTextureFromApk("Texture/death.png",getAssets()));
+		mTextures.add(Texture.loadTextureFromApk("Texture/weapon.png",getAssets()));
+		mTextures.add(Texture.loadTextureFromApk("Texture/pink_logo.png",getAssets()));
+		mTextures.add(Texture.loadTextureFromApk("Texture/life.png",getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("Texture/orange_logo.png",getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("Texture/green_logo.png",getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("Texture/cyan_logo.png",getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("Texture/purple_logo.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("Texture/red_logo.png",getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("Texture/blue_logo.png",getAssets()));
+    	mTextures.add(Texture.loadTextureFromApk("Texture/black_logo.png",getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("Texture/white_logo.png",getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("Texture/grey_logo.png",getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("Texture/yellow_logo.png",getAssets()));
+    }
 
 	@Override
 	protected void onPause() {
@@ -202,9 +219,25 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		alertDialog.create();
 		alertDialog.show();	
 	}
+	
 	private void createFirebaseUser() {
 
 		appRef = new Firebase("https://flashme.firebaseio.com/");
+				
+		
+		SimpleLogin authClient = new SimpleLogin(appRef);
+		authClient.loginAnonymously(new SimpleLoginAuthenticatedHandler() {
+			@Override
+			public void authenticated(com.firebase.simplelogin.enums.Error e, User u) {
+			    if(e != null) {
+				  Log.d(LOGTAG, "Error while logging in");
+			    }
+			    else {
+			    	Log.d(LOGTAG, "User logged in !");
+			    }				
+			}
+		});
+		
 		
 		// Create user
 		Firebase userRef = new Firebase("https://flashme.firebaseio.com/user/"+currentUser.getObjectId());
@@ -287,6 +320,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 //			Log.d(LOGTAG, "Waiting for players");
 //		}
 		progressDialog.dismiss();
+		
 		// Init Vuforia
 		vuforiaAppSession = new SampleApplicationSession(GameActivity.this);
 		startLoadingAnimation();
@@ -340,8 +374,8 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
             Log.e(LOGTAG, e.getString());
         }
         super.onDestroy();
-//        mTextures.clear();
-//        mTextures = null;
+        mTextures.clear();
+        mTextures = null;
         System.gc();
     }
 
@@ -474,9 +508,8 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		mGlView.init(translucent, depthSize, stencilSize);
 
 		mRenderer = new GameRenderer(this, vuforiaAppSession);
-		//mRenderer.setTextures(mTextures);
+		mRenderer.setTextures(mTextures);
 		mGlView.setRenderer(mRenderer);
-
 	}
 
 
