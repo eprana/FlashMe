@@ -195,35 +195,22 @@ public class EditActivity extends Activity {
 				}
 
 				//Sending alert & Changing page
-      	   		// Create an alert box
-				AlertDialog.Builder adb = new AlertDialog.Builder(context);
-				MessageAlert msg_a;
-				
-				if (alertDialogView == null) {
-					msg_a = new MessageAlert();
-					alertDialogView = layoutInflater.inflate(R.layout.alert_dialog, null);
-					msg_a.msg = (TextView)alertDialogView.findViewById(R.id.text_alert);
-					alertDialogView.setTag(msg_a);
-				} else {
-					msg_a = (MessageAlert) alertDialogView.getTag();
-	            	ViewGroup adbParent = (ViewGroup) alertDialogView.getParent();
-					adbParent.removeView(alertDialogView);
-				}
-				
-				// Choosing the type of message alert
-				msg_a.msg.setText(context.getResources().getString(R.string.changes_saved));				
-				
+				// Create an alert box
+	        	View alertDialogView = null;
+				AlertDialog.Builder changesSaved = new AlertDialog.Builder(context);
+
 				// Filling the alert box
-				adb.setView(alertDialogView);
-				adb.setTitle("Success !");
-				adb.setPositiveButton("BACK TO PROFILE", new DialogInterface.OnClickListener() {
+				changesSaved.setView(alertDialogView);
+				changesSaved.setTitle("Success !");
+				changesSaved.setMessage(context.getResources().getString(R.string.changes_saved));
+				changesSaved.setPositiveButton("BACK TO PROFILE", new DialogInterface.OnClickListener() {
 		            public void onClick(DialogInterface dialog, int which) {
 		            	finish();
 		        } });
-				
+								
 				// Showing the alert box
-		        adb.create();
-				adb.show();
+				changesSaved.create();
+				changesSaved.show();
 				
 			}
 		});

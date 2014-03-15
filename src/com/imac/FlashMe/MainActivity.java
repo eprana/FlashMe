@@ -111,39 +111,22 @@ public class MainActivity extends Activity {
 						} else {
 														
 							// Login failed, display alert box
-							AlertDialog.Builder adb = new AlertDialog.Builder(context);
-							MessageAlert msg_a;
-							
-							if (alertDialogView == null) {
-								msg_a = new MessageAlert();
-								alertDialogView = inflater.inflate(R.layout.alert_dialog, null);
-								msg_a.msg = (TextView)alertDialogView.findViewById(R.id.text_alert);
-								alertDialogView.setTag(msg_a);
-							} else {
-								msg_a = (MessageAlert) alertDialogView.getTag();	
-							}
+							AlertDialog.Builder loginFailed = new AlertDialog.Builder(context);
 
-							// Choosing the type of message alert
-							msg_a.msg.setText(context.getResources().getString(R.string.wrong_username_or_pass));
-							
 							// Filling the alert box
-							adb.setView(alertDialogView);
-							adb.setTitle("Ooops !");
-							adb.setNegativeButton("RETRY", new DialogInterface.OnClickListener() {
-					            public void onClick(DialogInterface dialog, int which) {
-					            	// Going back to the front screen and deleting the alertDialogView
-					            	ViewGroup adbParent = (ViewGroup) alertDialogView.getParent();
-									adbParent.removeView(alertDialogView);
-					          } });
-							adb.setPositiveButton("SIGN UP", new DialogInterface.OnClickListener() {
+							loginFailed.setView(alertDialogView);
+							loginFailed.setTitle("Ooops !");
+							loginFailed.setMessage("Seems like you haven\'t created an account yet.");
+							loginFailed.setNegativeButton("RETRY", null);
+							loginFailed.setPositiveButton("SIGN UP", new DialogInterface.OnClickListener() {
 					            public void onClick(DialogInterface dialog, int which) {
 					            	Intent intent = new Intent(MainActivity.this, SignUpActivity.class);
 									startActivity(intent);
 					          } });
 							
 							// Showing the alert box
-					        adb.create();
-							adb.show();
+							loginFailed.create();
+							loginFailed.show();
 						}
 					}
 				});

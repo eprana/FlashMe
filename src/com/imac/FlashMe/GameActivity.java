@@ -178,7 +178,12 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	}
 	
 	private void loadTextures() {
+
+		mTextures.add(Texture.loadTextureFromApk("Texture/scourge.png",getAssets()));
 		mTextures.add(Texture.loadTextureFromApk("Texture/death.png",getAssets()));
+		mTextures.add(Texture.loadTextureFromApk("Texture/pink_logo.png",getAssets()));
+		mTextures.add(Texture.loadTextureFromApk("Texture/chainsaw.png",getAssets()));
+		mTextures.add(Texture.loadTextureFromApk("Texture/rifle.png",getAssets()));
 		mTextures.add(Texture.loadTextureFromApk("Texture/weapon.png",getAssets()));
 		mTextures.add(Texture.loadTextureFromApk("Texture/pink_logo.png",getAssets()));
 		mTextures.add(Texture.loadTextureFromApk("Texture/life.png",getAssets()));
