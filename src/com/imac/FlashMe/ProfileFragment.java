@@ -125,7 +125,7 @@ public class ProfileFragment extends Fragment {
 			
 			@Override
 			public void done(ParseObject marker, ParseException e) {
-				ParseFile markerFile = (ParseFile) marker.getParseFile("image");
+				ParseFile markerFile = (ParseFile) marker.getParseFile("thumb");
 		    	markerFile.getDataInBackground(new GetDataCallback() {
 					public void done(byte[] data, ParseException e) {
 						if (e != null){
