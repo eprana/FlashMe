@@ -317,7 +317,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 			public void onDataChange(DataSnapshot snapshot) {
 				Log.d(LOGTAG, "NB PLAYERS : "+snapshot.getChildrenCount());
 				nbPlayersReady = snapshot.getChildrenCount();
-				if(nbPlayersReady == 2) {
+				if(nbPlayersReady == 1 /*markerId.size()*/) {
 					waitingDialog.dismiss();
 					initTimer();
 				}
@@ -400,21 +400,15 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		if(lastMarkerId == markerId) {
 			// Fill the gauge
 			if(gauge.getLayoutParams().height < maxValue){
+				// Gauge not full
 				gauge.getLayoutParams().height += incrementValue;
-				if(tmpLostMunitions%100 == 0){
-					updateMunitions(-1);
-					tmpLostMunitions = 0;
-				}
-				else {
-					++tmpLostMunitions;
-				}
 			}
 			else {
 				// Gauge full
 				gauge.getLayoutParams().height = 0;
-				updatePoints(currentUser.getObjectId(), 10);
-				updatePoints(playerId, -10);
-				tmpLostMunitions = 0;
+				updatePoints(currentUser.getObjectId(), 2*(gun+1));
+				updatePoints(playerId, -2*(gun+1));
+				updateMunitions(-2+gun);
 			}
 		}
 
