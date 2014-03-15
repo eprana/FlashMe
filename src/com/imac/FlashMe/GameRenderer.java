@@ -165,8 +165,35 @@ public class GameRenderer implements GLSurfaceView.Renderer {
 			
             int markerId = marker.getMarkerId();
             String userId = marker.getName();
-            //Log.d("Zizanie", "DEBUG : Marker" + markerId + "detected from " + userId);
-       		mActivity.updateGauge(markerId, userId);
+            
+            switch(markerId) {
+            case 511:
+            	// Poison
+            	mActivity.updateCurrentUserPoints(-10);
+            	break;
+            case 510:
+            	// Points
+            	mActivity.updateCurrentUserPoints(10);
+            	break;
+            case 509 :
+            	// Munitions
+            	mActivity.updateMunitions(50);
+            case 508:
+            	// Gun
+            	mActivity.updateGun(0);
+            	break;
+            case 507:
+            	// Gun
+            	mActivity.updateGun(1);
+            	break;
+            case 506:
+            	// Gun
+            	mActivity.updateGun(2);
+            	break;
+            default:
+            	mActivity.updateGauge(markerId, userId);
+            	break;
+            }
 			
 			// Select which model to draw:
             Buffer vertices = null;

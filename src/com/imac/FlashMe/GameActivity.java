@@ -72,6 +72,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	private int lastMarkerId;
 	
 	private Firebase appRef;
+	private Firebase gameRef;
 	private float nbPlayersReady;
 
 	private final Context context = this;
@@ -84,8 +85,10 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	private TextView time;
 	private TextView life;
 	private int gun;
+	private int tmpLostMunitions;
 	private TextView munitions;
 	private int minutes;
+	ProgressDialog waitingDialog;
 
 	SampleApplicationSession vuforiaAppSession;
 	private SampleApplicationGLView mGlView;
@@ -212,7 +215,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		alertDialog.setMessage("Are you sure you want to leave this game ?");
 		alertDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
-				// User wants to log out
+				// User wants to end game
 				finish();
 			}
 		});
@@ -224,8 +227,30 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	private void createFirebaseUser() {
 
 		appRef = new Firebase("https://flashme.firebaseio.com/");
-				
+		gameRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId);
+
+		// Create connection
+		final Firebase gameConnectionsRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/connections");
+		final Firebase connectedRef = new Firebase("https://flashme.firebaseio.com/.info/connected");
+		connectedRef.addValueEventListener(new ValueEventListener() {
+		    @Override
+		    public void onDataChange(DataSnapshot snapshot) {
+		        boolean isConnected = snapshot.getValue(Boolean.class);
+		        if (isConnected) {
+		            Firebase presence = gameConnectionsRef.push();
+		            presence.setValue(Boolean.TRUE);
+		            presence.onDisconnect().removeValue();
+		            Log.d(LOGTAG, "Connected !");
+		        }
+		    }
+
+		    @Override
+		    public void onCancelled(FirebaseError e) {
+		        Log.d(LOGTAG, e.getMessage()+" : Listener was cancelled at .info/connected");
+		    }
+		});
 		
+		// Create simple login
 		SimpleLogin authClient = new SimpleLogin(appRef);
 		authClient.loginAnonymously(new SimpleLoginAuthenticatedHandler() {
 			@Override
@@ -239,9 +264,8 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 			}
 		});
 		
-		
 		// Create user
-		Firebase userRef = new Firebase("https://flashme.firebaseio.com/user/"+currentUser.getObjectId());
+		Firebase userRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/user/"+currentUser.getObjectId());
 		Map<String, Object> userData = new HashMap<String, Object>();
 		userData.put("life", 0);
 		userData.put("gun", 0);
@@ -268,38 +292,20 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 				} else {
 					String lifeValue = ((Map)value).get("life").toString();
 					String munitionsValue = ((Map)value).get("munitions").toString();
+					int gunId = Integer.parseInt(((Map)value).get("gun").toString());
 					life.setText(lifeValue);
 					munitions.setText(munitionsValue);
+					gun = gunId;
 				}
 			}
 			
-		});
-		
-		// Create connection
-		final Firebase presenceRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/presence");
-		final Firebase connectedRef = new Firebase("https://flashme.firebaseio.com/.info/connected");
-		connectedRef.addValueEventListener(new ValueEventListener() {
-		    @Override
-		    public void onDataChange(DataSnapshot snapshot) {
-		        boolean isConnected = snapshot.getValue(Boolean.class);
-		        if (isConnected) {
-		            Firebase presence = presenceRef.push();
-		            presence.setValue(Boolean.TRUE);
-		            presence.onDisconnect().removeValue();
-		        }
-		    }
-
-		    @Override
-		    public void onCancelled(FirebaseError e) {
-		        Log.d(LOGTAG, e.getMessage()+" : Listener was cancelled at .info/connected");
-		    }
 		});
 		
 		waitingForPlayers();
 	}
 
 	private void updateNbPlayers() {
-		final Firebase presenceRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/presence");
+		final Firebase presenceRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/connections");
 		presenceRef.addValueEventListener(new ValueEventListener() {
 
 			@Override
@@ -311,31 +317,27 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 			public void onDataChange(DataSnapshot snapshot) {
 				Log.d(LOGTAG, "NB PLAYERS : "+snapshot.getChildrenCount());
 				nbPlayersReady = snapshot.getChildrenCount();
+				if(nbPlayersReady == 2) {
+					waitingDialog.dismiss();
+					initTimer();
+				}
 			}
-			
 		});
 	}
 	private void waitingForPlayers() {
-		ProgressDialog progressDialog = ProgressDialog.show(context, gameName, "Waiting for other players to be ready...", true);
-		progressDialog.show();
+		waitingDialog = ProgressDialog.show(context, gameName, "Waiting for other players to be ready...", true);
+		waitingDialog.show();
 		updateNbPlayers();
-		while(nbPlayersReady != 2/*markerId.size()*/){
-			Log.d(LOGTAG, "Waiting for players");
-			Log.d(LOGTAG, "Nb players ready : "+nbPlayersReady);
-		}
-		progressDialog.dismiss();
 		
 		// Init Vuforia
 		vuforiaAppSession = new SampleApplicationSession(GameActivity.this);
 		startLoadingAnimation();
 		vuforiaAppSession.initAR(GameActivity.this, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		initApplicationAR();
-		initTimer();
 	}
 
 	private void initTimer() {
 		minutes = 10;
-		final Firebase gameRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId);
 		if(isCreator) {
 			new CountDownTimer(minutes*60000, 1000) {
 				public void onTick(long millisUntilFinished) {
@@ -385,58 +387,47 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 	public void updateGauge(final int markerId, final String playerId) {
 		
-//		Firebase munitionsRef = new Firebase("https://flashme.firebaseio.com/user/"+currentUser.getObjectId()+"/munitions");
-//		munitionsRef.addValueEventListener(new ValueEventListener() {
-//		    @Override
-//		    public void onDataChange(DataSnapshot snapshot) {
-//		        Log.d(LOGTAG, "NB MUNITIONS : "+snapshot.getValue());
-//		    }
-//
-//			@Override
-//			public void onCancelled(FirebaseError e) {
-//				Log.d(LOGTAG, e.getMessage());
-//			}
-//		});
-		
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				handler.post(new Runnable() { // This thread runs in the UI
-					@Override
-					public void run() {
-						Log.d(LOGTAG, "Marker " + markerId + " detected from " + playerId);
-						float scale = context.getResources().getDisplayMetrics().density;
-						int maxValue = (int) (300 * scale + 0.5f);
-						int incrementValue = maxValue/10;
-						// Flashing same marker
-						if(lastMarkerId == markerId) {
-							// Fill the gauge
-							if(gauge.getLayoutParams().height < maxValue){
-								gauge.getLayoutParams().height += incrementValue;
-								setMunitions(-1);
-							}
-							else {
-								// Gauge full
-								gauge.getLayoutParams().height = 0;
-								setPoints(currentUser.getObjectId(), 10);
-								setPoints(playerId, -10);
-							}
-						}
-
-						// Flashing new marker
-						else {
-							gauge.getLayoutParams().height = 0;
-						}
-						lastMarkerId = markerId;
-					}
-				});
+		Log.d(LOGTAG, "Marker " + markerId + " detected from " + playerId);
+		// Set gauge value according to device resolution
+		if(Integer.parseInt(munitions.getText().toString()) <= 0){
+			Log.d(LOGTAG, "You're out of munition !");
+			return;
+		}
+		float scale = context.getResources().getDisplayMetrics().density;
+		int maxValue = (int) (300 * scale + 0.5f);
+		int incrementValue = maxValue/10;
+		// Flashing same marker
+		if(lastMarkerId == markerId) {
+			// Fill the gauge
+			if(gauge.getLayoutParams().height < maxValue){
+				gauge.getLayoutParams().height += incrementValue;
+				if(tmpLostMunitions%100 == 0){
+					updateMunitions(-1);
+					tmpLostMunitions = 0;
+				}
+				else {
+					++tmpLostMunitions;
+				}
 			}
-		};
-		new Thread(runnable).start();
+			else {
+				// Gauge full
+				gauge.getLayoutParams().height = 0;
+				updatePoints(currentUser.getObjectId(), 10);
+				updatePoints(playerId, -10);
+				tmpLostMunitions = 0;
+			}
+		}
+
+		// Flashing new marker
+		else {
+			gauge.getLayoutParams().height = 0;
+			tmpLostMunitions = 0;
+		}
+		lastMarkerId = markerId;
 	}
 	
-	private void setMunitions(final int nbMunitions) {
-		Firebase munitionsRef = new Firebase("https://flashme.firebaseio.com/user/"+currentUser.getObjectId()+"/munitions");
+	public void updateMunitions(final int nbMunitions) {
+		Firebase munitionsRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/user/"+currentUser.getObjectId()+"/munitions");
 		munitionsRef.runTransaction(new Transaction.Handler() {
 			@Override
 		    public Transaction.Result doTransaction(MutableData currentData) {
@@ -460,8 +451,36 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		});
 	}
 	
-	private void setPoints(String playerId, final int points) {
-		Firebase lifeRef = new Firebase("https://flashme.firebaseio.com/user/"+playerId+"/life");
+	public void updateGun(final int gunId) {
+		Firebase gunRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/user/"+currentUser.getObjectId()+"/gun");
+		gunRef.runTransaction(new Transaction.Handler() {
+			@Override
+		    public Transaction.Result doTransaction(MutableData currentData) {
+		        currentData.setValue(gunId);
+		        return Transaction.success(currentData);
+		    }
+
+		    @Override
+		    public void onComplete(FirebaseError e, boolean committed, DataSnapshot currentData) {
+		        if (e != null) {
+		            Log.d(LOGTAG, e.getMessage());
+		        } else {
+		            if (!committed) {
+		            	Log.d(LOGTAG, "Transaction not comitted");
+		            } else {
+		            	Log.d(LOGTAG, "Transaction succeeded");
+		            }
+		        }
+		    }
+		});
+	}
+	
+	public void updateCurrentUserPoints(int points) {
+		updatePoints(currentUser.getObjectId(), points);
+	}
+	
+	private void updatePoints(String playerId, final int points) {
+		Firebase lifeRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/user/"+playerId+"/life");
 		lifeRef.runTransaction(new Transaction.Handler() {
 		    @Override
 		    public Transaction.Result doTransaction(MutableData currentData) {
