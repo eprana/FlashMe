@@ -83,6 +83,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	private ImageView gauge;
 	private TextView time;
 	private TextView life;
+	private int gun;
 	private TextView munitions;
 	private int minutes;
 
@@ -243,10 +244,12 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		Firebase userRef = new Firebase("https://flashme.firebaseio.com/user/"+currentUser.getObjectId());
 		Map<String, Object> userData = new HashMap<String, Object>();
 		userData.put("life", 0);
+		userData.put("gun", 0);
 		userData.put("munitions", 500);
 		userRef.setValue(userData);
 		
 		life.setText("0");
+		gun = 0;
         munitions.setText("500");
         
 		// Add listener
@@ -316,9 +319,10 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		ProgressDialog progressDialog = ProgressDialog.show(context, gameName, "Waiting for other players to be ready...", true);
 		progressDialog.show();
 		updateNbPlayers();
-//		while(nbPlayersReady != 2/*markerId.size()*/){
-//			Log.d(LOGTAG, "Waiting for players");
-//		}
+		while(nbPlayersReady != 2/*markerId.size()*/){
+			Log.d(LOGTAG, "Waiting for players");
+			Log.d(LOGTAG, "Nb players ready : "+nbPlayersReady);
+		}
 		progressDialog.dismiss();
 		
 		// Init Vuforia

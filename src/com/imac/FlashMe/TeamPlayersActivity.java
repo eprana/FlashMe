@@ -65,6 +65,9 @@ public class TeamPlayersActivity extends ListActivity {
 		
 		// Initialize members
 		currentUser = ParseUser.getCurrentUser();
+		currentUser.put("state", 1);
+		currentUser.saveInBackground();
+		
 		playersList = new ArrayList<String>();
 		
 		autocompleteValue = (AutoCompleteTextView) this.findViewById(R.id.autocomplete_player);
@@ -105,6 +108,20 @@ public class TeamPlayersActivity extends ListActivity {
 		});
 		
 		initParseAdapter();
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		currentUser.put("state", 0);
+		currentUser.saveInBackground();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		currentUser.put("state", 1);
+		currentUser.saveInBackground();
 	}
 	
 	private void initAutoCompleteList(List<ParseUser> players) {

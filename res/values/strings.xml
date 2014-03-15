@@ -92,9 +92,7 @@
     <string name="edit_profile">Edit profile</string>
     <string name="change_pic">CHANGE PICTURE</string>
     <string name="take_new_pic">TAKE NEW PICTURE</string>
-    <string name="change_mail">Update mail :</string>
-    <string name="change_pass">Update password :</string>
-    <string name="new_mail">New mail</string>
+    <string name="new_mail">New email</string>
     <string name="new_pass">New password</string>
     <string name="save_changes">SAVE CHANGES</string>
     <string name="changes_saved">Your changes have been successfully saved !</string>
