@@ -95,6 +95,10 @@ public class TeamsFragment extends ListFragment {
 					// Invalid team name
 					Toast.makeText(getActivity(), R.string.empty_team_name, Toast.LENGTH_LONG).show();
 				}
+				else if(s_inputValue.length() < 4){
+					Toast.makeText(context, R.string.name_too_short, Toast.LENGTH_SHORT).show();
+					return;
+				}
 				else {
 					createTeam(s_inputValue);
 				}

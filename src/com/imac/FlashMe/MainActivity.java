@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.parse.LogInCallback;
 import com.parse.Parse;
@@ -157,9 +158,8 @@ public class MainActivity extends Activity {
 			// Get the instance of the LayoutInflater 
 			LayoutInflater inflater = (LayoutInflater) MainActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE); 
 			View layout = inflater.inflate(R.layout.about_popup,(ViewGroup) findViewById(R.id.popup)); 
-			popup = new PopupWindow(layout, 600, 300, true); 
+			popup = new PopupWindow(layout, 180, 210, true);
 			popup.showAtLocation(parentView, Gravity.TOP|Gravity.LEFT, locateView(aboutButton).left, locateView(aboutButton).bottom+10);
-		
 			closeButton = (ImageButton) layout.findViewById(R.id.close_popup); 
 			closeButton.setOnClickListener(new OnClickListener() { 
 				public void onClick(View v) { 

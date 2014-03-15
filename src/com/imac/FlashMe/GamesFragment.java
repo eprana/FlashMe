@@ -123,6 +123,10 @@ public class GamesFragment extends ListFragment {
 					Toast.makeText(context, R.string.empty_game_name, Toast.LENGTH_LONG).show();
 					return;
 				}
+				else if(s_inputValue.length() < 4){
+					Toast.makeText(context, R.string.name_too_short, Toast.LENGTH_SHORT).show();
+					return;
+				}
 				else {
 					createGame(s_inputValue);
 				}

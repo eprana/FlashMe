@@ -130,6 +130,7 @@
 	<string name="delete_team_bt">Delete team</string>
 	<string name="quit_game">Quit game</string>
 	<string name="elem_in_list_picture">Elem in list picture</string>
+	<string name="name_too_short">Ooops ! You must choose a name larger than 3 characters.</string>
 	
 	<!-- details list -->
 	<string name="add_bt">Add element</string>
