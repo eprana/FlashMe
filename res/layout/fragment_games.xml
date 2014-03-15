@@ -42,6 +42,7 @@
 	     <EditText
 		    android:id="@+id/enter_game"
 		    android:hint="@string/enter_game"
+		    android:maxLength="8"
 		    style="@style/white_edit_text" />
 	     
 	     <AutoCompleteTextView 

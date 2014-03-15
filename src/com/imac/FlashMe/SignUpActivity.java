@@ -239,27 +239,15 @@ public class SignUpActivity extends Activity {
     
     private void showSuccessAlertBox() {
 
-		AlertDialog.Builder adb = new AlertDialog.Builder(context);
-		MessageAlert msg_a;
-		
-		if (alertDialogView == null) {
-			msg_a = new MessageAlert();
-			alertDialogView = inflater.inflate(R.layout.alert_dialog, null);
-			msg_a.msg = (TextView)alertDialogView.findViewById(R.id.text_alert);
-			alertDialogView.setTag(msg_a);
-		} else {
-			msg_a = (MessageAlert) alertDialogView.getTag();
-        	ViewGroup adbParent = (ViewGroup) alertDialogView.getParent();
-			adbParent.removeView(alertDialogView);
-		}
-		
-		// Choosing the type of message alert
-		msg_a.msg.setText(context.getResources().getString(R.string.account_created));
-		
+    	// Create an alert box
+    	View alertDialogView = null;
+		AlertDialog.Builder accountCreated = new AlertDialog.Builder(context);
+
 		// Filling the alert box
-		adb.setView(alertDialogView);
-		adb.setTitle("Success !");
-		adb.setPositiveButton("VIEW PROFILE", new DialogInterface.OnClickListener() {
+		accountCreated.setView(alertDialogView);
+		accountCreated.setTitle("Success !");
+		accountCreated.setMessage(context.getResources().getString(R.string.account_created));
+		accountCreated.setPositiveButton("VIEW PROFILE", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
             	hasBeenCreated = true;
             	Intent intent = new Intent(context, ContentActivity.class);
@@ -267,8 +255,8 @@ public class SignUpActivity extends Activity {
         } });
 		
 		// Showing the alert box
-        adb.create();
-		adb.show();
+		accountCreated.create();
+		accountCreated.show();
     }
     
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {  

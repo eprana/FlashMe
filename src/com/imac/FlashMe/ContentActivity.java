@@ -112,27 +112,18 @@ public class ContentActivity extends Activity implements
 	        	startActivityForResult(intent, EDIT_PROFILE);
 	            return true;
 	        case R.id.action_send_marker:
+	        	
 	        	// Create an alert box
 	        	View alertDialogView = null;
-				AlertDialog.Builder adb = new AlertDialog.Builder(context);
-				MessageAlert msg_a;
-				
-				msg_a = new MessageAlert();
-				alertDialogView = inflater.inflate(R.layout.alert_dialog, null);
-				msg_a.msg = (TextView)alertDialogView.findViewById(R.id.text_alert);
-				alertDialogView.setTag(msg_a);
-				
-				// Choosing the type of message alert
-				msg_a.msg.setText(context.getResources().getString(R.string.resend_marker, currentUser.getEmail()));
-				
+				AlertDialog.Builder sendMarkerByMail = new AlertDialog.Builder(context);
+
 				// Filling the alert box
-				adb.setView(alertDialogView);
-				adb.setTitle("Send marker again");
-				adb.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-		            public void onClick(DialogInterface dialog, int which) {
-		            	// Going back to the front screen
-		          } });
-				adb.setPositiveButton("SEND AGAIN", new DialogInterface.OnClickListener() {
+				sendMarkerByMail.setView(alertDialogView);
+				sendMarkerByMail.setTitle("Send marker again");
+				sendMarkerByMail.setMessage(context.getResources().getString(R.string.resend_marker, currentUser.getEmail()));
+				sendMarkerByMail.setNegativeButton("CANCEL", null);
+
+				sendMarkerByMail.setPositiveButton("SEND AGAIN", new DialogInterface.OnClickListener() {
 		            public void onClick(DialogInterface dialog, int which) {
 	          	   		// Send an e-mail
 	     				SendMailToUser mail = new SendMailToUser(context);
@@ -143,9 +134,10 @@ public class ContentActivity extends Activity implements
 		        } });
 				
 				// Showing the alert box
-		        adb.create();
-				adb.show();
+				sendMarkerByMail.create();
+				sendMarkerByMail.show();
 	            return true;
+	            
 	        case R.id.action_log_out:
 	        	ParseUser.logOut();
 	        	finish();

@@ -77,6 +77,7 @@ public class GameTeamsActivity extends ListActivity {
 		teamsList = new ArrayList<String>();
 		
 		autocompleteValue = (AutoCompleteTextView) this.findViewById(R.id.autocomplete_player);
+		autocompleteValue.setHint("Team name");
 		ParseQuery<ParseObject> teamsQuery = ParseQuery.getQuery("Team");
 		teamsQuery.findInBackground(new FindCallback<ParseObject>() {
 			@Override

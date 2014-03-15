@@ -203,7 +203,7 @@ public class EditActivity extends Activity {
 				      	}
 	
 			      	});
-				}				
+				}
 			}
 		});
 	}
