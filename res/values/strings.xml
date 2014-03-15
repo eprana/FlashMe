@@ -15,7 +15,7 @@
     <string name="username">Username</string>  
 	<string name="password">Password</string>
 	<string name="login">LOG IN</string>
-	<string name="or">Or</string>
+	<string name="or">or</string>
 	<string name="signup">SIGN UP</string>
 	<string name="popup_title">FLASH ME \n if you can !</string>
 	<string name="popup_description">is an augmented reality mobile application created by Xochitl Florimont, Flora Jullien and Elisa Prana, three students of the IMAC engineering school located in Paris.</string>
@@ -96,6 +96,7 @@
     <string name="new_pass">New password</string>
     <string name="save_changes">SAVE CHANGES</string>
     <string name="changes_saved">Your changes have been successfully saved !</string>
+    <string name="delete_profile">DELETE ACCOUNT</string>
     
 	<!-- my teams -->
 	<string name="my_teams">My teams</string>

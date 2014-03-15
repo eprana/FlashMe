@@ -80,10 +80,26 @@
             <Button
                 android:id="@+id/save_changes"
                 style="@style/buttonDarkBlue"
-                android:layout_width="@dimen/button_wd"
-                android:layout_marginTop="@dimen/medium_mg"
-                android:background="@drawable/dark_button"
+	   	        android:layout_width="@dimen/button_wd"
+	   	        android:layout_marginTop="@dimen/large_mg"
+	   	        android:background="@drawable/dark_button"
                 android:text="@string/save_changes" />
+            
+            <TextView
+	   	        android:id="@+id/or_2"
+	   	        style="@style/blue"
+	   	        android:layout_width="wrap_content"
+	   	        android:layout_height="wrap_content"
+	   	        android:layout_marginTop="@dimen/small_mg"
+	   	        android:text="@string/or" />
+
+            <Button
+                android:id="@+id/delete_profile"
+                style="@style/buttonLightBlue"
+	   	        android:layout_width="@dimen/button_wd"
+	   	        android:layout_margin="@dimen/small_mg"
+	   	        android:background="@drawable/light_button"
+                android:text="@string/delete_profile" />
         </LinearLayout>
 
     </ScrollView>

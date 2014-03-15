@@ -47,6 +47,7 @@ public class EditActivity extends Activity {
 	private EditText updateMail;
 	private EditText updatePass;
 	private Button saveChanges;
+	private Button deleteProfile;
 	private String s_password;
 	private String s_mail;
 	private View alertDialogView;
@@ -68,6 +69,7 @@ public class EditActivity extends Activity {
 		updateMail = (EditText) findViewById(R.id.new_mail);
 		updatePass = (EditText) findViewById(R.id.new_pass);
 		saveChanges = (Button) findViewById(R.id.save_changes);
+		deleteProfile = (Button) findViewById(R.id.delete_profile);
 		layoutInflater = getLayoutInflater();
 		avatarParseFile = null;
 		
@@ -115,6 +117,26 @@ public class EditActivity extends Activity {
             }
         });
 		
+        // Delete button
+        deleteProfile.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+				alertDialog.setTitle("Delete profile");
+				alertDialog.setMessage("Are you sure you want to delete your profile ?");
+				alertDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						// User wants to delete profile
+						deleteProfile();
+					}
+				});
+				alertDialog.setNegativeButton("CANCEL", null);
+				alertDialog.create();
+				alertDialog.show();	
+			}
+		});
+        
 		// Saving button
 		saveChanges.setOnClickListener(new OnClickListener() {
 			
@@ -206,6 +228,14 @@ public class EditActivity extends Activity {
 			}
 		});
 	}	
+	
+	private void deleteProfile() {
+		currentUser.deleteInBackground();
+		ParseUser.logOut();
+		finish();
+		Intent intent = new Intent(getApplicationContext(), MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    	startActivity(intent);
+	}
 	
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {  
         super.onActivityResult(requestCode, resultCode, data);
