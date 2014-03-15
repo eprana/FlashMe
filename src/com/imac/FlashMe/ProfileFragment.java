@@ -7,18 +7,20 @@ import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.RefreshCallback;
 import com.imac.FlashMe.R;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -26,20 +28,21 @@ import android.widget.Toast;
 
 public class ProfileFragment extends Fragment {
 
-	private static final String LOGTAG = "TeamsFragment";
+	private final String LOGTAG = "TeamsFragment";
 	
 	// Data elements
-	private static ParseUser currentUser = null;
-	private static ProgressBar progress = null;
+	private ParseUser currentUser = null;
+	private ProgressBar progress = null;
 	
 	// Layout elements
-	private static ImageView profilePictureView = null;
-	private static ImageView profileMarkerView = null;
-	private static TextView totalScoreView;
-	private static TextView bestScoreValue;
-	private static TextView victoriesValue;
-	private static TextView rankValue;
-	private static TextView defeatsValue;
+	private ImageButton refreshButton;
+	private ImageView profilePictureView = null;
+	private ImageView profileMarkerView = null;
+	private TextView totalScoreView;
+	private TextView bestScoreValue;
+	private TextView victoriesValue;
+	private TextView rankValue;
+	private TextView defeatsValue;
 	
 	
 	@Override
@@ -48,11 +51,12 @@ public class ProfileFragment extends Fragment {
 		Log.d(LOGTAG, "onCreateView");
 		
 		View mainView = inflater.inflate(R.layout.fragment_profile, container, false);
-		Context context = mainView.getContext();
+		final Context context = mainView.getContext();
     	
 		// Initialize members
 		currentUser = ParseUser.getCurrentUser();
 		progress = (ProgressBar) mainView.findViewById(R.id.progressBar);
+		refreshButton = (ImageButton) mainView.findViewById(R.id.refresh_bt);
 		
 		profilePictureView = (ImageView) mainView.findViewById(R.id.profile_picture);
 		profileMarkerView = (ImageView) mainView.findViewById(R.id.marker_picture);
@@ -62,64 +66,63 @@ public class ProfileFragment extends Fragment {
 		defeatsValue = (TextView) mainView.findViewById(R.id.defeats_value);
 		victoriesValue = (TextView) mainView.findViewById(R.id.victories_value);
 
-		// Load fragment data
-		LoadProfile lp = new LoadProfile(context);
-    	lp.execute();
+		refreshButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				loadProfilePicture(context);
+			}
+		});
+		
+		// Load display data
+		loadProfileData(context);
 		
 		return mainView;
 	}
 	
-	private static class LoadProfile extends AsyncTask<Void, Integer, Void> {
+	
+	public void loadProfileData(final Context context) {
 
-		private Context context;
+		// Get user's statistics
+		loadStatistics();
 		
-		public LoadProfile(Context context){
-			this.context = context;
-		}
-		
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			//progress.setVisibility(View.VISIBLE);
-		}
-		
-		@Override
-		protected Void doInBackground(Void... arg0) {
-			loadProfileData(context);
-			return null;
-		}
-		
-		@Override
-		protected void onPostExecute(Void result) {
-			super.onPostExecute(result);
-			//progress.setVisibility(View.GONE);
-		}
+		// Get user's images
+		loadProfilePicture(context);
+    	loadMarkerImage(context);
 	}
 	
-	public static void loadProfileData(final Context context) {
-
+	private void loadStatistics() {
 	    totalScoreView.setText("TOTAL SCORE : "+ String.valueOf(currentUser.getInt("totalScore")));
 	    bestScoreValue.setText(String.valueOf(currentUser.getInt("bestScore")));
 		rankValue.setText(String.valueOf(currentUser.getInt("rank")));
 		defeatsValue.setText(String.valueOf(currentUser.getInt("defeats")));
 		victoriesValue.setText(String.valueOf(currentUser.getInt("victories")));
-		
-		// Get profile picture
-    	ParseFile avatarFile = (ParseFile) currentUser.get("avatar");
-		avatarFile.getDataInBackground(new GetDataCallback() {
-			public void done(byte[] data, ParseException e) {
-				if (e != null){
-					Toast.makeText(context, "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
-					return;
-				}
-				Bitmap avatarBitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-				// Setting the profile imageView
-				profilePictureView.setImageBitmap(avatarBitmap);
+	}
+	
+	private void loadProfilePicture(final Context context) {
+		currentUser.refreshInBackground(new RefreshCallback() {
+			@Override
+			public void done(ParseObject object, ParseException e) {
+				ParseFile avatarFile = (ParseFile) currentUser.get("avatar");
+				avatarFile.getDataInBackground(new GetDataCallback() {
+					public void done(byte[] data, ParseException e) {
+						if (e != null){
+							Toast.makeText(context, "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
+							return;
+						}
+						Bitmap avatarBitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+						// Setting the profile imageView
+						profilePictureView.setImageBitmap(avatarBitmap);
+						progress.setVisibility(View.GONE);
+						profileMarkerView.setVisibility(View.VISIBLE);
+						profilePictureView.setVisibility(View.VISIBLE);
+					}
+				});
 			}
 		});
-		
-		// Get marker image
-    	ParseQuery<ParseObject> markerQuery = ParseQuery.getQuery("Marker");
+	}
+	
+	private void loadMarkerImage(final Context context) {
+		ParseQuery<ParseObject> markerQuery = ParseQuery.getQuery("Marker");
     	markerQuery.whereEqualTo("Id", currentUser.getInt("MarkerId"));
     	markerQuery.getFirstInBackground(new GetCallback<ParseObject>() {
 			
@@ -135,26 +138,9 @@ public class ProfileFragment extends Fragment {
 						Bitmap markerBitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
 						// Setting the marker imageView
 						profileMarkerView.setImageBitmap(markerBitmap);
-						progress.setVisibility(View.GONE);
-						profileMarkerView.setVisibility(View.VISIBLE);
-						profilePictureView.setVisibility(View.VISIBLE);
 					}
 				});
 			}
 		});
-		
-//		// Parse query for marker
-//		ParseQuery<ParseUser> markerQuery = ParseUser.getQuery();
-//		markerQuery.whereEqualTo("username", currentUser.getUsername());
-//		markerQuery.getFirstInBackground(new GetCallback<ParseUser>() {
-//			// Find current user
-//			public void done(ParseUser user, ParseException e) {
-//			    if (e != null) {
-//			    	Toast.makeText(context, "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
-//			    	return;
-//			    }
-//
-//			}
-//		});
 	}
 }

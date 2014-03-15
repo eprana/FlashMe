@@ -88,7 +88,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	private int tmpLostMunitions;
 	private TextView munitions;
 	private int minutes;
-	ProgressDialog waitingDialog;
+	private ProgressDialog waitingDialog;
 
 	SampleApplicationSession vuforiaAppSession;
 	private SampleApplicationGLView mGlView;

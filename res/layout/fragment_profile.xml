@@ -5,17 +5,15 @@
     android:orientation="vertical" >
     
     <LinearLayout 
-        android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
         android:id="@+id/fragment_header"
-	    style="@style/header" >
+        style="@style/header" >
 	    
         <TextView
             android:id="@+id/top_line_light"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="14.5sp"
-            android:layout_marginRight="29sp"
+            android:layout_weight="0.50"
             android:gravity="center"
             android:text="@string/my_profile"
             android:textColor="@color/white"

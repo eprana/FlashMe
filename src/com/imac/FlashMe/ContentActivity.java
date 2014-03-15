@@ -46,7 +46,6 @@ public class ContentActivity extends Activity implements
 
 	private static final String LOGTAG = "ContentActivity";
 	private final int EDIT_PROFILE = 3000;
-	private boolean firstLoad = true;
 	
 	private class TabAction { public int icon; public int icon_in; public String text; 
 		public TabAction(int icon, int icon_in, String text) {
@@ -109,7 +108,6 @@ public class ContentActivity extends Activity implements
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
 	        case R.id.action_edit_profile:
-	        	firstLoad = false;
 	        	Intent intent = new Intent(getApplicationContext(), EditActivity.class);
 	        	startActivityForResult(intent, EDIT_PROFILE);
 	            return true;
@@ -171,11 +169,6 @@ public class ContentActivity extends Activity implements
 		super.onResume();
 	 	currentUser.put("state", 1);
 	 	currentUser.saveInBackground();
-	 	if(!firstLoad){
-		 	finish();
-		 	Intent intent = new Intent(context, ContentActivity.class);
-		 	startActivity(intent);
-	 	}
 	}
 	
 	@Override

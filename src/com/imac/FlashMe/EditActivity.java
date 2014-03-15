@@ -19,6 +19,7 @@ import com.imac.FlashMe.R;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -156,78 +157,71 @@ public class EditActivity extends Activity {
 						@Override
 						public void done(ParseUser user, ParseException e) {
 				      		
-							if (e == null) {
-				      	    
-								// Update the fields  
-								
-								// If the mail has changed
-				      	    	if(!s_mail.equals("")){
-				    				// Testing if mail is right
-				    				Pattern p = Pattern.compile(".+@.+\\.[a-z]+");
-				          	   		Matcher m = p.matcher(s_mail);
-				          	   		if (!m.matches()) {
-				          	   			Toast.makeText(context, R.string.wrong_mail_pattern, Toast.LENGTH_SHORT).show();
-				          	   			return;
-				          	   		}else{
-					          	   		user.put("email", s_mail);
-					          	   		user.saveInBackground();
-				          	   		}
-				      	    	}	
-				      	    	
-				      	    	// If the password has changed
-				      	    	if(!s_password.equals("")){
-									user.put("password", s_password);
-									user.saveInBackground();
-				      	    	}
-				      	    	
-				      	    	// If the picture has changed
-								if(avatarParseFile != null){
-									user.put("avatar", avatarParseFile);
-									user.saveInBackground();
-								}
-				      	    	
-					      	} else{
+							if (e != null) {
 					      	   	Toast.makeText(context, "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
-					      	} 
+							}
+							
+							// Update the fields  
+							
+							// If the mail has changed
+			      	    	if(!s_mail.equals("")){
+			    				// Testing if mail is right
+			    				Pattern p = Pattern.compile(".+@.+\\.[a-z]+");
+			          	   		Matcher m = p.matcher(s_mail);
+			          	   		if (!m.matches()) {
+			          	   			Toast.makeText(context, R.string.wrong_mail_pattern, Toast.LENGTH_SHORT).show();
+			          	   			return;
+			          	   		}else{
+				          	   		user.put("email", s_mail);
+				          	   		user.saveInBackground();
+			          	   		}
+			      	    	}	
+			      	    	
+			      	    	// If the password has changed
+			      	    	if(!s_password.equals("")){
+								user.put("password", s_password);
+								user.saveInBackground();
+			      	    	}
+			      	    	
+			      	    	// If the picture has changed
+							if(avatarParseFile != null){
+								final ProgressDialog waitingDialog = ProgressDialog.show(context, "Uploading picture", "Waiting for you new picture to upload...", true);
+								waitingDialog.show();
+								user.put("avatar", avatarParseFile);
+								user.saveInBackground(new SaveCallback() {
+									
+									@Override
+									public void done(ParseException e) {
+										waitingDialog.dismiss();
+										displaySuccessDialog();
+									}
+								});
+							}
+							else {
+								displaySuccessDialog();
+							}
 				      	}
 	
 			      	});
-				}
-
-				//Sending alert & Changing page
-      	   		// Create an alert box
-				AlertDialog.Builder adb = new AlertDialog.Builder(context);
-				MessageAlert msg_a;
-				
-				if (alertDialogView == null) {
-					msg_a = new MessageAlert();
-					alertDialogView = layoutInflater.inflate(R.layout.alert_dialog, null);
-					msg_a.msg = (TextView)alertDialogView.findViewById(R.id.text_alert);
-					alertDialogView.setTag(msg_a);
-				} else {
-					msg_a = (MessageAlert) alertDialogView.getTag();
-	            	ViewGroup adbParent = (ViewGroup) alertDialogView.getParent();
-					adbParent.removeView(alertDialogView);
-				}
-				
-				// Choosing the type of message alert
-				msg_a.msg.setText(context.getResources().getString(R.string.changes_saved));				
-				
-				// Filling the alert box
-				adb.setView(alertDialogView);
-				adb.setTitle("Success !");
-				adb.setPositiveButton("BACK TO PROFILE", new DialogInterface.OnClickListener() {
-		            public void onClick(DialogInterface dialog, int which) {
-		            	finish();
-		        } });
-				
-				// Showing the alert box
-		        adb.create();
-				adb.show();
-				
+				}				
 			}
 		});
-	}	
+	}
+	
+	private void displaySuccessDialog() {
+		AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+		alertDialog.setTitle("Success");
+		alertDialog.setMessage("Your changes have been saved successfully.");
+		alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				finish();
+				Intent intent = new Intent(getApplicationContext(), ContentActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);;
+		    	startActivity(intent);
+			}
+		});
+		alertDialog.create();
+		alertDialog.show();	
+	}
 	
 	private void deleteProfile() {
 		currentUser.deleteInBackground();
