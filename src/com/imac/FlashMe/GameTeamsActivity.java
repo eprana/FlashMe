@@ -78,6 +78,10 @@ public class GameTeamsActivity extends ListActivity {
 		query.getFirstInBackground(new GetCallback<ParseObject>(){
 			@Override
 			public void done(ParseObject game, ParseException e) {
+				if (game.getNumber("state").intValue() > 0) {
+					playButton.setBackgroundResource(R.drawable.locked_button);
+					playButton.setEnabled(false);
+				}
 				try {
 					isCreator = game.getParseUser("createdBy").fetchIfNeeded().getUsername().equals(currentUser.getUsername()) ? true : false;
 				} catch (ParseException e1) {
