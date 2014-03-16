@@ -118,6 +118,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		// Get game name passed in extras
 		Intent intent = getIntent();
 		gameId = intent.getStringExtra("GAME_ID");
+		minutes = intent.getIntExtra("MINUTES", 20);
 		
 		// Get layout elements
 		inflater = LayoutInflater.from(context);
@@ -342,7 +343,6 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	}
 
 	private void initTimer() {
-		minutes = 10;
 		if(isCreator) {
 			new CountDownTimer(minutes*60000, 1000) {
 				public void onTick(long millisUntilFinished) {

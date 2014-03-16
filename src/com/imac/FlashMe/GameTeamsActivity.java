@@ -30,6 +30,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.NumberPicker;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,6 +43,7 @@ public class GameTeamsActivity extends ListActivity {
 	
 	// Data elements
 	private static ParseUser currentUser = null;
+	private boolean isCreator;
 	private String gameId;
 	private static List<String> teamsList = null;
 	
@@ -71,6 +73,18 @@ public class GameTeamsActivity extends ListActivity {
 		
 		// Initialize members
 		currentUser = ParseUser.getCurrentUser();
+		ParseQuery<ParseObject> query = ParseQuery.getQuery("Game");
+		query.whereEqualTo("objectId", gameId);
+		query.getFirstInBackground(new GetCallback<ParseObject>(){
+			@Override
+			public void done(ParseObject game, ParseException e) {
+				try {
+					isCreator = game.getParseUser("createdBy").fetchIfNeeded().getUsername().equals(currentUser.getUsername()) ? true : false;
+				} catch (ParseException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
 		currentUser.put("state", 1);
 		currentUser.saveInBackground();
 		
@@ -132,18 +146,45 @@ public class GameTeamsActivity extends ListActivity {
 				// Start game
 				int nbTeams = gameTeamsParseAdapter.getCount();
 				if(!gameId.isEmpty()) {
-//					if(nbTeams < 2) {
-//						AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-//						alertDialog.setTitle(title.getText());
-//						alertDialog.setMessage("You need to have at least 2 teams in the game if you want to play.");
-//						alertDialog.setPositiveButton("OK", null);
-//						alertDialog.create();
-//						alertDialog.show();
-//						return;
-//					}
-					final Intent intent = new Intent(context, GameActivity.class);
-					intent.putExtra("GAME_ID", gameId);			
-					startActivity(intent);
+					if(nbTeams < 2) {
+						AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+						alertDialog.setTitle(title.getText());
+						alertDialog.setMessage("You need to have at least 2 teams in the game if you want to play.");
+						alertDialog.setPositiveButton("OK", null);
+						alertDialog.create();
+						alertDialog.show();
+						return;
+					}
+					if(isCreator) {
+						AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+						alertDialog.setTitle(title.getText());
+						alertDialog.setMessage("How many minutes do you want this game to last ?");
+						final NumberPicker np = new NumberPicker(context);
+						np.setMaxValue(60);
+						np.setMinValue(5);
+						np.setValue(20);
+						np.setWrapSelectorWheel(false);
+						alertDialog.setView(np);
+						alertDialog.setPositiveButton("START", new DialogInterface.OnClickListener() {
+							
+							@Override
+							public void onClick(DialogInterface dialog, int id) {
+								final Intent intent = new Intent(context, GameActivity.class);
+								intent.putExtra("GAME_ID", gameId);
+								intent.putExtra("MINUTES", np.getValue());
+								startActivity(intent);
+								
+							}
+						});
+						alertDialog.setNegativeButton("CANCEL", null);
+						alertDialog.create();
+						alertDialog.show();
+					}
+					else {
+						final Intent intent = new Intent(context, GameActivity.class);
+						intent.putExtra("GAME_ID", gameId);
+						startActivity(intent);
+					}
 				}
 			}
 		});
