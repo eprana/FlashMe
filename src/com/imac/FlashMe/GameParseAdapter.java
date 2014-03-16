@@ -54,10 +54,6 @@ public class GameParseAdapter extends ParseQueryAdapter<ParseObject>{
  
 		super.getItemView(game, v, parent);
 		
-		if(game.getInt("state") > 0) {
-			v.setBackgroundColor(v.getResources().getColor(R.color.light_gray));
-		}
-		
 		TextView gameName = (TextView) v.findViewById(R.id.elem_name);
 		gameName.setText(game.getString("name"));
 		
@@ -70,6 +66,12 @@ public class GameParseAdapter extends ParseQueryAdapter<ParseObject>{
 			e.printStackTrace();
 		}
 		gameCreator.setText(s_gameCreator);
+		
+		if(game.getInt("state") > 0) {
+			v.setBackgroundColor(v.getResources().getColor(R.color.verylight_gray));
+			gameName.setTextColor(v.getResources().getColor(R.color.middle_text_gray));
+			gameCreator.setTextColor(v.getResources().getColor(R.color.cell_gray));
+		}
 		
 		ImageView defaultPicture = (ImageView) v.findViewById(R.id.elem_picture);
 		defaultPicture.setImageResource(R.drawable.default_game_picture_thumb);
