@@ -34,7 +34,7 @@ public class GameParseAdapter extends ParseQueryAdapter<ParseObject>{
 		super(context, new ParseQueryAdapter.QueryFactory<ParseObject>() {
 			public ParseQuery<ParseObject> create() {
 				// Define queries
-				ParseQuery<ParseObject> gamesQuery = user.getRelation("games").getQuery();
+				ParseQuery<ParseObject> gamesQuery = user.getRelation("games").getQuery().orderByAscending("state");
 				return gamesQuery;
 			}
 		});
@@ -53,7 +53,11 @@ public class GameParseAdapter extends ParseQueryAdapter<ParseObject>{
 		}
  
 		super.getItemView(game, v, parent);
- 
+		
+		if(game.getInt("state") > 0) {
+			v.setBackgroundColor(v.getResources().getColor(R.color.light_gray));
+		}
+		
 		TextView gameName = (TextView) v.findViewById(R.id.elem_name);
 		gameName.setText(game.getString("name"));
 		

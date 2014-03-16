@@ -69,7 +69,6 @@ public class GameTeamsActivity extends ListActivity {
 		
 		getActionBar().setIcon(R.drawable.ic_menu);
 		getActionBar().setDisplayShowTitleEnabled(false);
-		getActionBar().setDisplayHomeAsUpEnabled(true);
 		
 		// Initialize members
 		currentUser = ParseUser.getCurrentUser();
