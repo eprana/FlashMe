@@ -136,6 +136,8 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		currentUser.saveInBackground();
 
 		lastMarkerId = -1;
+		
+		// Add pictograms objects in the map
 
 		// Get game
 		Log.d("Zizanie", "DEBUG : Load teams");
@@ -187,13 +189,12 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	private void loadTextures() {
 
 		mTextures.add(Texture.loadTextureFromApk("Texture/scourge.png",getAssets()));
-		mTextures.add(Texture.loadTextureFromApk("Texture/death.png",getAssets()));
-		mTextures.add(Texture.loadTextureFromApk("Texture/pink_logo.png",getAssets()));
 		mTextures.add(Texture.loadTextureFromApk("Texture/chainsaw.png",getAssets()));
-		mTextures.add(Texture.loadTextureFromApk("Texture/rifle.png",getAssets()));
-		mTextures.add(Texture.loadTextureFromApk("Texture/weapon.png",getAssets()));
+		mTextures.add(Texture.loadTextureFromApk("Texture/gun.png",getAssets()));
+		mTextures.add(Texture.loadTextureFromApk("Texture/munitions.png",getAssets()));
+		mTextures.add(Texture.loadTextureFromApk("Texture/points.png",getAssets()));
+		mTextures.add(Texture.loadTextureFromApk("Texture/poison.png",getAssets()));
 		mTextures.add(Texture.loadTextureFromApk("Texture/pink_logo.png",getAssets()));
-		mTextures.add(Texture.loadTextureFromApk("Texture/life.png",getAssets()));
 		mTextures.add(Texture.loadTextureFromApk("Texture/orange_logo.png",getAssets()));
 		mTextures.add(Texture.loadTextureFromApk("Texture/green_logo.png",getAssets()));
 		mTextures.add(Texture.loadTextureFromApk("Texture/cyan_logo.png",getAssets()));
@@ -620,8 +621,9 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 			return false;
 		}
 
+//		Marker[] dataSet = new Marker[markerIdToPlayerId.size() + 6];
 		Marker[] dataSet = new Marker[markerIdToPlayerId.size()];
-
+		
 		int i = 0;
 		for (Entry<Integer, String> entry : markerIdToPlayerId.entrySet()) {								    
 			dataSet[i] = markerTracker.createFrameMarker(entry.getKey(), entry.getValue() , new Vec2F(50, 50));
@@ -630,6 +632,11 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 			}
 			++i;
 		}
+//		int index = 506;
+//		for(int j = markerIdToPlayerId.size(); j <markerIdToPlayerId.size() + 6; ++j) {
+//			dataSet[j] = markerTracker.createFrameMarker(index, "" , new Vec2F(50, 50));
+//			++index;
+//		}
 
 		GameActivity.this.dataSet = dataSet;
 
