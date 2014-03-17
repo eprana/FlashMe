@@ -1,6 +1,5 @@
 package com.imac.FlashMe;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -9,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Vector;
 
+import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -30,7 +30,6 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
 import com.qualcomm.vuforia.CameraDevice;
 import com.qualcomm.vuforia.Marker;
 import com.qualcomm.vuforia.MarkerTracker;
@@ -49,6 +48,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.location.GpsStatus.Listener;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -67,11 +67,12 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	private static final String LOGTAG = "GameActivity";
 
 	private ParseUser currentUser;
+	private String currentUserTeam;
 	private String gameId;
 	private String gameName;
 	private boolean isCreator;
 	private int lastMarkerId;
-	
+
 	private Firebase appRef;
 	private Firebase gameRef;
 	private float nbPlayersReady;
@@ -112,7 +113,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 		super.onCreate(savedInstanceState);
 		Log.d("Zizanie", "DEBUG : Create GameActivity");
-		
+
 		mTextures = new Vector<Texture>();
 		loadTextures();
 
@@ -120,7 +121,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		Intent intent = getIntent();
 		gameId = intent.getStringExtra("GAME_ID");
 		minutes = intent.getIntExtra("MINUTES", 20);
-		
+
 		// Get layout elements
 		inflater = LayoutInflater.from(context);
 		mainView = inflater.inflate(R.layout.activity_game, null, false);
@@ -134,7 +135,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		//State 0:offline, 1:online
 		currentUser.put("state", 1);
 		currentUser.saveInBackground();
-		
+
 		lastMarkerId = -1;
 
 		// Get game
@@ -156,7 +157,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 					public void done(List<ParseObject> teams, ParseException e) {
 						Iterator<ParseObject> it = teams.iterator();
 						while(it.hasNext()) {
-							ParseObject team = it.next();
+							final ParseObject team = it.next();
 							teamsId.add(team.getObjectId());
 							Log.d("Zizanie", "DEBUG : " + team.getObjectId());
 							team.getRelation("players").getQuery().findInBackground(new FindCallback<ParseObject>() {
@@ -167,18 +168,23 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 									while(it.hasNext()) {
 										ParseObject player = it.next();
 										markerIdToPlayerId.put(player.getInt("markerId"), player.getObjectId());
+										if(player.getObjectId().equals(currentUser.getObjectId())) {
+											Log.d("Zizanie", "PROUT");
+											currentUserTeam = team.getObjectId();
+											createFirebaseUser();
+										}
 									}
 								}
 							});
 						}
-						createFirebaseUser();
+						//createFirebaseUser();
 					}
 				});
 			}
 		});
 
 	}
-	
+
 	private void loadTextures() {
 
 		mTextures.add(Texture.loadTextureFromApk("Texture/scourge.png",getAssets()));
@@ -189,17 +195,17 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		mTextures.add(Texture.loadTextureFromApk("Texture/weapon.png",getAssets()));
 		mTextures.add(Texture.loadTextureFromApk("Texture/pink_logo.png",getAssets()));
 		mTextures.add(Texture.loadTextureFromApk("Texture/life.png",getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("Texture/orange_logo.png",getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("Texture/green_logo.png",getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("Texture/cyan_logo.png",getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("Texture/purple_logo.png", getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("Texture/red_logo.png",getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("Texture/blue_logo.png",getAssets()));
-    	mTextures.add(Texture.loadTextureFromApk("Texture/black_logo.png",getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("Texture/white_logo.png",getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("Texture/grey_logo.png",getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("Texture/yellow_logo.png",getAssets()));
-    }
+		mTextures.add(Texture.loadTextureFromApk("Texture/orange_logo.png",getAssets()));
+		mTextures.add(Texture.loadTextureFromApk("Texture/green_logo.png",getAssets()));
+		mTextures.add(Texture.loadTextureFromApk("Texture/cyan_logo.png",getAssets()));
+		mTextures.add(Texture.loadTextureFromApk("Texture/purple_logo.png", getAssets()));
+		mTextures.add(Texture.loadTextureFromApk("Texture/red_logo.png",getAssets()));
+		mTextures.add(Texture.loadTextureFromApk("Texture/blue_logo.png",getAssets()));
+		mTextures.add(Texture.loadTextureFromApk("Texture/black_logo.png",getAssets()));
+		mTextures.add(Texture.loadTextureFromApk("Texture/white_logo.png",getAssets()));
+		mTextures.add(Texture.loadTextureFromApk("Texture/grey_logo.png",getAssets()));
+		mTextures.add(Texture.loadTextureFromApk("Texture/yellow_logo.png",getAssets()));
+	}
 
 	@Override
 	protected void onPause() {
@@ -230,7 +236,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		alertDialog.create();
 		alertDialog.show();	
 	}
-	
+
 	private void createFirebaseUser() {
 
 		appRef = new Firebase("https://flashme.firebaseio.com/");
@@ -240,49 +246,50 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		final Firebase gameConnectionsRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/connections");
 		final Firebase connectedRef = new Firebase("https://flashme.firebaseio.com/.info/connected");
 		connectedRef.addValueEventListener(new ValueEventListener() {
-		    @Override
-		    public void onDataChange(DataSnapshot snapshot) {
-		        boolean isConnected = snapshot.getValue(Boolean.class);
-		        if (isConnected) {
-		            Firebase presence = gameConnectionsRef.push();
-		            presence.setValue(Boolean.TRUE);
-		            presence.onDisconnect().removeValue();
-		            Log.d(LOGTAG, "Connected !");
-		        }
-		    }
+			@Override
+			public void onDataChange(DataSnapshot snapshot) {
+				boolean isConnected = snapshot.getValue(Boolean.class);
+				if (isConnected) {
+					Firebase presence = gameConnectionsRef.push();
+					presence.setValue(Boolean.TRUE);
+					presence.onDisconnect().removeValue();
+					Log.d(LOGTAG, "Connected !");
+				}
+			}
 
-		    @Override
-		    public void onCancelled(FirebaseError e) {
-		        Log.d(LOGTAG, e.getMessage()+" : Listener was cancelled at .info/connected");
-		    }
+			@Override
+			public void onCancelled(FirebaseError e) {
+				Log.d(LOGTAG, e.getMessage()+" : Listener was cancelled at .info/connected");
+			}
 		});
-		
+
 		// Create simple login
 		SimpleLogin authClient = new SimpleLogin(appRef);
 		authClient.loginAnonymously(new SimpleLoginAuthenticatedHandler() {
 			@Override
 			public void authenticated(com.firebase.simplelogin.enums.Error e, User u) {
-			    if(e != null) {
-				  Log.d(LOGTAG, "Error while logging in");
-			    }
-			    else {
-			    	Log.d(LOGTAG, "User logged in !");
-			    }				
+				if(e != null) {
+					Log.d(LOGTAG, "Error while logging in");
+				}
+				else {
+					Log.d(LOGTAG, "User logged in !");
+				}				
 			}
 		});
-		
+
 		// Create user
-		Firebase userRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/user/"+currentUser.getObjectId());
+		Firebase teamRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/team/"+currentUserTeam);
+		Firebase userRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/team/"+currentUserTeam+"/user/"+currentUser.getObjectId());
 		Map<String, Object> userData = new HashMap<String, Object>();
-		userData.put("life", 0);
+		userData.put("life", 50);
 		userData.put("gun", 0);
 		userData.put("munitions", 500);
 		userRef.setValue(userData);
-		
+
 		life.setText("0");
 		gun = 0;
-        munitions.setText("500");
-        
+		munitions.setText("500");
+
 		// Add listener
 		userRef.addValueEventListener(new ValueEventListener() {
 
@@ -295,7 +302,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 			public void onDataChange(DataSnapshot snapshot) {
 				Object value = snapshot.getValue();
 				if (value == null) {
-		             Log.d(LOGTAG, "User doesn't exist");
+					Log.d(LOGTAG, "User doesn't exist");
 				} else {
 					String lifeValue = ((Map)value).get("life").toString();
 					String munitionsValue = ((Map)value).get("munitions").toString();
@@ -305,9 +312,9 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 					gun = gunId;
 				}
 			}
-			
+
 		});
-		
+
 		waitingForPlayers();
 	}
 
@@ -335,7 +342,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		waitingDialog = ProgressDialog.show(context, gameName, "Waiting for other players to be ready...", true);
 		waitingDialog.show();
 		updateNbPlayers();
-		
+
 		// Init Vuforia
 		vuforiaAppSession = new SampleApplicationSession(GameActivity.this);
 		startLoadingAnimation();
@@ -351,9 +358,51 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 					int secondsRemaining = (int) ((millisUntilFinished/1000) - (minutesRemaining*60));
 					gameRef.child("timer").setValue(minutesRemaining+":"+secondsRemaining);
 				}
-	
+
 				public void onFinish() {
+
+					// Update Parse	
+					final int currentScore = currentUser.getInt("totalScore");
+
+					// Score = life
+					String userURL = "https://flashme.firebaseio.com/game/"+gameId+"/team/"+currentUserTeam+"/user/"+currentUser.getObjectId();
+					Firebase userRef = new Firebase(userURL);
+					userRef.addValueEventListener(new ValueEventListener() {
+						
+						@Override
+						public void onDataChange(DataSnapshot snapshot) {
+							Object value = snapshot.getValue();
+							if (value == null) {
+								Log.d(LOGTAG, "User doesn't exist");
+							} else {
+								
+								long life = ((Long) ((Map)value).get("life"));
+								currentUser.put("totalScore", currentScore + (int)life);
+								
+								// Best score
+								if(life > currentUser.getInt("bestScore")) {
+									currentUser.put("bestScore", life);
+								}
+							}			
+						}
+
+						@Override
+						public void onCancelled(FirebaseError arg0) {
+							System.err.println("Listener was cancelled");
+
+						}
+					});
+
+					// Rank
+					
+					// Victories - Defeats
+
+					// Delete Firebase
+					Firebase gameRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId);
+					gameRef.removeValue();
+					
 					time.setText("GAME OVER");
+
 				}
 			}.start();
 		}
@@ -368,7 +417,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 			public void onDataChange(DataSnapshot snapshot) {
 				Object value = snapshot.getValue();
 				if (value == null) {
-		             Log.d(LOGTAG, "Game doesn't exist");
+					Log.d(LOGTAG, "Game doesn't exist");
 				} else {
 					String timeValue = (String)((Map)value).get("timer");
 					time.setText(timeValue);
@@ -378,21 +427,22 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	}
 
 	@Override
-    protected void onDestroy() {
-        Log.d(LOGTAG, "onDestroy");
-        try {
-            vuforiaAppSession.stopAR();
-        } catch (SampleApplicationException e) {
-            Log.e(LOGTAG, e.getString());
-        }
-        super.onDestroy();
-        mTextures.clear();
-        mTextures = null;
-        System.gc();
-    }
+	protected void onDestroy() {
+		Log.d(LOGTAG, "onDestroy");
+		try {
+			vuforiaAppSession.stopAR();
+		} catch (SampleApplicationException e) {
+			Log.e(LOGTAG, e.getString());
+		}
+		super.onDestroy();
+		mTextures.clear();
+		mTextures = null;
+
+		System.gc();
+	}
 
 	public void updateGauge(final int markerId, final String playerId) {
-		
+
 		Log.d(LOGTAG, "Marker " + markerId + " detected from " + playerId);
 		// Set gauge value according to device resolution
 		if(Integer.parseInt(munitions.getText().toString()) <= 0){
@@ -425,83 +475,92 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		}
 		lastMarkerId = markerId;
 	}
-	
+
 	public void updateMunitions(final int nbMunitions) {
-		Firebase munitionsRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/user/"+currentUser.getObjectId()+"/munitions");
+		Firebase munitionsRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/team/"+currentUserTeam+"/user/"+currentUser.getObjectId()+"/munitions");
 		munitionsRef.runTransaction(new Transaction.Handler() {
 			@Override
-		    public Transaction.Result doTransaction(MutableData currentData) {
-		        int currentMunitions = currentData.getValue(Integer.class);
-		        currentData.setValue(currentMunitions + nbMunitions);
-		        return Transaction.success(currentData);
-		    }
+			public Transaction.Result doTransaction(MutableData currentData) {
+				int currentMunitions = currentData.getValue(Integer.class);
+				currentData.setValue(currentMunitions + nbMunitions);
+				return Transaction.success(currentData);
+			}
 
-		    @Override
-		    public void onComplete(FirebaseError e, boolean committed, DataSnapshot currentData) {
-		        if (e != null) {
-		            Log.d(LOGTAG, e.getMessage());
-		        } else {
-		            if (!committed) {
-		            	Log.d(LOGTAG, "Transaction not comitted");
-		            } else {
-		            	Log.d(LOGTAG, "Transaction succeeded");
-		            }
-		        }
-		    }
+			@Override
+			public void onComplete(FirebaseError e, boolean committed, DataSnapshot currentData) {
+				if (e != null) {
+					Log.d(LOGTAG, e.getMessage());
+				} else {
+					if (!committed) {
+						Log.d(LOGTAG, "Transaction not comitted");
+					} else {
+						Log.d(LOGTAG, "Transaction succeeded");
+					}
+				}
+			}
 		});
 	}
-	
+
 	public void updateGun(final int gunId) {
-		Firebase gunRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/user/"+currentUser.getObjectId()+"/gun");
+		Firebase gunRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/team/"+currentUserTeam+"/user/"+currentUser.getObjectId()+"/gun");
 		gunRef.runTransaction(new Transaction.Handler() {
 			@Override
-		    public Transaction.Result doTransaction(MutableData currentData) {
-		        currentData.setValue(gunId);
-		        return Transaction.success(currentData);
-		    }
+			public Transaction.Result doTransaction(MutableData currentData) {
+				currentData.setValue(gunId);
+				return Transaction.success(currentData);
+			}
 
-		    @Override
-		    public void onComplete(FirebaseError e, boolean committed, DataSnapshot currentData) {
-		        if (e != null) {
-		            Log.d(LOGTAG, e.getMessage());
-		        } else {
-		            if (!committed) {
-		            	Log.d(LOGTAG, "Transaction not comitted");
-		            } else {
-		            	Log.d(LOGTAG, "Transaction succeeded");
-		            }
-		        }
-		    }
+			@Override
+			public void onComplete(FirebaseError e, boolean committed, DataSnapshot currentData) {
+				if (e != null) {
+					Log.d(LOGTAG, e.getMessage());
+				} else {
+					if (!committed) {
+						Log.d(LOGTAG, "Transaction not comitted");
+					} else {
+						Log.d(LOGTAG, "Transaction succeeded");
+					}
+				}
+			}
 		});
 	}
-	
+
 	public void updateCurrentUserPoints(int points) {
 		updatePoints(currentUser.getObjectId(), points);
 	}
-	
-	private void updatePoints(String playerId, final int points) {
-		Firebase lifeRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/user/"+playerId+"/life");
-		lifeRef.runTransaction(new Transaction.Handler() {
-		    @Override
-		    public Transaction.Result doTransaction(MutableData currentData) {
-		        int currentLife = currentData.getValue(Integer.class);
-		        currentData.setValue(currentLife + points);
-		        return Transaction.success(currentData);
-		    }
 
-		    @Override
-		    public void onComplete(FirebaseError e, boolean committed, DataSnapshot currentData) {
-		        if (e != null) {
-		            Log.d(LOGTAG, e.getMessage());
-		        } else {
-		            if (!committed) {
-		            	Log.d(LOGTAG, "Transaction not comitted");
-		            } else {
-		            	Log.d(LOGTAG, "Transaction succeeded");
-		            }
-		        }
-		    }
-		});
+	private void updatePoints(String playerId, final int points) {
+		
+		// On boucle sur toues les équipes présentes dans le jeu
+		for(String team : teamsId) {
+			Firebase teamRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/team/"+team);
+			if(teamRef.child(playerId) != null) {
+				Log.d("Zizanie", "YES WE CAN ! : " + playerId);
+				Firebase lifeRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/team/"+team+"/user/"+playerId+"/life");
+				lifeRef.runTransaction(new Transaction.Handler() {
+					@Override
+					public Transaction.Result doTransaction(MutableData currentData) {
+						int currentLife = currentData.getValue(Integer.class);
+						currentData.setValue(currentLife + points);
+						return Transaction.success(currentData);
+					}
+
+					@Override
+					public void onComplete(FirebaseError e, boolean committed, DataSnapshot currentData) {
+						if (e != null) {
+							Log.d(LOGTAG, e.getMessage());
+						} else {
+							if (!committed) {
+								Log.d(LOGTAG, "Transaction not comitted");
+							} else {
+								Log.d(LOGTAG, "Transaction succeeded");
+							}
+						}
+					}
+				});
+			}
+		}
+		
 	}
 
 	private void startLoadingAnimation() {
@@ -566,7 +625,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 		int i = 0;
 		for (Entry<Integer, String> entry : markerIdToPlayerId.entrySet()) {								    
-		    dataSet[i] = markerTracker.createFrameMarker(entry.getKey(), entry.getValue() , new Vec2F(50, 50));
+			dataSet[i] = markerTracker.createFrameMarker(entry.getKey(), entry.getValue() , new Vec2F(50, 50));
 			if (dataSet[i] == null) {
 				Log.e(LOGTAG, "Failed to create frame marker." + entry.getKey());
 			}
