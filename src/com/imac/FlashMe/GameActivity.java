@@ -1,6 +1,5 @@
 package com.imac.FlashMe;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -9,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Vector;
 
+import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -30,7 +30,6 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
 import com.qualcomm.vuforia.CameraDevice;
 import com.qualcomm.vuforia.Marker;
 import com.qualcomm.vuforia.MarkerTracker;
@@ -48,6 +47,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
+import android.location.GpsStatus.Listener;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -66,6 +66,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	private static final String LOGTAG = "GameActivity";
 
 	private ParseUser currentUser;
+	private String currentUserTeam;
 	private String gameId;
 	private String gameName;
 	private boolean isCreator;
@@ -155,7 +156,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 					public void done(List<ParseObject> teams, ParseException e) {
 						Iterator<ParseObject> it = teams.iterator();
 						while(it.hasNext()) {
-							ParseObject team = it.next();
+							final ParseObject team = it.next();
 							teamsId.add(team.getObjectId());
 							Log.d("Zizanie", "DEBUG : " + team.getObjectId());
 							team.getRelation("players").getQuery().findInBackground(new FindCallback<ParseObject>() {
@@ -166,11 +167,16 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 									while(it.hasNext()) {
 										ParseObject player = it.next();
 										markerIdToPlayerId.put(player.getInt("markerId"), player.getObjectId());
+										if(player.getObjectId().equals(currentUser.getObjectId())) {
+											Log.d("Zizanie", "PROUT");
+											currentUserTeam = team.getObjectId();
+											createFirebaseUser();
+										}
 									}
 								}
 							});
 						}
-						createFirebaseUser();
+						//createFirebaseUser();
 					}
 				});
 			}
@@ -271,7 +277,8 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		});
 
 		// Create user
-		Firebase userRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/user/"+currentUser.getObjectId());
+		Firebase teamRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/team/"+currentUserTeam);
+		Firebase userRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/team/"+currentUserTeam+"/user/"+currentUser.getObjectId());
 		Map<String, Object> userData = new HashMap<String, Object>();
 		userData.put("life", 50);
 		userData.put("gun", 0);
@@ -357,7 +364,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 					final int currentScore = currentUser.getInt("totalScore");
 
 					// Score = life
-					String userURL = "https://flashme.firebaseio.com/game/"+gameId+"/user/"+currentUser.getObjectId();
+					String userURL = "https://flashme.firebaseio.com/game/"+gameId+"/team/"+currentUserTeam+"/user/"+currentUser.getObjectId();
 					Firebase userRef = new Firebase(userURL);
 					userRef.addValueEventListener(new ValueEventListener() {
 						
@@ -469,7 +476,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	}
 
 	public void updateMunitions(final int nbMunitions) {
-		Firebase munitionsRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/user/"+currentUser.getObjectId()+"/munitions");
+		Firebase munitionsRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/team/"+currentUserTeam+"/user/"+currentUser.getObjectId()+"/munitions");
 		munitionsRef.runTransaction(new Transaction.Handler() {
 			@Override
 			public Transaction.Result doTransaction(MutableData currentData) {
@@ -494,7 +501,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	}
 
 	public void updateGun(final int gunId) {
-		Firebase gunRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/user/"+currentUser.getObjectId()+"/gun");
+		Firebase gunRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/team/"+currentUserTeam+"/user/"+currentUser.getObjectId()+"/gun");
 		gunRef.runTransaction(new Transaction.Handler() {
 			@Override
 			public Transaction.Result doTransaction(MutableData currentData) {
@@ -522,28 +529,37 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	}
 
 	private void updatePoints(String playerId, final int points) {
-		Firebase lifeRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/user/"+playerId+"/life");
-		lifeRef.runTransaction(new Transaction.Handler() {
-			@Override
-			public Transaction.Result doTransaction(MutableData currentData) {
-				int currentLife = currentData.getValue(Integer.class);
-				currentData.setValue(currentLife + points);
-				return Transaction.success(currentData);
-			}
-
-			@Override
-			public void onComplete(FirebaseError e, boolean committed, DataSnapshot currentData) {
-				if (e != null) {
-					Log.d(LOGTAG, e.getMessage());
-				} else {
-					if (!committed) {
-						Log.d(LOGTAG, "Transaction not comitted");
-					} else {
-						Log.d(LOGTAG, "Transaction succeeded");
+		
+		// On boucle sur toues les équipes présentes dans le jeu
+		for(String team : teamsId) {
+			Firebase teamRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/team/"+team);
+			if(teamRef.child(playerId) != null) {
+				Log.d("Zizanie", "YES WE CAN ! : " + playerId);
+				Firebase lifeRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/team/"+team+"/user/"+playerId+"/life");
+				lifeRef.runTransaction(new Transaction.Handler() {
+					@Override
+					public Transaction.Result doTransaction(MutableData currentData) {
+						int currentLife = currentData.getValue(Integer.class);
+						currentData.setValue(currentLife + points);
+						return Transaction.success(currentData);
 					}
-				}
+
+					@Override
+					public void onComplete(FirebaseError e, boolean committed, DataSnapshot currentData) {
+						if (e != null) {
+							Log.d(LOGTAG, e.getMessage());
+						} else {
+							if (!committed) {
+								Log.d(LOGTAG, "Transaction not comitted");
+							} else {
+								Log.d(LOGTAG, "Transaction succeeded");
+							}
+						}
+					}
+				});
 			}
-		});
+		}
+		
 	}
 
 	private void startLoadingAnimation() {
