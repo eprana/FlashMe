@@ -45,6 +45,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.location.GpsStatus.Listener;
 import android.os.Bundle;
@@ -139,6 +140,8 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		currentUser.saveInBackground();
 
 		lastMarkerId = -1;
+		
+		// Add pictograms objects in the map
 
 		// Get game
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Game");
@@ -200,14 +203,13 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 	private void loadTextures() {
 
-		mTextures.add(Texture.loadTextureFromApk("Texture/scourge.png",getAssets()));
-		mTextures.add(Texture.loadTextureFromApk("Texture/death.png",getAssets()));
-		mTextures.add(Texture.loadTextureFromApk("Texture/pink_logo.png",getAssets()));
+		mTextures.add(Texture.loadTextureFromApk("Texture/gun.png",getAssets()));
 		mTextures.add(Texture.loadTextureFromApk("Texture/chainsaw.png",getAssets()));
-		mTextures.add(Texture.loadTextureFromApk("Texture/rifle.png",getAssets()));
-		mTextures.add(Texture.loadTextureFromApk("Texture/weapon.png",getAssets()));
+		mTextures.add(Texture.loadTextureFromApk("Texture/scourge.png",getAssets()));
+		mTextures.add(Texture.loadTextureFromApk("Texture/munitions.png",getAssets()));
+		mTextures.add(Texture.loadTextureFromApk("Texture/points.png",getAssets()));
+		mTextures.add(Texture.loadTextureFromApk("Texture/poison.png",getAssets()));
 		mTextures.add(Texture.loadTextureFromApk("Texture/pink_logo.png",getAssets()));
-		mTextures.add(Texture.loadTextureFromApk("Texture/life.png",getAssets()));
 		mTextures.add(Texture.loadTextureFromApk("Texture/orange_logo.png",getAssets()));
 		mTextures.add(Texture.loadTextureFromApk("Texture/green_logo.png",getAssets()));
 		mTextures.add(Texture.loadTextureFromApk("Texture/cyan_logo.png",getAssets()));
@@ -321,12 +323,12 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 				if (value == null) {
 					Log.d(LOGTAG, "User doesn't exist");
 				} else {
-					String lifeValue = ((Map)value).get("life").toString();
-					String munitionsValue = ((Map)value).get("munitions").toString();
-					int gunId = Integer.parseInt(((Map)value).get("gun").toString());
-					life.setText(lifeValue);
-					munitions.setText(munitionsValue);
-					gun = gunId;
+//					String lifeValue = ((Map)value).get("life").toString();
+//					String munitionsValue = ((Map)value).get("munitions").toString();
+//					int gunId = Integer.parseInt(((Map)value).get("gun").toString());
+//					life.setText(lifeValue);
+//					munitions.setText(munitionsValue);
+//					gun = gunId;
 				}
 			}
 
@@ -348,7 +350,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 			public void onDataChange(DataSnapshot snapshot) {
 				Log.d(LOGTAG, "NB PLAYERS : "+snapshot.getChildrenCount());
 				nbPlayersReady = snapshot.getChildrenCount();
-				if(nbPlayersReady == 1 /*markerId.size()*/) {
+				if(nbPlayersReady >= 1 /*markerId.size()*/) {
 					waitingDialog.dismiss();
 					initTimer();
 				}
@@ -796,8 +798,9 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 			return false;
 		}
 
-		Marker[] dataSet = new Marker[markerIdToPlayerId.size()];
-
+		Marker[] dataSet = new Marker[markerIdToPlayerId.size() + 6];
+		//Marker[] dataSet = new Marker[markerIdToPlayerId.size()];
+		
 		int i = 0;
 		for (Entry<Integer, String> entry : markerIdToPlayerId.entrySet()) {								    
 			dataSet[i] = markerTracker.createFrameMarker(entry.getKey(), entry.getValue() , new Vec2F(50, 50));
@@ -805,6 +808,15 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 				Log.e(LOGTAG, "Failed to create frame marker." + entry.getKey());
 			}
 			++i;
+		}
+		int index = 506;
+		for(int j = dataSet.length-6; j <dataSet.length; ++j) {
+			dataSet[j] = markerTracker.createFrameMarker(index, "index" + index , new Vec2F(50, 50));
+			++index;
+		}
+		
+		for(int k = 0; k<dataSet.length; ++k){
+			Log.d("index last marqueurs ", "#############" + dataSet[k]);
 		}
 
 		GameActivity.this.dataSet = dataSet;
@@ -845,6 +857,18 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		tManager.deinitTracker(MarkerTracker.getClassType());
 		return result;
 	}
+	
+	 @Override
+	 public void onConfigurationChanged(Configuration config) {
+		 if(config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+			 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+			 Log.d(LOGTAG, "Enter LANDSCAPE mode");
+		 }
+		 if(config.orientation == Configuration.ORIENTATION_PORTRAIT) {
+			 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+			 Log.d(LOGTAG, "Enter PORTRAIT mode");
+		 }
+	 }
 
 	@Override
 	public void onInitARDone(SampleApplicationException e) {

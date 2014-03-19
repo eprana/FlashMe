@@ -159,42 +159,53 @@ public class GameRenderer implements GLSurfaceView.Renderer {
             MarkerResult markerResult = (MarkerResult) (trackableResult);
             Marker marker = (Marker) markerResult.getTrackable();
 			
-			textureIndex = marker.getMarkerId();
+        	textureIndex = marker.getMarkerId() + 6;
 			assert (textureIndex < mTextures.size());
-            Texture thisTexture = mTextures.get(textureIndex);
-			
+		            
             int markerId = marker.getMarkerId();
             String userId = marker.getName();
+            
+    		
             
             switch(markerId) {
             case 511:
             	// Poison
             	mActivity.updateCurrentUserPoints(-10);
+            	textureIndex = 5;
             	break;
             case 510:
             	// Points
             	mActivity.updateCurrentUserPoints(10);
+            	textureIndex = 4;
             	break;
             case 509 :
             	// Munitions
             	mActivity.updateMunitions(50);
+            	textureIndex = 3;
+            	break;
             case 508:
-            	// Gun
+            	// Scourge
             	mActivity.updateGun(0);
+            	textureIndex = 2;
             	break;
             case 507:
-            	// Gun
+            	// Chain-Saw
             	mActivity.updateGun(1);
+            	textureIndex = 1;
             	break;
             case 506:
             	// Gun
             	mActivity.updateGun(2);
+            	textureIndex = 0;
             	break;
             default:
             	mActivity.updateGauge(markerId, userId);
             	break;
             }
-			
+
+            Log.d("########################", "Marker " + textureIndex + " detected from ");
+            Texture thisTexture = mTextures.get(textureIndex);
+            
 			// Select which model to draw:
             Buffer vertices = null;
             Buffer normals = null;
@@ -203,42 +214,21 @@ public class GameRenderer implements GLSurfaceView.Renderer {
             int numIndices = 0;
             int numVertices = 0;
             
-            switch (marker.getMarkerId())
-            {
-            case 0: // Death
+            if(markerId >= 506) {
                 vertices = pictoObject.getVertices();
                 normals = pictoObject.getNormals();
                 texCoords = pictoObject.getTexCoords();
                 numIndices = pictoObject.getNumObjectIndex();
                 numVertices = pictoObject.getNumObjectVertex();
-                break;
-            case 1: // Weapon
-                vertices = pictoObject.getVertices();
-                normals = pictoObject.getNormals();
-                texCoords = pictoObject.getTexCoords();
-                numIndices = pictoObject.getNumObjectIndex();
-                numVertices = pictoObject.getNumObjectVertex();
-                break;
-            case 2: 
-                vertices = logoObject.getVertices();
+            }else {
+            	vertices = logoObject.getVertices();
                 normals = logoObject.getNormals();
                 texCoords = logoObject.getTexCoords();
                 numIndices = logoObject.getNumObjectIndex();
                 numVertices = logoObject.getNumObjectVertex();
-                break;
-            default:
-                vertices = logoObject.getVertices();
-                normals = logoObject.getNormals();
-                texCoords = logoObject.getTexCoords();
-                numIndices = logoObject.getNumObjectIndex();
-                numVertices = logoObject.getNumObjectVertex();
-                break;
-        }
+            }
 			
 			float[] modelViewProjection = new float[16];
-            
-//            if (mActivity.isFrontCameraActive())
-//                Matrix.rotateM(modelViewMatrix, 0, 180, 0.f, 1.0f, 0.f);
             
             Matrix.translateM(modelViewMatrix, 0, 0.f,
                 0.f, 0.f);
