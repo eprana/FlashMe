@@ -383,7 +383,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	}
 
 	private void computeScore() {
-		Log.d("Zizanie", "Compute Score");
+
 		final int currentScore = currentUser.getInt("totalScore");
 
 		// Score = life
@@ -421,8 +421,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	}
 
 	private void displayScores() {
-		Log.d("Zizanie", "Diplay scores");
-		// get prompts.xml view
+
 		LayoutInflater li = LayoutInflater.from(context);
 		View promptsView = li.inflate(R.layout.scores, null);
 
@@ -492,7 +491,6 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 	private void doPlayerWin() {
 
-		Log.d("Zizanie", "DO I WON ?");
 		Iterator<Entry<String, ArrayList<String>>> it = teamIdToPlayerIdArray.entrySet().iterator();	
 		// For each team
 		while(it.hasNext()) {
@@ -522,19 +520,15 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 						if(finalCount == teamIdToPlayerIdArray.size() - 1) {
 							if(bestTeam.equals(currentUserTeam)) {
 								currentUser.increment("victories");
-								time.setText("YOUR TEAM WON !");
 							}
 							else {
 								currentUser.increment("defeats");
-								time.setText("YOUR TEAM LOST");
 							}
 							currentUser.saveInBackground();
 
-
-							// Rank
-
 							displayScores();
-
+							
+							// Rank
 
 						}
 					}	
@@ -623,6 +617,16 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		System.gc();
 	}
 
+	public boolean isEnnemy(String ennemyId) {
+		for(String playerId : teamIdToPlayerIdArray.get(currentUserTeam)) {
+			if(playerId.equals(ennemyId)) {
+				return false;
+			}
+					
+		}
+		return true;
+	}
+	
 	public void updateGauge(final int markerId, final String playerId) {
 
 		Log.d(LOGTAG, "Marker " + markerId + " detected from " + playerId);
@@ -644,8 +648,15 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 			else {
 				// Gauge full
 				gauge.getLayoutParams().height = 0;
-				updatePoints(currentUser.getObjectId(), 2*(gun+1));
-				updatePoints(playerId, -2*(gun+1));
+				int plus = 1;
+				if(!isEnnemy(playerId)) {
+					plus = -1;
+				}
+				if(!currentUser.getObjectId().equals(playerId)) {
+					updatePoints(playerId, -2*(gun+1));
+				}
+				updatePoints(currentUser.getObjectId(), plus*2*(gun+1));
+				
 				updateMunitions(-2+gun);
 			}
 		}
