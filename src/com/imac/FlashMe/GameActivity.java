@@ -80,6 +80,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	private ArrayList<String> teamsId = new ArrayList<String>();
 	private ArrayList<Integer> markerId = new ArrayList<Integer>();
 	private HashMap<String, ArrayList<String>> teamIdToPlayerIdArray = new HashMap<String, ArrayList<String>>();
+	private HashMap<String, Integer> teamIdToTeamScore = new HashMap<String, Integer>();
 	private HashMap<Integer, String> markerIdToPlayerId = new HashMap<Integer, String>();
 	private View mainView;
 	private ImageView gauge;
@@ -366,7 +367,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 	private void initTimer() {
 		if(isCreator) {
-			new CountDownTimer(minutes*60000, 1000) {
+			new CountDownTimer(1*60000, 1000) {
 				public void onTick(long millisUntilFinished) {
 					int minutesRemaining = (int) Math.floor((millisUntilFinished/1000)/60);
 					int secondsRemaining = (int) ((millisUntilFinished/1000) - (minutesRemaining*60));
@@ -407,10 +408,61 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 						}
 					});
 
-					// Rank
+					
 
 					// Victories - Defeats
+					int bestTeamScore = -1000;
+					String bestTeam = "";
+					Iterator<Entry<String, ArrayList<String>>> it = teamIdToPlayerIdArray.entrySet().iterator();	
+					// For each team
+					while(it.hasNext()) {
+					    final String teamId = it.next().getKey();
+					    
+					    String teamScoreURL = "https://flashme.firebaseio.com/game/"+gameId+"/team/"+teamId;
+						Firebase teamScoreRef = new Firebase(teamScoreURL);
+						
+						teamScoreRef.addValueEventListener(new ValueEventListener() {
 
+							@Override
+							public void onDataChange(DataSnapshot snapshot) {
+								Object value = snapshot.getValue();
+								if (value == null) {
+									Log.d(LOGTAG, "User doesn't exist");
+								} else {
+
+									long teamScore = ((Long) ((Map)value).get("teamScore"));
+									teamIdToTeamScore.put(teamId, (int)teamScore);
+									
+								}			
+							}
+
+							@Override
+							public void onCancelled(FirebaseError arg0) {
+								System.err.println("Listener was cancelled");
+
+							}
+						});
+						
+						if(teamIdToTeamScore.get(teamId) > bestTeamScore) {
+							bestTeamScore = teamIdToTeamScore.get(teamId);
+							bestTeam = teamId;
+						}
+					}
+					
+					if(bestTeam.equals(currentUserTeam)) {
+						currentUser.increment("victories");
+						Log.d("Zizanie", "YOU WON ! ");
+					}
+					else {
+						currentUser.increment("defeats");
+						Log.d("Zizanie", "YOU LOST NOOB ! ");
+					}
+					currentUser.saveInBackground();
+					
+					
+					
+					// Rank
+					
 					// Delete Firebase
 					Firebase gameRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId);
 					gameRef.removeValue();
