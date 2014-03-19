@@ -323,12 +323,12 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 				if (value == null) {
 					Log.d(LOGTAG, "User doesn't exist");
 				} else {
-//					String lifeValue = ((Map)value).get("life").toString();
-//					String munitionsValue = ((Map)value).get("munitions").toString();
-//					int gunId = Integer.parseInt(((Map)value).get("gun").toString());
-//					life.setText(lifeValue);
-//					munitions.setText(munitionsValue);
-//					gun = gunId;
+					String lifeValue = ((Map)value).get("life").toString();
+					String munitionsValue = ((Map)value).get("munitions").toString();
+					int gunId = Integer.parseInt(((Map)value).get("gun").toString());
+					life.setText(lifeValue);
+					munitions.setText(munitionsValue);
+					gun = gunId;
 				}
 			}
 
