@@ -249,6 +249,10 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		alertDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
 				// User wants to end game
+				if(isCreator) {
+					gameRef.removeValue();
+					gameRef = null;
+				}
 				finish();
 			}
 		});
@@ -474,8 +478,8 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 			public void onClick(DialogInterface dialog, int which) {
 				// Delete Firebase
 				if(isCreator) {
-					Firebase gameRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId);
 					gameRef.removeValue();
+					gameRef = null;
 				}
 
 				finish();
@@ -585,11 +589,14 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 		// Creator handle timer
 		if(isCreator) {
-			new CountDownTimer(5000, 1000) {
+			new CountDownTimer(15000, 1000) {
 				public void onTick(long millisUntilFinished) {
 					int minutesRemaining = (int) Math.floor((millisUntilFinished/1000)/60);
 					int secondsRemaining = (int) ((millisUntilFinished/1000) - (minutesRemaining*60));
-					gameRef.child("timer").setValue(minutesRemaining+":"+secondsRemaining);
+					if(gameRef != null) {
+						gameRef.child("timer").setValue(minutesRemaining+":"+secondsRemaining);
+					}
+					
 				}
 
 				public void onFinish() {
