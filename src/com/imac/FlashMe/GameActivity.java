@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Vector;
 
-import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -80,6 +79,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	private LayoutInflater inflater;
 	private ArrayList<String> teamsId = new ArrayList<String>();
 	private ArrayList<Integer> markerId = new ArrayList<Integer>();
+	private HashMap<String, ArrayList<String>> teamIdToPlayerIdArray = new HashMap<String, ArrayList<String>>();
 	private HashMap<Integer, String> markerIdToPlayerId = new HashMap<Integer, String>();
 	private View mainView;
 	private ImageView gauge;
@@ -154,27 +154,35 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 				game.getRelation("teams").getQuery().findInBackground(new FindCallback<ParseObject>() {
 					@Override
 					public void done(List<ParseObject> teams, ParseException e) {
+
+						// For each team
 						Iterator<ParseObject> it = teams.iterator();
 						while(it.hasNext()) {
+							final ArrayList<String> playerArray = new ArrayList<String>();
 							final ParseObject team = it.next();
 							teamsId.add(team.getObjectId());
 							Log.d("Zizanie", "DEBUG : " + team.getObjectId());
 							team.getRelation("players").getQuery().findInBackground(new FindCallback<ParseObject>() {
 								@Override
 								public void done(List<ParseObject> players, ParseException e) {
+
+									// For each player
 									Iterator<ParseObject> it = players.iterator();
-									// Add marker
 									while(it.hasNext()) {
 										ParseObject player = it.next();
+										// Add marker
 										markerIdToPlayerId.put(player.getInt("markerId"), player.getObjectId());
+										playerArray.add(player.getObjectId());
+										Log.d("Zizanie", "Add player to playerArray : " + player.getObjectId());
 										if(player.getObjectId().equals(currentUser.getObjectId())) {
-											Log.d("Zizanie", "PROUT");
 											currentUserTeam = team.getObjectId();
 											createFirebaseUser();
 										}
 									}
 								}
 							});
+							Log.d("Zizanie", "#########################################");
+							teamIdToPlayerIdArray.put(team.getObjectId(), playerArray);
 						}
 						//createFirebaseUser();
 					}
@@ -276,8 +284,12 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 			}
 		});
 
-		// Create user
+		// Create team
 		Firebase teamRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/team/"+currentUserTeam);
+		Firebase scoreTeamRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/team/"+currentUserTeam+"/teamScore");
+		scoreTeamRef.setValue(0);
+
+		// Create user
 		Firebase userRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/team/"+currentUserTeam+"/user/"+currentUser.getObjectId());
 		Map<String, Object> userData = new HashMap<String, Object>();
 		userData.put("life", 50);
@@ -367,17 +379,17 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 					String userURL = "https://flashme.firebaseio.com/game/"+gameId+"/team/"+currentUserTeam+"/user/"+currentUser.getObjectId();
 					Firebase userRef = new Firebase(userURL);
 					userRef.addValueEventListener(new ValueEventListener() {
-						
+
 						@Override
 						public void onDataChange(DataSnapshot snapshot) {
 							Object value = snapshot.getValue();
 							if (value == null) {
 								Log.d(LOGTAG, "User doesn't exist");
 							} else {
-								
+
 								long life = ((Long) ((Map)value).get("life"));
 								currentUser.put("totalScore", currentScore + (int)life);
-								
+
 								// Best score
 								if(life > currentUser.getInt("bestScore")) {
 									currentUser.put("bestScore", life);
@@ -393,13 +405,13 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 					});
 
 					// Rank
-					
+
 					// Victories - Defeats
 
 					// Delete Firebase
 					Firebase gameRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId);
 					gameRef.removeValue();
-					
+
 					time.setText("GAME OVER");
 
 				}
@@ -530,36 +542,141 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 	private void updatePoints(String playerId, final int points) {
 		
-		// On boucle sur toues les équipes présentes dans le jeu
-		for(String team : teamsId) {
-			Firebase teamRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/team/"+team);
-			if(teamRef.child(playerId) != null) {
-				Log.d("Zizanie", "YES WE CAN ! : " + playerId);
-				Firebase lifeRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/team/"+team+"/user/"+playerId+"/life");
-				lifeRef.runTransaction(new Transaction.Handler() {
-					@Override
-					public Transaction.Result doTransaction(MutableData currentData) {
-						int currentLife = currentData.getValue(Integer.class);
-						currentData.setValue(currentLife + points);
-						return Transaction.success(currentData);
-					}
+		Iterator<Entry<String, ArrayList<String>>> it = teamIdToPlayerIdArray.entrySet().iterator();
+		
+		// For each team
+		while(it.hasNext()) {
+		    String teamId = it.next().toString();
+		    ArrayList<String> playerArray = (ArrayList<String>)teamIdToPlayerIdArray.get(teamId);
+		    Log.d("Zizanie", "PLAYERARREY DE MERDE : " + playerArray);
+		    // For each player in playerArray
+		    for(String player : playerArray) {
+		    	if(player.equals(playerId)) {
+		    		
+		    		// Update user score
+					Firebase lifeRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/team/"+teamId+"/user/"+playerId+"/life");
+					lifeRef.runTransaction(new Transaction.Handler() {
+						@Override
+						public Transaction.Result doTransaction(MutableData currentData) {
+							int currentLife = currentData.getValue(Integer.class);
+							currentData.setValue(currentLife + points);
+							Log.d("Zizanie", "User CurrentScore : " + currentLife);
+							Log.d("Zizanie", "User Add : " + points);
+							return Transaction.success(currentData);
+						}
 
-					@Override
-					public void onComplete(FirebaseError e, boolean committed, DataSnapshot currentData) {
-						if (e != null) {
-							Log.d(LOGTAG, e.getMessage());
-						} else {
-							if (!committed) {
-								Log.d(LOGTAG, "Transaction not comitted");
+						@Override
+						public void onComplete(FirebaseError e, boolean committed, DataSnapshot currentData) {
+							if (e != null) {
+								Log.d(LOGTAG, e.getMessage());
 							} else {
-								Log.d(LOGTAG, "Transaction succeeded");
+								if (!committed) {
+									Log.d(LOGTAG, "Transaction not comitted");
+								} else {
+									Log.d(LOGTAG, "Transaction succeeded");
+								}
 							}
 						}
-					}
-				});
-			}
+					});
+
+
+					// Update team score
+					Firebase teamScoreRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/team/"+teamId+"/teamScore");
+					teamScoreRef.runTransaction(new Transaction.Handler() {
+						@Override
+						public Transaction.Result doTransaction(MutableData currentData) {
+							int currentScore = currentData.getValue(Integer.class);
+							currentData.setValue(currentScore + points);
+							Log.d("Zizanie", "Team CurrentScore : " + currentScore);
+							Log.d("Zizanie", "Team Add : " + points);
+
+							return Transaction.success(currentData);
+						}
+
+						@Override
+						public void onComplete(FirebaseError e, boolean committed, DataSnapshot currentData) {
+							if (e != null) {
+								Log.d(LOGTAG, e.getMessage());
+							} else {
+								if (!committed) {
+									Log.d(LOGTAG, "Transaction not comitted");
+								} else {
+									Log.d(LOGTAG, "Transaction succeeded");
+								}
+							}
+						}
+					});
+		    		
+		    	}
+		    }
+
 		}
-		
+
+//		// On boucle sur toues les équipes présentes dans le jeu
+//		for(String team : teamsId) {
+//			Firebase teamRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/team/"+team);
+//
+//			if(teamRef.child("/user/" + playerId) != null) {
+//
+//				Log.d("Zizanie", teamRef.child("/user/" + playerId).toString());
+//				Log.d("Zizanie", "Je suis dans la bonne team");
+//
+//				// Update user score
+//				Firebase lifeRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/team/"+team+"/user/"+playerId+"/life");
+//				lifeRef.runTransaction(new Transaction.Handler() {
+//					@Override
+//					public Transaction.Result doTransaction(MutableData currentData) {
+//						int currentLife = currentData.getValue(Integer.class);
+//						currentData.setValue(currentLife + points);
+//						Log.d("Zizanie", "User CurrentScore : " + currentLife);
+//						Log.d("Zizanie", "User Add : " + points);
+//						return Transaction.success(currentData);
+//					}
+//
+//					@Override
+//					public void onComplete(FirebaseError e, boolean committed, DataSnapshot currentData) {
+//						if (e != null) {
+//							Log.d(LOGTAG, e.getMessage());
+//						} else {
+//							if (!committed) {
+//								Log.d(LOGTAG, "Transaction not comitted");
+//							} else {
+//								Log.d(LOGTAG, "Transaction succeeded");
+//							}
+//						}
+//					}
+//				});
+//
+//
+//				// Update team score
+//				Firebase teamScoreRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/team/"+team+"/teamScore");
+//				teamScoreRef.runTransaction(new Transaction.Handler() {
+//					@Override
+//					public Transaction.Result doTransaction(MutableData currentData) {
+//						int currentScore = currentData.getValue(Integer.class);
+//						currentData.setValue(currentScore + points);
+//						Log.d("Zizanie", "Team CurrentScore : " + currentScore);
+//						Log.d("Zizanie", "Team Add : " + points);
+//
+//						return Transaction.success(currentData);
+//					}
+//
+//					@Override
+//					public void onComplete(FirebaseError e, boolean committed, DataSnapshot currentData) {
+//						if (e != null) {
+//							Log.d(LOGTAG, e.getMessage());
+//						} else {
+//							if (!committed) {
+//								Log.d(LOGTAG, "Transaction not comitted");
+//							} else {
+//								Log.d(LOGTAG, "Transaction succeeded");
+//							}
+//						}
+//					}
+//				});
+//			}
+		//}
+
 	}
 
 	private void startLoadingAnimation() {
