@@ -138,7 +138,6 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		lastMarkerId = -1;
 
 		// Get game
-		Log.d("Zizanie", "DEBUG : Load teams");
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Game");
 		query.whereEqualTo("objectId", gameId);
 		query.getFirstInBackground(new GetCallback<ParseObject>(){
@@ -173,16 +172,15 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 										// Add marker
 										markerIdToPlayerId.put(player.getInt("markerId"), player.getObjectId());
 										playerArray.add(player.getObjectId());
-										Log.d("Zizanie", "Add player to playerArray : " + player.getObjectId());
 										if(player.getObjectId().equals(currentUser.getObjectId())) {
 											currentUserTeam = team.getObjectId();
 											createFirebaseUser();
 										}
 									}
+									teamIdToPlayerIdArray.put(team.getObjectId(), playerArray);
 								}
 							});
-							Log.d("Zizanie", "#########################################");
-							teamIdToPlayerIdArray.put(team.getObjectId(), playerArray);
+							
 						}
 						//createFirebaseUser();
 					}
@@ -549,66 +547,71 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		    String teamId = it.next().toString();
 		    ArrayList<String> playerArray = (ArrayList<String>)teamIdToPlayerIdArray.get(teamId);
 		    Log.d("Zizanie", "PLAYERARREY DE MERDE : " + playerArray);
-		    // For each player in playerArray
-		    for(String player : playerArray) {
-		    	if(player.equals(playerId)) {
-		    		
-		    		// Update user score
-					Firebase lifeRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/team/"+teamId+"/user/"+playerId+"/life");
-					lifeRef.runTransaction(new Transaction.Handler() {
-						@Override
-						public Transaction.Result doTransaction(MutableData currentData) {
-							int currentLife = currentData.getValue(Integer.class);
-							currentData.setValue(currentLife + points);
-							Log.d("Zizanie", "User CurrentScore : " + currentLife);
-							Log.d("Zizanie", "User Add : " + points);
-							return Transaction.success(currentData);
-						}
-
-						@Override
-						public void onComplete(FirebaseError e, boolean committed, DataSnapshot currentData) {
-							if (e != null) {
-								Log.d(LOGTAG, e.getMessage());
-							} else {
-								if (!committed) {
-									Log.d(LOGTAG, "Transaction not comitted");
-								} else {
-									Log.d(LOGTAG, "Transaction succeeded");
+		    if(playerArray != null) {
+		    	 Log.d("Zizanie", "PLAYERARREY DE MERDE : " + playerArray);
+				    
+				    // For each player in playerArray
+				    for(String player : playerArray) {
+				    	if(player.equals(playerId)) {
+				    		
+				    		// Update user score
+							Firebase lifeRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/team/"+teamId+"/user/"+playerId+"/life");
+							lifeRef.runTransaction(new Transaction.Handler() {
+								@Override
+								public Transaction.Result doTransaction(MutableData currentData) {
+									int currentLife = currentData.getValue(Integer.class);
+									currentData.setValue(currentLife + points);
+									Log.d("Zizanie", "User CurrentScore : " + currentLife);
+									Log.d("Zizanie", "User Add : " + points);
+									return Transaction.success(currentData);
 								}
-							}
-						}
-					});
 
-
-					// Update team score
-					Firebase teamScoreRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/team/"+teamId+"/teamScore");
-					teamScoreRef.runTransaction(new Transaction.Handler() {
-						@Override
-						public Transaction.Result doTransaction(MutableData currentData) {
-							int currentScore = currentData.getValue(Integer.class);
-							currentData.setValue(currentScore + points);
-							Log.d("Zizanie", "Team CurrentScore : " + currentScore);
-							Log.d("Zizanie", "Team Add : " + points);
-
-							return Transaction.success(currentData);
-						}
-
-						@Override
-						public void onComplete(FirebaseError e, boolean committed, DataSnapshot currentData) {
-							if (e != null) {
-								Log.d(LOGTAG, e.getMessage());
-							} else {
-								if (!committed) {
-									Log.d(LOGTAG, "Transaction not comitted");
-								} else {
-									Log.d(LOGTAG, "Transaction succeeded");
+								@Override
+								public void onComplete(FirebaseError e, boolean committed, DataSnapshot currentData) {
+									if (e != null) {
+										Log.d(LOGTAG, e.getMessage());
+									} else {
+										if (!committed) {
+											Log.d(LOGTAG, "Transaction not comitted");
+										} else {
+											Log.d(LOGTAG, "Transaction succeeded");
+										}
+									}
 								}
-							}
-						}
-					});
-		    		
-		    	}
+							});
+
+
+							// Update team score
+							Firebase teamScoreRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/team/"+teamId+"/teamScore");
+							teamScoreRef.runTransaction(new Transaction.Handler() {
+								@Override
+								public Transaction.Result doTransaction(MutableData currentData) {
+									int currentScore = currentData.getValue(Integer.class);
+									currentData.setValue(currentScore + points);
+									Log.d("Zizanie", "Team CurrentScore : " + currentScore);
+									Log.d("Zizanie", "Team Add : " + points);
+
+									return Transaction.success(currentData);
+								}
+
+								@Override
+								public void onComplete(FirebaseError e, boolean committed, DataSnapshot currentData) {
+									if (e != null) {
+										Log.d(LOGTAG, e.getMessage());
+									} else {
+										if (!committed) {
+											Log.d(LOGTAG, "Transaction not comitted");
+										} else {
+											Log.d(LOGTAG, "Transaction succeeded");
+										}
+									}
+								}
+							});
+				    		
+				    	}
+				    }
 		    }
+		   
 
 		}
 
