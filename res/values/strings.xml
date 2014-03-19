@@ -152,4 +152,12 @@
 	<string name="time_value">00:00</string>
 	<string name="gauge">Gauge</string>
 	
+	<!--  Score alert -->
+	<string name="score_title">Score table</string>
+	<string name="score_yours">Your score : </string>
+	<string name="score_team1">Score Team1</string>
+	<string name="score_team2">Score Team2</string>
+	<string name="score_team3">Score Team3</string>
+	
+	
 </resources>

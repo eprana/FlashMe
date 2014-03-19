@@ -59,6 +59,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -79,6 +80,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 	private int bestTeamScore = -1000;
 	private String bestTeam = "TOTO";
+	private int playerScore = 0;
 
 	private int finalCount = 0;
 	private final Context context = this;
@@ -86,6 +88,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	private ArrayList<String> teamsId = new ArrayList<String>();
 	private ArrayList<Integer> markerId = new ArrayList<Integer>();
 	private HashMap<String, ArrayList<String>> teamIdToPlayerIdArray = new HashMap<String, ArrayList<String>>();
+	private HashMap<String, Integer> teamIdToTeamScore = new HashMap<String,Integer>();
 	private HashMap<Integer, String> markerIdToPlayerId = new HashMap<Integer, String>();
 	private View mainView;
 	private ImageView gauge;
@@ -143,8 +146,15 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 		lastMarkerId = -1;
 
-		// Add pictograms objects in the map
+		initGame();
 
+
+
+
+	}
+
+	// Initialize game
+	private void initGame() {
 		// Get game
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Game");
 		query.whereEqualTo("objectId", gameId);
@@ -194,7 +204,6 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 				});
 			}
 		});
-
 	}
 
 	private void loadTextures() {
@@ -252,7 +261,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 		appRef = new Firebase("https://flashme.firebaseio.com/");
 		gameRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId);
-		
+
 		// Create connection
 		final Firebase gameConnectionsRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/connections");
 		final Firebase connectedRef = new Firebase("https://flashme.firebaseio.com/.info/connected");
@@ -292,7 +301,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		Firebase teamRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/team/"+currentUserTeam);
 		Firebase scoreTeamRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/team/"+currentUserTeam+"/teamScore");
 		scoreTeamRef.setValue(0);
-		
+
 
 		// Create user
 		Firebase userRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/team/"+currentUserTeam+"/user/"+currentUser.getObjectId());
@@ -347,7 +356,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 			public void onDataChange(DataSnapshot snapshot) {
 				Log.d(LOGTAG, "NB PLAYERS : "+snapshot.getChildrenCount());
 				nbPlayersReady = snapshot.getChildrenCount();
-				if(nbPlayersReady == 2 /*markerId.size()*/) {
+				if(nbPlayersReady == 1 /*markerId.size()*/) {
 					waitingDialog.dismiss();
 					initTimer();
 
@@ -356,6 +365,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 			}
 		});
 	}
+
 	private void waitingForPlayers() {
 		waitingDialog = ProgressDialog.show(context, gameName, "Waiting for other players to be ready...", true);
 		waitingDialog.show();
@@ -368,23 +378,174 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		initApplicationAR();
 	}
 
-	private void initTimer() {
+	private void computeScore() {
+		Log.d("Zizanie", "Compute Score");
+		final int currentScore = currentUser.getInt("totalScore");
 
-		// Creator handle timer
-		if(isCreator) {
-			new CountDownTimer(5000, 1000) {
-				public void onTick(long millisUntilFinished) {
-					int minutesRemaining = (int) Math.floor((millisUntilFinished/1000)/60);
-					int secondsRemaining = (int) ((millisUntilFinished/1000) - (minutesRemaining*60));
-					gameRef.child("timer").setValue(minutesRemaining+":"+secondsRemaining);
-				}
+		// Score = life
+		String userURL = "https://flashme.firebaseio.com/game/"+gameId+"/team/"+currentUserTeam+"/user/"+currentUser.getObjectId();
+		Firebase userRef = new Firebase(userURL);
+		userRef.addValueEventListener(new ValueEventListener() {
 
-				public void onFinish() {
+			@Override
+			public void onDataChange(DataSnapshot snapshot) {
+				Object value = snapshot.getValue();
+				if (value == null) {
+					Log.d(LOGTAG, "User doesn't exist");
+				} else {
 
-				}
-			}.start();
-		}
+					long life = ((Long) ((Map)value).get("life"));
+					playerScore = (int) life;
+
+					currentUser.put("totalScore",  currentScore + (int)life);
+
+					// Best score
+					if(life > currentUser.getInt("bestScore")) {
+						currentUser.put("bestScore", life);
+					}
+				}	
+
+				currentUser.saveInBackground();
+			}
+
+			@Override
+			public void onCancelled(FirebaseError arg0) {
+				System.err.println("Listener was cancelled");
+
+			}
+		});
+	}
+
+	private void displayScores() {
+		Log.d("Zizanie", "Diplay scores");
+		// get prompts.xml view
+		LayoutInflater li = LayoutInflater.from(context);
+		View promptsView = li.inflate(R.layout.scores, null);
+
+		final LinearLayout ll = (LinearLayout) promptsView.findViewById(R.id.score_layout);
+
+		TextView t_yourScore = new TextView(context);
+		t_yourScore.setText("Your score : " + playerScore);
+		t_yourScore.setTextSize(20);
+		ll.addView(t_yourScore);
 		
+		TextView t_winner = new TextView(context);
+		t_winner.setText("Winning team  : " + bestTeam);
+		t_winner.setTextSize(20);
+		ll.addView(t_winner);
+
+		for(final String teamId : teamsId) {
+
+			// Get parse team
+			ParseQuery<ParseObject> query = ParseQuery.getQuery("Team");
+			query.whereEqualTo("objectId", teamId);
+			query.getFirstInBackground(new GetCallback<ParseObject>(){
+				@Override
+				public void done(ParseObject team, ParseException e) {
+					String teamName = team.getString("name");
+					
+					TextView t_team = new TextView(context);
+					String teamScore;
+					if( teamIdToTeamScore.get(teamId) == null) {
+						teamScore = "Team did not play";
+					}
+					else {
+						teamScore =  teamIdToTeamScore.get(teamId).toString();
+					}
+					
+					t_team.setText(teamName + " score : " + teamScore);
+					t_team.setTextSize(20);
+					ll.addView(t_team);
+					
+				}
+
+			});
+		}
+
+
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+
+		// set prompts.xml to alertdialog builder
+		alertDialogBuilder.setView(promptsView);
+
+		alertDialogBuilder.setPositiveButton("OK", new OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// Delete Firebase
+				if(isCreator) {
+					Firebase gameRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId);
+					gameRef.removeValue();
+				}
+
+				finish();
+
+			}
+		});
+		alertDialogBuilder.create();
+		alertDialogBuilder.show();
+	}
+
+	private void doPlayerWin() {
+
+		Log.d("Zizanie", "DO I WON ?");
+		Iterator<Entry<String, ArrayList<String>>> it = teamIdToPlayerIdArray.entrySet().iterator();	
+		// For each team
+		while(it.hasNext()) {
+			final String teamId = it.next().getKey();
+
+			String teamScoreURL = "https://flashme.firebaseio.com/game/"+gameId+"/team/"+teamId;
+			Firebase teamScoreRef = new Firebase(teamScoreURL);
+
+			teamScoreRef.addListenerForSingleValueEvent(new ValueEventListener() {
+				@Override
+				public void onDataChange(DataSnapshot snapshot) {
+					Object value = snapshot.getValue();
+					if (value == null) {
+						Log.d(LOGTAG, "User doesn't exist");
+					} 
+					else {
+
+						long teamScore = ((Long) ((Map)value).get("teamScore"));
+						teamIdToTeamScore.put(teamId, (int)teamScore);
+						if(teamScore > bestTeamScore) {
+							bestTeamScore = (int) teamScore;
+							bestTeam = teamId;
+						}
+
+						finalCount++;
+
+						if(finalCount == teamIdToPlayerIdArray.size() - 1) {
+							if(bestTeam.equals(currentUserTeam)) {
+								currentUser.increment("victories");
+								time.setText("YOUR TEAM WON !");
+							}
+							else {
+								currentUser.increment("defeats");
+								time.setText("YOUR TEAM LOST");
+							}
+							currentUser.saveInBackground();
+
+
+							// Rank
+
+							displayScores();
+
+
+						}
+					}	
+				}
+
+				@Override
+				public void onCancelled(FirebaseError arg0) {
+					// TODO Auto-generated method stub
+
+				}
+			});
+		}
+	}
+
+	private void gameListening() {
 		gameRef.addValueEventListener(new ValueEventListener() {
 
 			@Override
@@ -406,121 +567,38 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 						// End of a game
 						if(timeValue.equals("0:1")) {
-							Log.d("Zizanie", "IT IS FINISHED ! ");
-							// Update Parse	
-							final int currentScore = currentUser.getInt("totalScore");
+							Log.d("Zizanie", "Game is FINISHED ! ");
 
-							// Score = life
-							String userURL = "https://flashme.firebaseio.com/game/"+gameId+"/team/"+currentUserTeam+"/user/"+currentUser.getObjectId();
-							Firebase userRef = new Firebase(userURL);
-							userRef.addValueEventListener(new ValueEventListener() {
+							computeScore();
 
-								@Override
-								public void onDataChange(DataSnapshot snapshot) {
-									Object value = snapshot.getValue();
-									if (value == null) {
-										Log.d(LOGTAG, "User doesn't exist");
-									} else {
+							doPlayerWin();
 
-										long life = ((Long) ((Map)value).get("life"));
-										currentUser.put("totalScore", currentScore + (int)life);
-
-										// Best score
-										if(life > currentUser.getInt("bestScore")) {
-											currentUser.put("bestScore", life);
-										}
-									}	
-									
-									currentUser.saveInBackground();
-								}
-
-								@Override
-								public void onCancelled(FirebaseError arg0) {
-									System.err.println("Listener was cancelled");
-
-								}
-							});
-
-
-
-							// Victories - Defeats
-							Iterator<Entry<String, ArrayList<String>>> it = teamIdToPlayerIdArray.entrySet().iterator();	
-							// For each team
-							while(it.hasNext()) {
-								final String teamId = it.next().getKey();
-
-								String teamScoreURL = "https://flashme.firebaseio.com/game/"+gameId+"/team/"+teamId;
-								Firebase teamScoreRef = new Firebase(teamScoreURL);
-
-								teamScoreRef.addListenerForSingleValueEvent(new ValueEventListener() {
-								     @Override
-								     public void onDataChange(DataSnapshot snapshot) {
-								    	Object value = snapshot.getValue();
-										if (value == null) {
-											Log.d(LOGTAG, "User doesn't exist");
-										} 
-										else {
-
-											long teamScore = ((Long) ((Map)value).get("teamScore"));
-											if(teamScore > bestTeamScore) {
-												bestTeamScore = (int) teamScore;
-												bestTeam = teamId;
-											}
-											
-											finalCount++;
-																						
-											if(finalCount == teamIdToPlayerIdArray.size()) {
-												if(bestTeam.equals(currentUserTeam)) {
-													currentUser.increment("victories");
-													time.setText("YOUR TEAM WON !");
-												}
-												else {
-													currentUser.increment("defeats");
-													time.setText("YOUR TEAM LOST");
-												}
-												currentUser.saveInBackground();
-
-
-												// Rank
-												
-												// Display scores
-												AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-												alertDialog.setTitle("SCORES");
-												alertDialog.setMessage("You can't add more than 4 teams in a game.");
-												alertDialog.setPositiveButton("OK", new OnClickListener() {
-													
-													@Override
-													public void onClick(DialogInterface dialog, int which) {
-														// Delete Firebase
-														if(isCreator) {
-															Firebase gameRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId);
-															gameRef.removeValue();
-														}
-														
-														finish();
-														
-													}
-												});
-												alertDialog.create();
-												alertDialog.show();
-
-												
-											}
-										}	
-								     }
-
-									@Override
-									public void onCancelled(FirebaseError arg0) {
-										// TODO Auto-generated method stub
-										
-									}
-								});
-							}
 						}
 					}
-				}			
+				}	
+
 			}
 		});
+	}
+
+	private void initTimer() {
+
+		// Creator handle timer
+		if(isCreator) {
+			new CountDownTimer(5000, 1000) {
+				public void onTick(long millisUntilFinished) {
+					int minutesRemaining = (int) Math.floor((millisUntilFinished/1000)/60);
+					int secondsRemaining = (int) ((millisUntilFinished/1000) - (minutesRemaining*60));
+					gameRef.child("timer").setValue(minutesRemaining+":"+secondsRemaining);
+				}
+
+				public void onFinish() {
+
+				}
+			}.start();
+		}
+
+		gameListening();
 	}
 
 	@Override
@@ -696,75 +774,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 					}
 				}
 			}
-
-
 		}
-
-		//		// On boucle sur toues les équipes présentes dans le jeu
-		//		for(String team : teamsId) {
-		//			Firebase teamRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/team/"+team);
-		//
-		//			if(teamRef.child("/user/" + playerId) != null) {
-		//
-		//				Log.d("Zizanie", teamRef.child("/user/" + playerId).toString());
-		//				Log.d("Zizanie", "Je suis dans la bonne team");
-		//
-		//				// Update user score
-		//				Firebase lifeRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/team/"+team+"/user/"+playerId+"/life");
-		//				lifeRef.runTransaction(new Transaction.Handler() {
-		//					@Override
-		//					public Transaction.Result doTransaction(MutableData currentData) {
-		//						int currentLife = currentData.getValue(Integer.class);
-		//						currentData.setValue(currentLife + points);
-		//						Log.d("Zizanie", "User CurrentScore : " + currentLife);
-		//						Log.d("Zizanie", "User Add : " + points);
-		//						return Transaction.success(currentData);
-		//					}
-		//
-		//					@Override
-		//					public void onComplete(FirebaseError e, boolean committed, DataSnapshot currentData) {
-		//						if (e != null) {
-		//							Log.d(LOGTAG, e.getMessage());
-		//						} else {
-		//							if (!committed) {
-		//								Log.d(LOGTAG, "Transaction not comitted");
-		//							} else {
-		//								Log.d(LOGTAG, "Transaction succeeded");
-		//							}
-		//						}
-		//					}
-		//				});
-		//
-		//
-		//				// Update team score
-		//				Firebase teamScoreRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/team/"+team+"/teamScore");
-		//				teamScoreRef.runTransaction(new Transaction.Handler() {
-		//					@Override
-		//					public Transaction.Result doTransaction(MutableData currentData) {
-		//						int currentScore = currentData.getValue(Integer.class);
-		//						currentData.setValue(currentScore + points);
-		//						Log.d("Zizanie", "Team CurrentScore : " + currentScore);
-		//						Log.d("Zizanie", "Team Add : " + points);
-		//
-		//						return Transaction.success(currentData);
-		//					}
-		//
-		//					@Override
-		//					public void onComplete(FirebaseError e, boolean committed, DataSnapshot currentData) {
-		//						if (e != null) {
-		//							Log.d(LOGTAG, e.getMessage());
-		//						} else {
-		//							if (!committed) {
-		//								Log.d(LOGTAG, "Transaction not comitted");
-		//							} else {
-		//								Log.d(LOGTAG, "Transaction succeeded");
-		//							}
-		//						}
-		//					}
-		//				});
-		//			}
-		//}
-
 	}
 
 	private void startLoadingAnimation() {

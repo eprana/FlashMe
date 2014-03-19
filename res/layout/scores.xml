@@ -1,0 +1,31 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+	android:id="@+id/scores" 
+	android:layout_width="match_parent" 
+	android:layout_height="match_parent" 
+	android:orientation="vertical" 
+	android:padding="@dimen/small_mg" 
+	android:background="@color/white">
+	
+    
+    <TextView 
+		android:id="@+id/score_title" 
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content" 
+		android:layout_gravity="center"
+		style="@style/blue"
+		android:text="@string/score_title" />
+    
+
+	<LinearLayout
+	    android:id="@+id/score_layout"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="vertical" >
+
+		
+
+	
+
+	</LinearLayout>
+	
+</LinearLayout>
