@@ -74,13 +74,15 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	private Firebase appRef;
 	private Firebase gameRef;
 	private float nbPlayersReady;
+	
+	private int bestTeamScore = -1000;
+	private String bestTeam = "";
 
 	private final Context context = this;
 	private LayoutInflater inflater;
 	private ArrayList<String> teamsId = new ArrayList<String>();
 	private ArrayList<Integer> markerId = new ArrayList<Integer>();
 	private HashMap<String, ArrayList<String>> teamIdToPlayerIdArray = new HashMap<String, ArrayList<String>>();
-	private HashMap<String, Integer> teamIdToTeamScore = new HashMap<String, Integer>();
 	private HashMap<Integer, String> markerIdToPlayerId = new HashMap<Integer, String>();
 	private View mainView;
 	private ImageView gauge;
@@ -411,8 +413,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 					
 
 					// Victories - Defeats
-					int bestTeamScore = -1000;
-					String bestTeam = "";
+					
 					Iterator<Entry<String, ArrayList<String>>> it = teamIdToPlayerIdArray.entrySet().iterator();	
 					// For each team
 					while(it.hasNext()) {
@@ -431,8 +432,10 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 								} else {
 
 									long teamScore = ((Long) ((Map)value).get("teamScore"));
-									teamIdToTeamScore.put(teamId, (int)teamScore);
-									
+									if(teamScore > bestTeamScore) {
+										bestTeamScore = (int) teamScore;
+										bestTeam = teamId;
+									}
 								}			
 							}
 
@@ -443,10 +446,6 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 							}
 						});
 						
-						if(teamIdToTeamScore.get(teamId) > bestTeamScore) {
-							bestTeamScore = teamIdToTeamScore.get(teamId);
-							bestTeam = teamId;
-						}
 					}
 					
 					if(bestTeam.equals(currentUserTeam)) {
