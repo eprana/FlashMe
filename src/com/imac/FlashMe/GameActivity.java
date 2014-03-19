@@ -172,12 +172,17 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 										// Add marker
 										markerIdToPlayerId.put(player.getInt("markerId"), player.getObjectId());
 										playerArray.add(player.getObjectId());
+										Log.d("Zizanie", "Add player to array : " + player.getObjectId());
 										if(player.getObjectId().equals(currentUser.getObjectId())) {
 											currentUserTeam = team.getObjectId();
 											createFirebaseUser();
 										}
 									}
 									teamIdToPlayerIdArray.put(team.getObjectId(), playerArray);
+									
+									for(String player : playerArray) {
+										Log.d("Zizanie", "In my array : " + player);
+									}
 								}
 							});
 							
@@ -544,12 +549,12 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		
 		// For each team
 		while(it.hasNext()) {
-		    String teamId = it.next().toString();
+			
+		    String teamId = it.next().getKey();
 		    ArrayList<String> playerArray = (ArrayList<String>)teamIdToPlayerIdArray.get(teamId);
-		    Log.d("Zizanie", "PLAYERARREY DE MERDE : " + playerArray);
+
 		    if(playerArray != null) {
-		    	 Log.d("Zizanie", "PLAYERARREY DE MERDE : " + playerArray);
-				    
+		    	
 				    // For each player in playerArray
 				    for(String player : playerArray) {
 				    	if(player.equals(playerId)) {
@@ -561,8 +566,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 								public Transaction.Result doTransaction(MutableData currentData) {
 									int currentLife = currentData.getValue(Integer.class);
 									currentData.setValue(currentLife + points);
-									Log.d("Zizanie", "User CurrentScore : " + currentLife);
-									Log.d("Zizanie", "User Add : " + points);
+									
 									return Transaction.success(currentData);
 								}
 
@@ -588,8 +592,6 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 								public Transaction.Result doTransaction(MutableData currentData) {
 									int currentScore = currentData.getValue(Integer.class);
 									currentData.setValue(currentScore + points);
-									Log.d("Zizanie", "Team CurrentScore : " + currentScore);
-									Log.d("Zizanie", "Team Add : " + points);
 
 									return Transaction.success(currentData);
 								}
