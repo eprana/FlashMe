@@ -352,7 +352,10 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 				nbPlayersReady = snapshot.getChildrenCount();
 				if(nbPlayersReady >= 1 /*markerId.size()*/) {
 					waitingDialog.dismiss();
-					initTimer();
+					if(isCreator) {
+						initTimer();
+					}
+					
 				}
 			}
 		});
