@@ -165,6 +165,8 @@ public class GameRenderer implements GLSurfaceView.Renderer {
             int markerId = marker.getMarkerId();
             String userId = marker.getName();
             
+    		
+            
             switch(markerId) {
             case 511:
             	// Poison
@@ -180,6 +182,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
             	// Munitions
             	mActivity.updateMunitions(50);
             	textureIndex = 3;
+            	break;
             case 508:
             	// Scourge
             	mActivity.updateGun(0);
@@ -200,6 +203,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
             	break;
             }
 
+            Log.d("########################", "Marker " + textureIndex + " detected from ");
             Texture thisTexture = mTextures.get(textureIndex);
             
 			// Select which model to draw:
