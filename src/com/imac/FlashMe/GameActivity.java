@@ -463,8 +463,11 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 					// Rank
 					
 					// Delete Firebase
-					Firebase gameRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId);
-					gameRef.removeValue();
+					if(isCreator) {
+						Firebase gameRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId);
+						gameRef.removeValue();
+					}
+					
 
 					time.setText("GAME OVER");
 
