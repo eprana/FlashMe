@@ -69,6 +69,7 @@ public class ProfileFragment extends Fragment {
 		refreshButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				loadStatistics();
 				loadProfilePicture(context);
 			}
 		});
