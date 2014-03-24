@@ -147,10 +147,6 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		lastMarkerId = -1;
 
 		initGame();
-
-
-
-
 	}
 
 	// Initialize game
@@ -360,11 +356,9 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 			public void onDataChange(DataSnapshot snapshot) {
 				Log.d(LOGTAG, "NB PLAYERS : "+snapshot.getChildrenCount());
 				nbPlayersReady = snapshot.getChildrenCount();
-				if(nbPlayersReady == 1 /*markerId.size()*/) {
+				if(nbPlayersReady == markerId.size()) {
 					waitingDialog.dismiss();
 					initTimer();
-
-
 				}
 			}
 		});
@@ -517,7 +511,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 						finalCount++;
 
-						if(finalCount == teamIdToPlayerIdArray.size() - 1) {
+						if(finalCount == teamIdToPlayerIdArray.size()) {
 							if(bestTeam.equals(currentUserTeam)) {
 								currentUser.increment("victories");
 							}
