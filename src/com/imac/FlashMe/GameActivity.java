@@ -158,7 +158,6 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 			@Override
 			public void done(ParseObject game, ParseException e) {
 				gameName = game.getString("name");
-				game.put("state", 1);
 				game.saveInBackground();
 				try {
 					isCreator = game.getParseUser("createdBy").fetchIfNeeded().getUsername().equals(currentUser.getUsername()) ? true : false;
@@ -361,7 +360,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 				if(nbPlayersReady == markerIdToPlayerId.size()) {
 					waitingDialog.dismiss();
 					initTimer();
-					
+
 					// Init Vuforia
 					vuforiaAppSession = new SampleApplicationSession(GameActivity.this);
 					startLoadingAnimation();
@@ -565,6 +564,17 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 							computeScore();
 
 							doPlayerWin();
+
+							ParseQuery<ParseObject> query = ParseQuery.getQuery("Game");
+							query.whereEqualTo("objectId", gameId);
+							query.getFirstInBackground(new GetCallback<ParseObject>(){
+								@Override
+								public void done(ParseObject game, ParseException e) {
+
+									game.put("state", 1);
+									game.saveInBackground();
+								}
+							});
 
 							// Rank
 							/*if(isCreator) {
