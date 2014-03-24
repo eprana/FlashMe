@@ -47,16 +47,33 @@
 	<string name="account_created">Your account has been successfully created ! Your marker will be sent to your mail address in a few minutes. Meanwhile, you can discover and edit your profile. Enjoy !</string>
 	<string name="email_to_send">Welcome to <font color="#A4A4A4"><b>Flash Me (if you can!)</b></font> ! \n\n<br/><br />
 	    										Here are your username and password required to access the application : \n<br />
-	    										<b>username :</b> %1$s \n<br />
-	    										<b>password :</b> %2$s \n\n<br /><br />
-	    										You can download your <b>marker</b> from this address : %3$s. \n<br />
+	    										<b>Username :</b> %1$s \n<br />
+	    										<b>Password :</b> %2$s \n\n<br /><br />
+	    										You can download your <b>marker</b> from this address : %3$s. \n\n<br />
+	    										Here is a list of all the markers you can use to spice up your games! \n<br />
+	    										<b>Poison</b> :  %4$s \n<br />
+	    										<b>Points</b> :  %5$s \n<br />
+	    										<b>Munitions</b> :  %6$s \n<br />
+	    										<b>Scourge</b> :  %7$s \n<br />
+	    										<b>Chain-saw</b> :  %8$s \n<br />
+	    										<b>Gun</b> :  %9$s \n\n<br />
+	    										
 	    										Enjoy your game! \n\n<br /><br />
 	    										The Flash Me Team\n</string>
 	<string name="error_mail">We were not able to send the marker to your address, it seems to be wrong. Please enter a new e-mail address in the "Edit Profile" section.</string>
 	<string name="marker_to_resend">Hello again!\n\n<br/><br />
-	    							You can download again your marker from this address : %1$s.\n<br />
+	    							You can download again your marker from this address : %1$s.\n\n<br />
+									Here is a list of all the markers you can use to spice up your games! \n<br />
+									<b>Poison</b> :  %2$s \n<br />
+									<b>Points</b> :  %3$s \n<br />
+									<b>Munitions</b> :  %4$s \n<br />
+									<b>Scourge</b> :  %5$s \n<br />
+									<b>Chain-saw</b> :  %6$s \n<br />
+									<b>Gun</b> :  %7$s \n\n<br />
+	    										
 	    							Enjoy your game! \n\n<br /><br />
 	    							The Flash Me Team\n</string>
+	    							
 	<string name="resend_marker">Do you want your marker to be sent again to your current e-mail address : %1$s ?</string>
 	
 	<!--  action bar -->

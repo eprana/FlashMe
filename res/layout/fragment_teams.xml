@@ -42,7 +42,7 @@
     	 <EditText
 		    android:id="@+id/enter_team"
 		    android:hint="@string/enter_team"
-		    android:maxLength="8"
+		    android:maxLength="15"
 		    style="@style/white_edit_text" />
     	 
     	 <AutoCompleteTextView 
