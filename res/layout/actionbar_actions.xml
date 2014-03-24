@@ -9,6 +9,10 @@
           android:icon="@drawable/marker_bt"
           android:title="@string/action_send_marker" />
     
+    <item android:id="@+id/action_invite_friend"
+          android:icon="@drawable/marker_bt"
+          android:title="@string/action_invite_friend" />
+    
     <item android:id="@+id/action_log_out"
           android:icon="@drawable/logout_bt"
           android:title="@string/action_log_out" />

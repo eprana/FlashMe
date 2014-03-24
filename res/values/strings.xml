@@ -61,6 +61,7 @@
 	    										Enjoy your game! \n\n<br /><br />
 	    										The Flash Me Team\n</string>
 	<string name="error_mail">We were not able to send the marker to your address, it seems to be wrong. Please enter a new e-mail address in the "Edit Profile" section.</string>
+	<string name="error_mail_friend">We were not able to send the marker to your friend, this address may be wrong or the server is crowded. Please try again later.</string>
 	<string name="marker_to_resend">Hello again!\n\n<br/><br />
 	    							You can download again your marker from this address : %1$s.\n\n<br />
 									Here is a list of all the markers you can use to spice up your games! \n<br />
@@ -74,16 +75,30 @@
 	    							Enjoy your game! \n\n<br /><br />
 	    							The Flash Me Team\n</string>
 	    							
+	<string name="send_mail_friend">Hello !\n\n<br/><br />
+	    							Your friend %1$s (%2$s) has invited you to join Flash Me ! \n\n<br />
+	    							Flash Me (If you can!) is the newest augmented reality mobile application, developed by three students of the engineering school IMAC (Paris, France). \n <br />
+	    							Once your team is ready, you can challenge opposing teams in a game for which rapidity will be your main asset ! 
+	    							The aim is to flash your opponents\' markers as many times as possible in order to inflict them damage. 
+	    							Show them who the boss is ! \n\n <br /><br />
+	    							
+									Flash Me is totaly free ! Don\'t hesitate ! Visit our website at %3$s and download the application.
+	    										
+	    							Hoping to see you soon ! \n\n<br /><br />
+	    							The Flash Me Team\n</string>
+	    							
 	<string name="resend_marker">Do you want your marker to be sent again to your current e-mail address : %1$s ?</string>
+	<string name="mail_sent_to_friend">An e-mail has been sent to %1$s.</string>
 	
 	<!--  action bar -->
 	<string name="action_edit_profile">Edit profile</string>
 	<string name="action_send_marker">Send marker</string>
+	<string name="action_invite_friend">Invite a friend</string>
 	<string name="action_log_out">Log out</string>
 	<string name="tab_profile">Profile</string>
 	<string name="tab_teams">Teams</string>
 	<string name="tab_games">Games</string>
-	
+	<string name="invite_friend">Enter your friend\'s e-mail address to invite him to join FlashMe and play with you !</string>
 	
 	<!-- profile -->
 	<string name="my_profile">My profile</string>

@@ -6,6 +6,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.parse.DeleteCallback;
 import com.parse.GetCallback;
@@ -24,6 +26,7 @@ import android.support.v4.view.ViewPager;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -32,6 +35,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.content.Context;
@@ -114,13 +118,11 @@ public class ContentActivity extends Activity implements
 	        	startActivityForResult(intent, EDIT_PROFILE);
 	            return true;
 	        case R.id.action_send_marker:
-	        	
+	       
 	        	// Create an alert box
-	        	View alertDialogView = null;
 				AlertDialog.Builder sendMarkerByMail = new AlertDialog.Builder(context);
 
 				// Filling the alert box
-				sendMarkerByMail.setView(alertDialogView);
 				sendMarkerByMail.setTitle("Send marker again");
 				sendMarkerByMail.setMessage(context.getResources().getString(R.string.resend_marker, currentUser.getEmail()));
 				sendMarkerByMail.setNegativeButton("CANCEL", null);
@@ -138,7 +140,7 @@ public class ContentActivity extends Activity implements
 	            	    String scourgeId = String.valueOf(508);
 	            	    String chainSawId = String.valueOf(507);
 	            	    String gunId = String.valueOf(506);
-	            	    
+
 	            	    String message = context.getResources().getString(R.string.marker_to_resend, "http://flashme.alwaysdata.net/markers/"+ encode(toEncode) +".jpg",
 																									//poison
 																									"http://flashme.alwaysdata.net/markers/"+ encode(poisonId) +".jpg",
@@ -152,7 +154,6 @@ public class ContentActivity extends Activity implements
 																									"http://flashme.alwaysdata.net/markers/"+ encode(chainSawId) +".jpg",
 																									//gun
 																									"http://flashme.alwaysdata.net/markers/"+ encode(gunId) +".jpg");
-	            	    
 	                    mail.sendMail(email, subject, message);
 		        } });
 				
@@ -160,6 +161,54 @@ public class ContentActivity extends Activity implements
 				sendMarkerByMail.create();
 				sendMarkerByMail.show();
 	            return true;
+	        case R.id.action_invite_friend:
+	        	AlertDialog.Builder inviteFriends = new AlertDialog.Builder(context);
+	        	final View alertView = inflater.inflate(R.layout.alert_edit_text, null);
+				 
+	        	//Filling the alert box
+				inviteFriends.setView(alertView);
+				inviteFriends.setTitle("Invite a friend !");
+				inviteFriends.setNegativeButton("CANCEL", null);
+				inviteFriends.setPositiveButton("SEND INVITATION", new DialogInterface.OnClickListener() {
+		            public void onClick(DialogInterface dialog, int which) {
+		            	EditText enteredMail = (EditText) alertView.findViewById(R.id.mail_friend);
+		            	String s_email = enteredMail.getText().toString();
+						// If the e-mail is invalid
+		      	        // Declaring pattern and matcher we need to compare
+						String regExpn =
+					             "^(([\\w-]+\\.)+[\\w-]+|([a-zA-Z]{1}|[\\w-]{2,}))@"
+					                 +"((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
+					                   +"[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\."
+					                   +"([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
+					                   +"[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|"
+					                   +"([a-zA-Z]+[\\w-]+\\.)+[a-zA-Z]{2,4})$";
+
+
+						Pattern p = Pattern.compile(regExpn,Pattern.CASE_INSENSITIVE);
+		      	   		Matcher m = p.matcher(s_email);
+		      	   		
+		            	if (!m.matches()) {
+		      	   			Toast.makeText(context, R.string.wrong_mail_pattern, Toast.LENGTH_SHORT).show();
+		      	   			return;
+		      	   		}else {
+			            	 // Send an e-mail
+		     				SendMailToUser mail = new SendMailToUser(context);
+		     				mail.setInviteFriend(1);
+		     				String email = s_email;
+		                    String subject = currentUser.getUsername() + " has invited you to join Flash Me !";
+		            	    String message = context.getResources().getString(R.string.send_mail_friend, currentUser.getUsername(), currentUser.getEmail(), "http://flashme.alwaysdata.net");
+		                    mail.sendMail(email, subject, message);
+		                    
+		                    Toast.makeText(context, context.getResources().getString(R.string.mail_sent_to_friend, email), Toast.LENGTH_LONG).show();
+		      	   		}
+		          } });
+				
+				// Showing the alert box
+				inviteFriends.create();
+				inviteFriends.show();
+	        	
+	        	return true;
+	            
 	            
 	        case R.id.action_log_out:
 	        	ParseUser.logOut();
