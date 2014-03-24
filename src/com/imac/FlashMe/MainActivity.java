@@ -1,5 +1,7 @@
 package com.imac.FlashMe;
 
+import java.util.List;
+
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -22,10 +24,13 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.LogInCallback;
 import com.parse.Parse;
 import com.parse.ParseAnalytics;
 import com.parse.ParseException;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.imac.FlashMe.R;
 import com.imac.VuforiaApp.SampleApplicationSession;
@@ -110,7 +115,7 @@ public class MainActivity extends Activity {
 							startActivityForResult(intent, LOGIN);
 							
 						} else {
-														
+							
 							// Login failed, display alert box
 							AlertDialog.Builder loginFailed = new AlertDialog.Builder(context);
 
