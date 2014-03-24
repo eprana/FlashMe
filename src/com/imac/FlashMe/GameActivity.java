@@ -356,9 +356,15 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 			public void onDataChange(DataSnapshot snapshot) {
 				Log.d(LOGTAG, "NB PLAYERS : "+snapshot.getChildrenCount());
 				nbPlayersReady = snapshot.getChildrenCount();
-				if(nbPlayersReady == markerId.size()) {
+				if(nbPlayersReady == markerIdToPlayerId.size()) {
 					waitingDialog.dismiss();
 					initTimer();
+					
+					// Init Vuforia
+					vuforiaAppSession = new SampleApplicationSession(GameActivity.this);
+					startLoadingAnimation();
+					vuforiaAppSession.initAR(GameActivity.this, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+					initApplicationAR();
 				}
 			}
 		});
@@ -368,12 +374,6 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		waitingDialog = ProgressDialog.show(context, gameName, "Waiting for other players to be ready...", true);
 		waitingDialog.show();
 		updateNbPlayers();
-
-		// Init Vuforia
-		vuforiaAppSession = new SampleApplicationSession(GameActivity.this);
-		startLoadingAnimation();
-		vuforiaAppSession.initAR(GameActivity.this, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-		initApplicationAR();
 	}
 
 	private void computeScore() {
