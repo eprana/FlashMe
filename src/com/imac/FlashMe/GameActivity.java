@@ -147,10 +147,6 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		lastMarkerId = -1;
 
 		initGame();
-
-
-
-
 	}
 
 	// Initialize game
@@ -364,8 +360,6 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 				if(nbPlayersReady == markerIdToPlayerId.size()) {
 					waitingDialog.dismiss();
 					initTimer();
-
-
 				}
 			}
 		});
@@ -518,7 +512,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 						finalCount++;
 
-						if(finalCount == teamIdToPlayerIdArray.size() - 1) {
+						if(finalCount == teamIdToPlayerIdArray.size()) {
 							if(bestTeam.equals(currentUserTeam)) {
 								currentUser.increment("victories");
 							}

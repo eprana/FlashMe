@@ -224,6 +224,26 @@ public class EditActivity extends Activity {
 	}
 	
 	private void deleteProfile() {
+		ParseQuery<ParseObject> teamsQuery = new ParseQuery<ParseObject>("Team");
+		teamsQuery.whereEqualTo("createdBy", currentUser);
+		teamsQuery.findInBackground(new FindCallback<ParseObject>() {
+			@Override
+			public void done(List<ParseObject> teams, ParseException e) {
+				for(ParseObject team : teams) {
+					team.deleteInBackground();
+				}
+			}
+		});
+		ParseQuery<ParseObject> gamesQuery = new ParseQuery<ParseObject>("Game");
+		gamesQuery.whereEqualTo("createdBy", currentUser);
+		gamesQuery.findInBackground(new FindCallback<ParseObject>() {
+			@Override
+			public void done(List<ParseObject> games, ParseException e) {
+				for(ParseObject game : games) {
+					game.deleteInBackground();
+				}
+			}
+		});
 		currentUser.deleteInBackground();
 		ParseUser.logOut();
 		finish();
