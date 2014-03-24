@@ -350,7 +350,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 			public void onDataChange(DataSnapshot snapshot) {
 				Log.d(LOGTAG, "NB PLAYERS : "+snapshot.getChildrenCount());
 				nbPlayersReady = snapshot.getChildrenCount();
-				if(nbPlayersReady >= 1 /*markerId.size()*/) {
+				if(nbPlayersReady == 2 /*markerId.size()*/) {
 					waitingDialog.dismiss();
 					if(isCreator) {
 						initTimer();
