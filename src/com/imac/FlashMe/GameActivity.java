@@ -162,6 +162,8 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 			@Override
 			public void done(ParseObject game, ParseException e) {
 				gameName = game.getString("name");
+				game.put("state", 1);
+				game.saveInBackground();
 				try {
 					isCreator = game.getParseUser("createdBy").fetchIfNeeded().getUsername().equals(currentUser.getUsername()) ? true : false;
 				} catch (ParseException e1) {
@@ -431,7 +433,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		t_yourScore.setText("Your score : " + playerScore);
 		t_yourScore.setTextSize(20);
 		ll.addView(t_yourScore);
-		
+
 		TextView t_winner = new TextView(context);
 		t_winner.setText("Winning team  : " + bestTeam);
 		t_winner.setTextSize(20);
@@ -446,7 +448,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 				@Override
 				public void done(ParseObject team, ParseException e) {
 					String teamName = team.getString("name");
-					
+
 					TextView t_team = new TextView(context);
 					String teamScore;
 					if( teamIdToTeamScore.get(teamId) == null) {
@@ -455,11 +457,11 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 					else {
 						teamScore =  teamIdToTeamScore.get(teamId).toString();
 					}
-					
+
 					t_team.setText(teamName + " score : " + teamScore);
 					t_team.setTextSize(20);
 					ll.addView(t_team);
-					
+
 				}
 
 			});
@@ -470,6 +472,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 		// set prompts.xml to alertdialog builder
 		alertDialogBuilder.setView(promptsView);
+		alertDialogBuilder.setTitle("Score table");
 
 		alertDialogBuilder.setPositiveButton("OK", new OnClickListener() {
 
@@ -527,8 +530,6 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 							currentUser.saveInBackground();
 
 							displayScores();
-							
-							// Rank
 
 						}
 					}	
@@ -571,6 +572,38 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 							doPlayerWin();
 
+							// Rank
+							/*if(isCreator) {
+								Log.d("Zizanie", "RANK");
+								ParseQuery<ParseUser> query = ParseUser.getQuery();
+								query.orderByDescending("totalScore");						
+								query.findInBackground(new FindCallback<ParseUser>() {
+
+									@Override
+									public void done(List<ParseUser> userlist, ParseException e) {
+										// TODO Auto-generated method stub
+										if (e == null) {
+											Log.d("Zizanie", "Size : " + Integer.toString(userlist.size()));
+											Iterator<ParseUser> it = userlist.iterator();
+											int i = 1;
+											while(it.hasNext()) {
+												ParseUser user = it.next();
+												Log.d("Zizanie", "User : " + user.toString());
+												Log.d("Zizanie", "Rank : " + Integer.toString(i));
+												user.put("rank", i);
+												user.put("tamere", 28);
+												user.saveInBackground();
+												++i;
+
+											}
+
+										} else {
+											Log.d("Zizanie", "EXCEPTION");
+											// handle Parse Exception here
+										}
+									}
+								});
+							}*/	
 						}
 					}
 				}	
@@ -590,7 +623,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 					if(gameRef != null) {
 						gameRef.child("timer").setValue(minutesRemaining+":"+secondsRemaining);
 					}
-					
+
 				}
 
 				public void onFinish() {
@@ -622,11 +655,11 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 			if(playerId.equals(ennemyId)) {
 				return false;
 			}
-					
+
 		}
 		return true;
 	}
-	
+
 	public void updateGauge(final int markerId, final String playerId) {
 
 		Log.d(LOGTAG, "Marker " + markerId + " detected from " + playerId);
@@ -656,7 +689,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 					updatePoints(playerId, -2*(gun+1));
 				}
 				updatePoints(currentUser.getObjectId(), plus*2*(gun+1));
-				
+
 				updateMunitions(-2+gun);
 			}
 		}
