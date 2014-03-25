@@ -52,6 +52,7 @@ import android.location.GpsStatus.Listener;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -101,6 +102,8 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	private ImageView munitionsIcon;
 	private int minutes;
 	private ProgressDialog waitingDialog;
+	
+	private Vibrator vibrator;
 
 	SampleApplicationSession vuforiaAppSession;
 	private SampleApplicationGLView mGlView;
@@ -694,6 +697,9 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 				gauge.getLayoutParams().height += incrementValue;
 			}
 			else {
+				
+				 vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+				 vibrator.vibrate(3000);
 				// Gauge full
 				gauge.getLayoutParams().height = 0;
 				int plus = 1;
