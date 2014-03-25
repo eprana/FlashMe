@@ -79,7 +79,8 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	private float nbPlayersReady;
 
 	private int bestTeamScore = -1000;
-	private String bestTeam = "TOTO";
+	private String bestTeamId = "TOTO";
+	private String bestTeamName;
 	private int playerScore = 0;
 
 	private int finalCount = 0;
@@ -429,11 +430,12 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		t_yourScore.setTextSize(20);
 		ll.addView(t_yourScore);
 
-		TextView t_winner = new TextView(context);
-		t_winner.setText("Winning team  : " + bestTeam);
-		t_winner.setTextSize(20);
-		ll.addView(t_winner);
+//		TextView t_winner = new TextView(context);
+//		t_winner.setText("Winning team  : " + bestTeam);
+//		t_winner.setTextSize(20);
+//		ll.addView(t_winner);
 
+		
 		for(final String teamId : teamsId) {
 
 			// Get parse team
@@ -443,7 +445,9 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 				@Override
 				public void done(ParseObject team, ParseException e) {
 					String teamName = team.getString("name");
-
+					if(teamId.equals(bestTeamId)) {
+						bestTeamName = teamName;					
+					}
 					TextView t_team = new TextView(context);
 					String teamScore;
 					if( teamIdToTeamScore.get(teamId) == null) {
@@ -461,6 +465,11 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 			});
 		}
+		
+		TextView t_winner = new TextView(context);
+		t_winner.setText("Winning team  : " + bestTeamName);
+		t_winner.setTextSize(20);
+		ll.addView(t_winner);	
 
 
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
@@ -510,13 +519,13 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 						teamIdToTeamScore.put(teamId, (int)teamScore);
 						if(teamScore > bestTeamScore) {
 							bestTeamScore = (int) teamScore;
-							bestTeam = teamId;
+							bestTeamId = teamId;
 						}
 
 						finalCount++;
 
 						if(finalCount == teamIdToPlayerIdArray.size()) {
-							if(bestTeam.equals(currentUserTeam)) {
+							if(bestTeamId.equals(currentUserTeam)) {
 								currentUser.increment("victories");
 							}
 							else {
