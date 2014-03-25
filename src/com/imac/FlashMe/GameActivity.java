@@ -622,7 +622,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 		// Creator handle timer
 		if(isCreator) {
-			new CountDownTimer(15000, 1000) {
+			new CountDownTimer(minutes*60000, 1000) {
 				public void onTick(long millisUntilFinished) {
 					int minutesRemaining = (int) Math.floor((millisUntilFinished/1000)/60);
 					int secondsRemaining = (int) ((millisUntilFinished/1000) - (minutesRemaining*60));
@@ -734,17 +734,29 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	}
 
 	public void updateGun(final int gunId) {
-		switch(gunId) {
-		case 0:
-			munitionsIcon.setImageResource(R.drawable.ic_munitions);
-			break;
-		case 1:
-			munitionsIcon.setImageResource(R.drawable.scourge);
-			break;
-		case 2:
-			munitionsIcon.setImageResource(R.drawable.chainsaw);
-			break;
-		}
+		Runnable runnable = new Runnable() {
+			@Override
+			public void run() {
+				handler.post(new Runnable() { // This thread runs in the UI
+					@Override
+					public void run() {
+						switch(gunId) {
+						case 0:
+							munitionsIcon.setImageResource(R.drawable.ic_munitions);
+							break;
+						case 1:
+							munitionsIcon.setImageResource(R.drawable.scourge);
+							break;
+						case 2:
+							munitionsIcon.setImageResource(R.drawable.chainsaw);
+							break;
+						}
+					}
+				});
+			}
+		};
+		new Thread(runnable).start();
+
 		Firebase gunRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/team/"+currentUserTeam+"/user/"+currentUser.getObjectId()+"/gun");
 		gunRef.runTransaction(new Transaction.Handler() {
 			@Override
