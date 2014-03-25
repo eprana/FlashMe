@@ -64,7 +64,7 @@
         android:layout_marginBottom="25dp"
         android:layout_marginLeft="25dp"
         android:contentDescription="@string/ic_life"
-        android:src="@drawable/ic_life" />
+        android:src="@drawable/target_icon" />
     
     <ImageView
         android:id="@+id/ic_munitions"

@@ -97,6 +97,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	private int gun;
 	private int tmpLostMunitions;
 	private TextView munitions;
+	private ImageView munitionsIcon;
 	private int minutes;
 	private ProgressDialog waitingDialog;
 
@@ -137,6 +138,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		time = (TextView) mainView.findViewById(R.id.text_time);
 		life = (TextView) mainView.findViewById(R.id.text_life);
 		munitions = (TextView) mainView.findViewById(R.id.text_munitions);
+		munitionsIcon = (ImageView) mainView.findViewById(R.id.ic_munitions);
 
 		// Parse - currentUser
 		currentUser = ParseUser.getCurrentUser();
@@ -732,6 +734,17 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	}
 
 	public void updateGun(final int gunId) {
+		switch(gunId) {
+		case 0:
+			munitionsIcon.setImageResource(R.drawable.ic_munitions);
+			break;
+		case 1:
+			munitionsIcon.setImageResource(R.drawable.scourge);
+			break;
+		case 2:
+			munitionsIcon.setImageResource(R.drawable.chainsaw);
+			break;
+		}
 		Firebase gunRef = new Firebase("https://flashme.firebaseio.com/game/"+gameId+"/team/"+currentUserTeam+"/user/"+currentUser.getObjectId()+"/gun");
 		gunRef.runTransaction(new Transaction.Handler() {
 			@Override
