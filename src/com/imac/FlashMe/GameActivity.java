@@ -466,10 +466,10 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 			});
 		}
 		
-		TextView t_winner = new TextView(context);
-		t_winner.setText("Winning team  : " + bestTeamName);
-		t_winner.setTextSize(20);
-		ll.addView(t_winner);	
+//		TextView t_winner = new TextView(context);
+//		t_winner.setText("Winning team  : " + bestTeamName);
+//		t_winner.setTextSize(20);
+//		ll.addView(t_winner);	
 
 
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
@@ -751,13 +751,13 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 					public void run() {
 						switch(gunId) {
 						case 0:
-							munitionsIcon.setImageResource(R.drawable.ic_munitions);
-							break;
-						case 1:
 							munitionsIcon.setImageResource(R.drawable.scourge);
 							break;
-						case 2:
+						case 1:
 							munitionsIcon.setImageResource(R.drawable.chainsaw);
+							break;
+						case 2:
+							munitionsIcon.setImageResource(R.drawable.ic_munitions);
 							break;
 						}
 					}
