@@ -34,6 +34,7 @@ public class SendMailToUser {
     private int exception = 0;
     private View alertDialogView;
     private LayoutInflater inflater;
+    private int inviteFriend = 0;
 
     public SendMailToUser(Context ctx){
     	this.context = ctx;
@@ -77,7 +78,12 @@ public class SendMailToUser {
             if(exception < 0){
             	// Create an alert box
 				AlertDialog.Builder errorMail = new AlertDialog.Builder(context);
-				errorMail.setMessage(context.getResources().getString(R.string.error_mail));				
+				if(inviteFriend > 0) {
+					errorMail.setMessage(context.getResources().getString(R.string.error_mail_friend));
+				}else {
+					errorMail.setMessage(context.getResources().getString(R.string.error_mail));	
+				}
+								
 			
 				// Filling the alert box
 				errorMail.setView(alertDialogView);
@@ -132,6 +138,10 @@ public class SendMailToUser {
     
     public int getException(){
     	return exception;
+    }
+    
+    public void setInviteFriend(int arg){
+    	inviteFriend = arg;
     }
     
 }
