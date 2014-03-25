@@ -89,6 +89,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	private int playerScore = 0;
 
 	private int finalCount = 0;
+	private int finalCountWinner = 0;
 	private final Context context = this;
 	private LayoutInflater inflater;
 	private ArrayList<String> teamsId = new ArrayList<String>();
@@ -461,12 +462,6 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		t_yourScore.setText("Your score : " + playerScore);
 		t_yourScore.setTextSize(20);
 		ll.addView(t_yourScore);
-
-//		TextView t_winner = new TextView(context);
-//		t_winner.setText("Winning team  : " + bestTeam);
-//		t_winner.setTextSize(20);
-//		ll.addView(t_winner);
-
 		
 		for(final String teamId : teamsId) {
 
@@ -477,12 +472,17 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 				@Override
 				public void done(ParseObject team, ParseException e) {
 					String teamName = team.getString("name");
+					finalCountWinner++;
+					
+					// Best team
 					if(teamId.equals(bestTeamId)) {
 						bestTeamName = teamName;					
 					}
+					
+					// Text view for the team
 					TextView t_team = new TextView(context);
 					String teamScore;
-					if( teamIdToTeamScore.get(teamId) == null) {
+					if( teamIdToTeamScore.get(teamId) == null) {			int finalCount = 0;
 						teamScore = "Team did not play";
 					}
 					else {
@@ -492,24 +492,30 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 					t_team.setText(teamName + " score : " + teamScore);
 					t_team.setTextSize(20);
 					ll.addView(t_team);
+					
+					// Text view for winning team 
+					if(finalCountWinner == teamIdToPlayerIdArray.size()) {
+						// Winning team
+						TextView t_winner = new TextView(context);
+						t_winner.setText("Winning team  : " + bestTeamName);
+						t_winner.setTextSize(20);
+						//t_winner.setTextColor(1);
+						ll.addView(t_winner);	
+					}
 
 				}
 
 			});
 		}
 		
-//		TextView t_winner = new TextView(context);
-//		t_winner.setText("Winning team  : " + bestTeamName);
-//		t_winner.setTextSize(20);
-//		ll.addView(t_winner);	
+		
 
 
+		
+		// Alert Dialog
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-
-		// set prompts.xml to alertdialog builder
 		alertDialogBuilder.setView(promptsView);
 		alertDialogBuilder.setTitle("Score table");
-
 		alertDialogBuilder.setPositiveButton("OK", new OnClickListener() {
 
 			@Override
