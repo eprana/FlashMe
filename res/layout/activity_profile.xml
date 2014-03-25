@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+    
+   
+    <!--  Header -->
+    <LinearLayout 
+        android:id="@+id/fragment_header"
+        style="@style/header" >
+	    
+        <TextView
+            android:id="@+id/top_line_light"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="14.5sp"
+            android:layout_weight="0.50"
+            android:gravity="center"
+            android:text="@string/profile"
+            android:textColor="@color/white"
+            android:textSize="@dimen/large_tx" />
+        
+        <ImageButton
+            android:id="@+id/refresh_bt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="14.5sp"
+            android:background="@null"
+            android:contentDescription="@string/refresh_bt"
+            android:focusable="false"
+            android:src="@drawable/refresh_bt" />
+	    
+	</LinearLayout>
+	
+    
+    <!--  User picture and flashCode -->
+	<LinearLayout 
+	    android:id="@+id/user_pictures"
+	    android:layout_width="match_parent"
+	    android:layout_height="0dp"
+	    android:layout_weight="2"
+	    android:orientation="horizontal" >
+        
+	    <ImageView
+            android:id="@+id/profile_picture"
+            android:scaleType="centerCrop"
+            android:layout_height="match_parent"
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:layout_margin="@dimen/small_mg"
+            android:contentDescription="@string/profile_picture"
+            android:visibility="gone" />
+
+	    <ProgressBar
+	        android:id="@+id/progressBar"
+	        android:layout_weight="1"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content" />
+		 	
+	 	<ImageView 
+	        android:id="@+id/marker_picture"
+			android:layout_height="match_parent"
+			android:layout_width="0dip" 
+			android:layout_margin="@dimen/small_mg"
+			android:layout_weight="1"
+			android:contentDescription="@string/profile_marker"
+			android:visibility="gone" />
+	 	
+	</LinearLayout>
+	
+	
+	<!--  User scores -->
+	<TextView
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:id="@+id/total_score"
+	    android:text="@string/total_score_txt"
+	    android:textColor="@color/white"
+	    android:textSize="@dimen/xverylarge_tx"
+	    style="@style/total_score" />
+	
+	<LinearLayout
+	    android:id="@+id/stats"
+	    android:layout_width="match_parent" 
+	    android:layout_height="0dp"
+	    android:layout_weight="3"
+	    android:orientation="vertical" >
+	 	
+	 	<LinearLayout
+		    android:id="@+id/row1"
+		    android:baselineAligned="false"
+		    android:layout_width="match_parent" 
+		    android:layout_height="0dp"
+		    android:layout_weight="1"
+		    android:orientation="horizontal" >
+		    
+	 	    <LinearLayout
+	 	        android:layout_height="match_parent"
+	 	        android:layout_width="0dp"
+	 	        android:layout_weight="1"
+	 	        android:gravity="center_vertical"
+	 	        android:background="@drawable/tab_cell"
+	 	        android:orientation="vertical" >
+		    	
+		 	    <ImageView 
+			        android:id="@+id/score_icon"
+					android:src="@drawable/ic_bestscore"
+					android:contentDescription="@string/score_ic"
+					style="@style/stats_icon" />
+		        
+		        <TextView
+		   		    android:id="@+id/best_score_txt"
+		   		    android:text="@string/best_score_txt"
+		   		    style="@style/stats_title" />
+		        
+		        <TextView
+		   		    android:id="@+id/best_score_value"
+		   		    android:text="@string/best_score_value"
+		   		    style="@style/stats_value" />
+	 	    </LinearLayout>
+	
+	        <LinearLayout
+	 	        android:layout_height="match_parent"
+	 	        android:layout_width="0dp"
+	 	        android:layout_weight="1"
+	 	        android:gravity="center_vertical"
+	 	        android:background="@drawable/tab_cell"
+	 	        android:orientation="vertical" >
+		        
+		        <ImageView 
+			        android:id="@+id/rank_icon"
+					android:src="@drawable/ic_rank"
+					android:contentDescription="@string/rank_ic"
+					style="@style/stats_icon" />
+		        
+		        <TextView 
+			        android:id="@+id/rank_txt"
+					android:text="@string/rank_txt"
+					style="@style/stats_title" />
+		        
+		        <TextView
+		   		    android:id="@+id/rank_value"
+		   		    android:text="@string/rank_value"
+		   		    style="@style/stats_value" />
+		    </LinearLayout>
+		    
+		</LinearLayout>
+		
+		<LinearLayout
+		    android:id="@+id/row2"
+		    android:baselineAligned="false"
+		    android:layout_width="match_parent" 
+		    android:layout_height="0dp"
+		    android:layout_weight="1"
+		    android:orientation="horizontal" >
+		    
+	        <LinearLayout
+	 	        android:layout_height="match_parent"
+	 	        android:layout_width="0dp"
+	 	        android:layout_weight="1"
+	 	        android:gravity="center_vertical"
+	 	        android:background="@drawable/tab_cell"
+	 	        android:orientation="vertical" >
+		        
+		        <ImageView 
+			        android:id="@+id/victories_icon"
+					android:src="@drawable/ic_victories"
+					android:contentDescription="@string/vics_ic"
+					style="@style/stats_icon" />
+		        
+		        <TextView 
+			        android:id="@+id/victories_txt"
+					android:text="@string/victories_txt"
+					style="@style/stats_title" />
+		        
+		        <TextView 
+			        android:id="@+id/victories_value"
+					android:text="@string/victories_value"
+					style="@style/stats_value" />
+		    </LinearLayout>
+		    
+	        <LinearLayout
+	 	        android:layout_height="match_parent"
+	 	        android:layout_width="0dp"
+	 	        android:layout_weight="1"
+	 	        android:gravity="center_vertical"
+	 	        android:background="@drawable/tab_cell"
+	 	        android:orientation="vertical" >
+		        
+		        <ImageView 
+			        android:id="@+id/defeats_icon"
+					android:src="@drawable/ic_defeats"
+					android:contentDescription="@string/vics_ic"
+					style="@style/stats_icon" />
+		        
+		        <TextView 
+			        android:id="@+id/defeats_txt"
+					android:text="@string/defeats_txt"
+					style="@style/stats_title" />
+		        
+		        <TextView 
+			        android:id="@+id/defeats_value"
+					android:text="@string/defeats_value"
+					style="@style/stats_value" />
+		    </LinearLayout>
+		    
+		</LinearLayout>
+ 	    
+ 	</LinearLayout>
+ 
+</LinearLayout>

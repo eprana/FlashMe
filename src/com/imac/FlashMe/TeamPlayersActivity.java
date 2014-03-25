@@ -106,6 +106,7 @@ public class TeamPlayersActivity extends ListActivity {
 			}
 		});
 		
+		
 		initParseAdapter();
 	}
 	
@@ -121,6 +122,20 @@ public class TeamPlayersActivity extends ListActivity {
 		super.onResume();
 		currentUser.put("state", 1);
 		currentUser.saveInBackground();
+	}
+	
+	@Override
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		Log.d("Zizanie", "TeamPlayersActivity : onListItemClick");
+		super.onListItemClick(l, v, position, id);
+		
+		ParseUser user = ((ParseUser) l.getItemAtPosition(position));
+		String userId = user.getObjectId();
+		
+		final Intent intent = new Intent(context, ProfileActivity.class);
+		intent.putExtra("USER", userId);
+		startActivity(intent);
+
 	}
 	
 	private void initAutoCompleteList(List<ParseUser> players) {

@@ -28,6 +28,7 @@
     <string name="title_activity_players">Flash me</string>
     <string name="title_activity_teams">Flash me</string>
     <string name="title_edit_activity">Edit profile</string>
+    <string name="title_profile_activity">Flash me</string>
 	
 	<!-- sign up & log in -->
     <string name="mail">E-mail</string>
@@ -102,6 +103,7 @@
 	
 	<!-- profile -->
 	<string name="my_profile">My profile</string>
+	<string name="profile">Profile</string>
     <string name="profile_bt">profile</string>
     <string name="team_bt">teams</string>
     <string name="game_bt">games</string>

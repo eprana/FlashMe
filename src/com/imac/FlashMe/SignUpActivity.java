@@ -57,6 +57,10 @@ public class SignUpActivity extends Activity {
     private DisplayMetrics screen = new DisplayMetrics();
     int pictureSize = 0;
     int playerMarkerId = -1;
+    int width = 300;
+	int height = 300;
+	int scaleX;
+	int scaleY;
     
     private EditText username;
     private EditText password;
@@ -319,6 +323,11 @@ public class SignUpActivity extends Activity {
     				// Replacing the preview by the chosen image
     				//Bitmap avatar = Bitmap.createScaledBitmap((Bitmap) data.getExtras().get("data"), pictureSize, pictureSize, false);
     				Bitmap avatar = (Bitmap) data.getExtras().get("data");
+
+    				scaleX = avatar.getWidth()/width;
+    				scaleY = avatar.getHeight()/height;
+    				avatar = Bitmap.createScaledBitmap(avatar, scaleX, scaleY, false);
+    				//Bitmap resizedAvatar = Bitmap.createBitmap(avatar, avatar.getWidth()/2 - width/2, avatar.getHeight()/2 - height/2, width, height, null, false);
     				avatarView.setImageBitmap(avatar);
     				
     				bitmapToSend = avatar;
@@ -351,8 +360,10 @@ public class SignUpActivity extends Activity {
 							e.printStackTrace();
 						}
 						// Replacing the preview image by the chosen image
-						
-	    				//Bitmap avatarPicked = Bitmap.createScaledBitmap(bm, pictureSize, pictureSize, false);
+						scaleX = bm.getWidth()/width;
+	    				scaleY = bm.getHeight()/height;
+	    				bm = Bitmap.createScaledBitmap(bm, scaleX, scaleY, false);
+	    			
 						
 						avatarView.setImageBitmap(bm);
 						bitmapToSend = bm;

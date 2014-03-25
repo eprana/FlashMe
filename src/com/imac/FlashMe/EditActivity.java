@@ -56,6 +56,10 @@ public class EditActivity extends Activity {
 	private static final int CAMERA_REQUEST = 1888; 
 	private final int PICK_IMAGE = 1000;
     private ParseFile avatarParseFile;
+    int width = 300;
+	int height = 300;
+	int scaleX;
+	int scaleY;
 	
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -261,6 +265,7 @@ public class EditActivity extends Activity {
     				// Replacing the preview by the chosen image
     				//Bitmap avatar = Bitmap.createScaledBitmap((Bitmap) data.getExtras().get("data"), 300, 300, false);
     				Bitmap avatar = (Bitmap) data.getExtras().get("data");
+    				avatar = Bitmap.createScaledBitmap(avatar, width, height, false);
     				avatarView.setImageBitmap(avatar);
     				
     				// Replacing the avatar in the database
@@ -290,7 +295,7 @@ public class EditActivity extends Activity {
 						}
 						// Replacing the preview image by the chosen image
 	    				//Bitmap avatarPicked = Bitmap.createScaledBitmap(bm, 300, 300, false);
-						Bitmap avatarPicked = bm;
+						Bitmap avatarPicked = Bitmap.createScaledBitmap(bm, width, height, false);
 						avatarView.setImageBitmap(avatarPicked);
 						
 						// Replacing the avatar in the database

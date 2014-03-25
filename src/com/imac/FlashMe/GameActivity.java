@@ -482,7 +482,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 					// Text view for the team
 					TextView t_team = new TextView(context);
 					String teamScore;
-					if( teamIdToTeamScore.get(teamId) == null) {			int finalCount = 0;
+					if( teamIdToTeamScore.get(teamId) == null) {			
 						teamScore = "Team did not play";
 					}
 					else {
@@ -507,10 +507,6 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 			});
 		}
-		
-		
-
-
 		
 		// Alert Dialog
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);

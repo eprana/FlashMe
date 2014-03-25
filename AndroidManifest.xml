@@ -2,7 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.imac.FlashMe"
       android:versionCode="200"
-      android:versionName="2.6">
+      android:versionName="2.6"
+      android:largeHeap="true">
 
     <!--
         The application's compatibility with one or more versions of the Android
@@ -134,6 +135,11 @@
         <activity
             android:name="com.imac.FlashMe.EditActivity"
             android:label="@string/title_edit_activity" />
+        
+        <!-- _______________ PROFILE ACTIVITY _______________ -->        
+        <activity
+            android:name="com.imac.FlashMe.ProfileActivity"
+            android:label="@string/title_profile_activity" />
       
     </application>
 
