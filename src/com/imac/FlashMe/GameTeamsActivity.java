@@ -210,6 +210,18 @@ public class GameTeamsActivity extends ListActivity {
 		currentUser.saveInBackground();
 	}
 	
+	@Override
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		Log.d(LOGTAG, "onListItemClick");
+		super.onListItemClick(l, v, position, id);
+		ParseObject team = ((ParseObject) l.getItemAtPosition(position));
+		String teamId = team.getObjectId();
+		// Start detail activity
+		final Intent intent = new Intent(context, TeamPlayersActivity.class);
+		intent.putExtra("TEAM_ID", teamId);
+		startActivity(intent);
+	}
+	
 	private void initAutoCompleteList(List<ParseObject> teams) {
 		for(ParseObject team: teams) {
 			teamsList.add(team.getString("name"));
