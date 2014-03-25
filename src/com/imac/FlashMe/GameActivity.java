@@ -415,7 +415,6 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	}
 
 	private void computeScore() {
-
 		final int currentScore = currentUser.getInt("totalScore");
 
 		// Score = life
@@ -453,7 +452,6 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	}
 
 	private void displayScores() {
-
 		LayoutInflater li = LayoutInflater.from(context);
 		View promptsView = li.inflate(R.layout.scores, null);
 
@@ -531,8 +529,8 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	}
 
 	private void doPlayerWin() {
-
 		Iterator<Entry<String, ArrayList<String>>> it = teamIdToPlayerIdArray.entrySet().iterator();	
+		
 		// For each team
 		while(it.hasNext()) {
 			final String teamId = it.next().getKey();
@@ -558,7 +556,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 						finalCount++;
 
-						if(finalCount == teamIdToPlayerIdArray.size()) {
+						if(finalCount == 1 /*teamIdToPlayerIdArray.size()*/) {
 							if(bestTeamId.equals(currentUserTeam)) {
 								currentUser.increment("victories");
 							}
@@ -582,6 +580,21 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		}
 	}
 
+	private void updateGameState() {
+		if(isCreator) {
+			ParseQuery<ParseObject> query = ParseQuery.getQuery("Game");
+			query.whereEqualTo("objectId", gameId);
+			query.getFirstInBackground(new GetCallback<ParseObject>(){
+				@Override
+				public void done(ParseObject game, ParseException e) {
+
+					game.put("state", 1);
+					game.saveInBackground();
+				}
+			});
+		}	
+	}
+	
 	private void gameListening() {
 		gameRef.addValueEventListener(new ValueEventListener() {
 
@@ -592,7 +605,6 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 			@Override
 			public void onDataChange(DataSnapshot snapshot) {
-				Log.d("Zizanie", "Game Data Changed");
 				Object value = snapshot.getValue();
 				if (value == null) {
 					Log.d(LOGTAG, "Game doesn't exist");
@@ -605,21 +617,22 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 						// End of a game
 						if(timeValue.equals("0:1")) {
 							Log.d("Zizanie", "Game is FINISHED ! ");
+							
+							// End Vuforia
+							try {
+								vuforiaAppSession.stopAR();
+							} catch (SampleApplicationException e) {
+								Log.e(LOGTAG, e.getString());
+							}
 
+							// Scores
 							computeScore();
-
 							doPlayerWin();
 
-							ParseQuery<ParseObject> query = ParseQuery.getQuery("Game");
-							query.whereEqualTo("objectId", gameId);
-							query.getFirstInBackground(new GetCallback<ParseObject>(){
-								@Override
-								public void done(ParseObject game, ParseException e) {
-
-									game.put("state", 1);
-									game.saveInBackground();
-								}
-							});
+							// Game state
+							updateGameState();
+							
+							
 
 							// Rank
 							/*if(isCreator) {
@@ -630,7 +643,6 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 									@Override
 									public void done(List<ParseUser> userlist, ParseException e) {
-										// TODO Auto-generated method stub
 										if (e == null) {
 											Log.d("Zizanie", "Size : " + Integer.toString(userlist.size()));
 											Iterator<ParseUser> it = userlist.iterator();
@@ -665,7 +677,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 		// Creator handle timer
 		if(isCreator) {
-			new CountDownTimer(minutes*60000, 1000) {
+			new CountDownTimer(15000 /*minutes*60000*/, 1000) {
 				public void onTick(long millisUntilFinished) {
 					int minutesRemaining = (int) Math.floor((millisUntilFinished/1000)/60);
 					int secondsRemaining = (int) ((millisUntilFinished/1000) - (minutesRemaining*60));
@@ -687,11 +699,11 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	@Override
 	protected void onDestroy() {
 		Log.d(LOGTAG, "onDestroy");
-		try {
-			vuforiaAppSession.stopAR();
-		} catch (SampleApplicationException e) {
-			Log.e(LOGTAG, e.getString());
-		}
+//		try {
+//			vuforiaAppSession.stopAR();
+//		} catch (SampleApplicationException e) {
+//			Log.e(LOGTAG, e.getString());
+//		}
 		super.onDestroy();
 		mTextures.clear();
 		mTextures = null;
