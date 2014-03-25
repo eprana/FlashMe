@@ -185,7 +185,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
             	break;
             case 508:
             	// Scourge
-            	mActivity.updateGun(0);
+            	mActivity.updateGun(2);
             	textureIndex = 2;
             	break;
             case 507:
@@ -195,7 +195,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
             	break;
             case 506:
             	// Gun
-            	mActivity.updateGun(2);
+            	mActivity.updateGun(0);
             	textureIndex = 0;
             	break;
             default:

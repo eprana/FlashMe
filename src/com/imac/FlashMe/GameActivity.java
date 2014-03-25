@@ -49,6 +49,9 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.location.GpsStatus.Listener;
+import android.media.AudioManager;
+import android.media.SoundPool;
+import android.media.SoundPool.OnLoadCompleteListener;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -74,6 +77,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	private String gameName;
 	private boolean isCreator;
 	private int lastMarkerId;
+	private int globalGunId;
 
 	private Firebase appRef;
 	private Firebase gameRef;
@@ -103,8 +107,17 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	private int minutes;
 	private ProgressDialog waitingDialog;
 	
+	// Vibrator and sounds
 	private Vibrator vibrator;
-
+	private SoundPool soundPool;
+	private int gunSoundID;
+	private int chainsawSoundID;
+	private int scourgeSoundID;
+	private int munitionsSoundID;
+	private int pointsSoundID;
+	private int deathSoundID;
+	boolean loaded = false;
+	
 	SampleApplicationSession vuforiaAppSession;
 	private SampleApplicationGLView mGlView;
 	private GameRenderer mRenderer;
@@ -150,6 +163,23 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		currentUser.put("state", 1);
 		currentUser.saveInBackground();
 
+		// Set the hardware buttons to control the music
+		this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
+		// Load the sound
+		soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
+		soundPool.setOnLoadCompleteListener(new OnLoadCompleteListener() {
+			@Override
+			public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
+				loaded = true;
+			}
+		});
+		gunSoundID = soundPool.load(this, R.raw.gun, 1);
+		chainsawSoundID = soundPool.load(this, R.raw.chainsaw, 1);
+		scourgeSoundID = soundPool.load(this, R.raw.scourge, 1);
+		munitionsSoundID = soundPool.load(this, R.raw.munitions, 1);
+		pointsSoundID = soundPool.load(this, R.raw.points, 1);
+		deathSoundID = soundPool.load(this, R.raw.death, 1);
+		
 		lastMarkerId = -1;
 
 		initGame();
@@ -363,7 +393,8 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 			public void onDataChange(DataSnapshot snapshot) {
 				Log.d(LOGTAG, "NB PLAYERS : "+snapshot.getChildrenCount());
 				nbPlayersReady = snapshot.getChildrenCount();
-				if(nbPlayersReady == markerIdToPlayerId.size()) {
+				//if(nbPlayersReady == markerIdToPlayerId.size()) {
+				if(nbPlayersReady == 1) {
 					waitingDialog.dismiss();
 					initTimer();
 
@@ -697,10 +728,37 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 				gauge.getLayoutParams().height += incrementValue;
 			}
 			else {
-				
-				 vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-				 vibrator.vibrate(3000);
 				// Gauge full
+				 vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+				 vibrator.vibrate(300);
+
+				 AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+				 float actualVolume = (float) audioManager
+				 		.getStreamVolume(AudioManager.STREAM_MUSIC);
+				 float maxVolume = (float) audioManager
+						.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+		    	 float volume = actualVolume / maxVolume;
+
+		    	  //Is the sound loaded already?
+				 if (loaded) {
+					 switch(globalGunId){
+						 case 0:
+							 //gun
+							 soundPool.play(gunSoundID, volume, volume, 1, 0, 1f);
+							 break;
+						 case 1:
+							 //chain saw
+							 soundPool.play(chainsawSoundID, volume, volume, 1, 0, 1f);
+							 break;
+						 case 2:
+							 //scourge
+							 soundPool.play(scourgeSoundID, volume, volume, 1, 0, 1f);
+							 break;
+						 default:
+							 break;
+					 }
+					
+				 }
 				gauge.getLayoutParams().height = 0;
 				int plus = 1;
 				if(!isEnnemy(playerId)) {
@@ -730,6 +788,21 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 			public Transaction.Result doTransaction(MutableData currentData) {
 				int currentMunitions = currentData.getValue(Integer.class);
 				currentData.setValue(currentMunitions + nbMunitions);
+
+				if(nbMunitions > 0) {
+					vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+					 vibrator.vibrate(300);
+	
+					 AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+					 float actualVolume = (float) audioManager
+					 		.getStreamVolume(AudioManager.STREAM_MUSIC);
+					 float maxVolume = (float) audioManager
+							.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+			    	 float volume = actualVolume / maxVolume;
+			    	 
+			    	 soundPool.play(munitionsSoundID, volume, volume, 1, 0, 1f);
+				}
+				
 				return Transaction.success(currentData);
 			}
 
@@ -740,7 +813,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 				} else {
 					if (!committed) {
 						Log.d(LOGTAG, "Transaction not comitted");
-					} else {
+					} else {						
 						Log.d(LOGTAG, "Transaction succeeded");
 					}
 				}
@@ -755,15 +828,20 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 				handler.post(new Runnable() { // This thread runs in the UI
 					@Override
 					public void run() {
+						 vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+						 vibrator.vibrate(300);
 						switch(gunId) {
 						case 0:
-							munitionsIcon.setImageResource(R.drawable.scourge);
+							munitionsIcon.setImageResource(R.drawable.ic_munitions);
+							globalGunId = 0;
 							break;
 						case 1:
 							munitionsIcon.setImageResource(R.drawable.chainsaw);
+							globalGunId = 1;
 							break;
 						case 2:
-							munitionsIcon.setImageResource(R.drawable.ic_munitions);
+							munitionsIcon.setImageResource(R.drawable.scourge);
+							globalGunId = 2;
 							break;
 						}
 					}
@@ -797,6 +875,27 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 	public void updateCurrentUserPoints(int points) {
 		updatePoints(currentUser.getObjectId(), points);
+		
+		 vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+		 vibrator.vibrate(300);
+
+		 AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+		 float actualVolume = (float) audioManager
+		 		.getStreamVolume(AudioManager.STREAM_MUSIC);
+		 float maxVolume = (float) audioManager
+				.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+		 float volume = actualVolume / maxVolume;
+		
+		if(points > 0) {	    	 
+			 vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+			 vibrator.vibrate(300);
+	    	 soundPool.play(pointsSoundID, volume, volume, 1, 0, 1f);
+		}else {
+			 vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+			 vibrator.vibrate(300);
+			 soundPool.play(deathSoundID, volume, volume, 1, 0, 1f);
+		}
+		
 	}
 
 	private void updatePoints(String playerId, final int points) {
