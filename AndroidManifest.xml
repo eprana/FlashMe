@@ -49,6 +49,8 @@
     -->
     <uses-permission android:name="android.permission.INTERNET"/>
 
+    <uses-permission android:name="android.permission.VIBRATE"></uses-permission>
+    
     <!--
         Add this permission to check which network access properties (e.g.
         active type: 3G/WiFi).
