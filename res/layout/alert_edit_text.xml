@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent" >
+
+	<TextView
+	    android:id="@+id/text_alert"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_margin="@dimen/large_mg"
+	    android:text="@string/invite_friend"
+	    android:paddingBottom="@dimen/large_mg" />
+	
+	<EditText
+        android:id="@+id/mail_friend"
+        android:layout_below="@id/text_alert"
+        android:inputType="textEmailAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+         <requestFocus />
+     </EditText>
+ 
+</RelativeLayout>
