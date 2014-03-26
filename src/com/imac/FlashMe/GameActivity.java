@@ -722,7 +722,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 		// Creator handle timer
 		if(isCreator) {
-			new CountDownTimer(30000/*minutes*60000*/, 1000) {
+			new CountDownTimer(minutes*60000, 1000) {
 				public void onTick(long millisUntilFinished) {
 					int minutesRemaining = (int) Math.floor((millisUntilFinished/1000)/60);
 					int secondsRemaining = (int) ((millisUntilFinished/1000) - (minutesRemaining*60));
@@ -783,7 +783,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 			else {
 				// Gauge full
 				vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-				vibrator.vibrate(300);
+				vibrator.vibrate(100);
 
 				AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 				float actualVolume = (float) audioManager
@@ -844,7 +844,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 				if(nbMunitions > 0) {
 					vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-					vibrator.vibrate(300);
+					vibrator.vibrate(100);
 
 					AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 					float actualVolume = (float) audioManager
@@ -882,7 +882,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 					@Override
 					public void run() {
 						vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-						vibrator.vibrate(300);
+						vibrator.vibrate(100);
 						switch(gunId) {
 						case 0:
 							munitionsIcon.setImageResource(R.drawable.ic_munitions);
@@ -930,7 +930,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		updatePoints(currentUser.getObjectId(), points);
 
 		vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-		vibrator.vibrate(300);
+		vibrator.vibrate(100);
 
 		AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 		float actualVolume = (float) audioManager
@@ -941,11 +941,11 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 		if(points > 0) {	    	 
 			vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-			vibrator.vibrate(300);
+			//vibrator.vibrate(100);
 			soundPool.play(pointsSoundID, volume, volume, 1, 0, 1f);
 		}else {
 			vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-			vibrator.vibrate(300);
+			//vibrator.vibrate(100);
 			soundPool.play(deathSoundID, volume, volume, 1, 0, 1f);
 		}
 
