@@ -609,9 +609,12 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 							markerQuery.getFirstInBackground( new GetCallback<ParseObject>(){
 								@Override
 								public void done(ParseObject marker, ParseException e) {
-									marker.put("rank", rankCount);
-									++rankCount;
-									marker.saveInBackground();
+									if(marker != null) {
+										marker.put("rank", rankCount);
+										++rankCount;
+										marker.saveInBackground();
+									}
+									
 								}
 							});
 						}

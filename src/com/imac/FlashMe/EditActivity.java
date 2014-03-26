@@ -265,7 +265,11 @@ public class EditActivity extends Activity {
     				// Replacing the preview by the chosen image
     				//Bitmap avatar = Bitmap.createScaledBitmap((Bitmap) data.getExtras().get("data"), 300, 300, false);
     				Bitmap avatar = (Bitmap) data.getExtras().get("data");
-    				avatar = Bitmap.createScaledBitmap(avatar, width, height, false);
+    				scaleX = avatar.getWidth()/width;
+    				if(scaleX > 1) {
+    					avatar = Bitmap.createScaledBitmap(avatar, avatar.getWidth()/scaleX, avatar.getHeight()/scaleX, false);
+    				}
+    				
     				avatarView.setImageBitmap(avatar);
     				
     				// Replacing the avatar in the database
@@ -295,7 +299,12 @@ public class EditActivity extends Activity {
 						}
 						// Replacing the preview image by the chosen image
 	    				//Bitmap avatarPicked = Bitmap.createScaledBitmap(bm, 300, 300, false);
-						Bitmap avatarPicked = Bitmap.createScaledBitmap(bm, width, height, false);
+						scaleX = bm.getWidth()/width;
+						Bitmap avatarPicked = bm;
+	    				if(scaleX > 1) {
+	    					avatarPicked = Bitmap.createScaledBitmap(bm, bm.getWidth()/scaleX, bm.getHeight()/scaleX, false);
+	    				}
+						
 						avatarView.setImageBitmap(avatarPicked);
 						
 						// Replacing the avatar in the database

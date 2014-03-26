@@ -94,7 +94,6 @@ public class ProfileFragment extends Fragment {
 	private void loadStatistics() {
 	    totalScoreView.setText("TOTAL SCORE : "+ String.valueOf(currentUser.getInt("totalScore")));
 	    bestScoreValue.setText(String.valueOf(currentUser.getInt("bestScore")));
-		rankValue.setText(String.valueOf(currentUser.getInt("rank")));
 		defeatsValue.setText(String.valueOf(currentUser.getInt("defeats")));
 		victoriesValue.setText(String.valueOf(currentUser.getInt("victories")));
 		
@@ -103,7 +102,9 @@ public class ProfileFragment extends Fragment {
 		markerQuery.getFirstInBackground( new GetCallback<ParseObject>(){
 			@Override
 			public void done(ParseObject marker, ParseException e) {
-				rankValue.setText(Integer.toString(marker.getInt("rank")));
+				if(marker != null) {
+					rankValue.setText(Integer.toString(marker.getInt("rank")));
+				}		
 			}
 		});
 	}

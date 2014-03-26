@@ -60,7 +60,6 @@ public class SignUpActivity extends Activity {
     int width = 300;
 	int height = 300;
 	int scaleX;
-	int scaleY;
     
     private EditText username;
     private EditText password;
@@ -325,9 +324,9 @@ public class SignUpActivity extends Activity {
     				Bitmap avatar = (Bitmap) data.getExtras().get("data");
 
     				scaleX = avatar.getWidth()/width;
-    				scaleY = avatar.getHeight()/height;
-    				avatar = Bitmap.createScaledBitmap(avatar, scaleX, scaleY, false);
-    				//Bitmap resizedAvatar = Bitmap.createBitmap(avatar, avatar.getWidth()/2 - width/2, avatar.getHeight()/2 - height/2, width, height, null, false);
+    				if(scaleX > 1) {
+    					avatar = Bitmap.createScaledBitmap(avatar,  avatar.getWidth()/scaleX,  avatar.getHeight()/scaleX, false);
+    				}
     				avatarView.setImageBitmap(avatar);
     				
     				bitmapToSend = avatar;
@@ -361,10 +360,10 @@ public class SignUpActivity extends Activity {
 						}
 						// Replacing the preview image by the chosen image
 						scaleX = bm.getWidth()/width;
-	    				scaleY = bm.getHeight()/height;
-	    				bm = Bitmap.createScaledBitmap(bm, scaleX, scaleY, false);
-	    			
-						
+						if(scaleX > 1) {
+							bm = Bitmap.createScaledBitmap(bm, bm.getWidth()/scaleX, bm.getHeight()/scaleX, false);
+						}
+	    				
 						avatarView.setImageBitmap(bm);
 						bitmapToSend = bm;
 						
