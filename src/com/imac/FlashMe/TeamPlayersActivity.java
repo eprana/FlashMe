@@ -18,6 +18,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
@@ -30,16 +31,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class TeamPlayersActivity extends ListActivity {
-	
+
 	private static final String LOGTAG = "TeamPlayersActivity";
 	private Context context;
 	private LayoutInflater inflater;
-	
+
 	// Data elements
 	private static ParseUser currentUser = null;
 	private String teamId;
 	private static List<String> playersList = null;
-	
+
 	// Layout elements
 	private TextView title;
 	private AutoCompleteTextView autocompleteValue;
@@ -49,7 +50,7 @@ public class TeamPlayersActivity extends ListActivity {
 	private static ProgressBar progress = null;
 	private ImageButton refreshButton;
 	private ListView teamPlayersList;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -58,17 +59,20 @@ public class TeamPlayersActivity extends ListActivity {
 		inflater = LayoutInflater.from(context);
 		Intent intent = getIntent();
 		teamId = intent.getStringExtra("TEAM_ID");
-		
+
+		// Action bar
 		getActionBar().setIcon(R.drawable.ic_menu);
 		getActionBar().setDisplayShowTitleEnabled(false);
-		
+		getActionBar().setDisplayHomeAsUpEnabled(true); 
+		getActionBar().setHomeButtonEnabled(true);
+
 		// Initialize members
 		currentUser = ParseUser.getCurrentUser();
 		currentUser.put("state", 1);
 		currentUser.saveInBackground();
-		
+
 		playersList = new ArrayList<String>();
-		
+
 		autocompleteValue = (AutoCompleteTextView) this.findViewById(R.id.autocomplete_player);
 		ParseQuery<ParseUser> playersQuery = ParseUser.getQuery();
 		playersQuery.findInBackground(new FindCallback<ParseUser>() {
@@ -83,7 +87,7 @@ public class TeamPlayersActivity extends ListActivity {
 		progress = (ProgressBar) this.findViewById(R.id.progressBar);
 		refreshButton = (ImageButton) this.findViewById(R.id.refresh_bt);
 		teamPlayersList = (ListView) this.findViewById(android.R.id.list);
-		
+
 		addButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -98,16 +102,27 @@ public class TeamPlayersActivity extends ListActivity {
 				}
 			}
 		});
-		
+
 		refreshButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				teamPlayersParseAdapter.loadObjects();
 			}
 		});
-		
-		
+
+
 		initParseAdapter();
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			onBackPressed();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 	
 	@Override
@@ -123,21 +138,21 @@ public class TeamPlayersActivity extends ListActivity {
 		currentUser.put("state", 1);
 		currentUser.saveInBackground();
 	}
-	
+
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		Log.d("Zizanie", "TeamPlayersActivity : onListItemClick");
 		super.onListItemClick(l, v, position, id);
-		
+
 		ParseUser user = ((ParseUser) l.getItemAtPosition(position));
 		String userId = user.getObjectId();
-		
+
 		final Intent intent = new Intent(context, ProfileActivity.class);
 		intent.putExtra("USER", userId);
 		startActivity(intent);
 
 	}
-	
+
 	private void initAutoCompleteList(List<ParseUser> players) {
 		for(ParseUser player: players) {
 			playersList.add(player.getUsername());
@@ -146,7 +161,7 @@ public class TeamPlayersActivity extends ListActivity {
 		playersAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, playersList.toArray(playersArray));
 		autocompleteValue.setAdapter(playersAdapter);
 	}
-	
+
 	private void initParseAdapter() {
 		ParseQuery<ParseObject> teamQuery = ParseQuery.getQuery("Team");
 		teamQuery.whereEqualTo("objectId", teamId);
@@ -172,7 +187,7 @@ public class TeamPlayersActivity extends ListActivity {
 				}
 				autocompleteValue.setEnabled(enable);
 				addButton.setEnabled(enable);
-				
+
 				teamPlayersParseAdapter.addOnQueryLoadListener(new OnQueryLoadListener<ParseObject>() {
 					@Override
 					public void onLoaded(List<ParseObject> arg0, Exception arg1) {
@@ -184,12 +199,12 @@ public class TeamPlayersActivity extends ListActivity {
 						progress.setVisibility(View.VISIBLE);
 						teamPlayersList.setVisibility(View.INVISIBLE);
 					}
-		    	});
+				});
 				setListAdapter(teamPlayersParseAdapter);
 			}
 		});
 	}
-	
+
 	// Add player to team
 	private void addPlayerToTeam(final String playerName) {
 		// Parse query

@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
@@ -40,13 +41,13 @@ public class GameTeamsActivity extends ListActivity {
 	private static final String LOGTAG = "TeamPlayersActivity";
 	private Context context;
 	private LayoutInflater inflater;
-	
+
 	// Data elements
 	private static ParseUser currentUser = null;
 	private boolean isCreator;
 	private String gameId;
 	private static List<String> teamsList = null;
-	
+
 	// Layout elements
 	private TextView title;
 	private AutoCompleteTextView autocompleteValue;
@@ -57,7 +58,7 @@ public class GameTeamsActivity extends ListActivity {
 	private ImageButton refreshButton;
 	private Button playButton;
 	private ListView gameTeamsList;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -66,10 +67,13 @@ public class GameTeamsActivity extends ListActivity {
 		inflater = LayoutInflater.from(context);
 		Intent intent = getIntent();
 		gameId = intent.getStringExtra("GAME_ID");
-		
+
+		// Action bar
 		getActionBar().setIcon(R.drawable.ic_menu);
 		getActionBar().setDisplayShowTitleEnabled(false);
-		
+		getActionBar().setDisplayHomeAsUpEnabled(true); 
+		getActionBar().setHomeButtonEnabled(true);
+
 		// Initialize members
 		currentUser = ParseUser.getCurrentUser();
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Game");
@@ -90,9 +94,9 @@ public class GameTeamsActivity extends ListActivity {
 		});
 		currentUser.put("state", 1);
 		currentUser.saveInBackground();
-		
+
 		teamsList = new ArrayList<String>();
-		
+
 		autocompleteValue = (AutoCompleteTextView) this.findViewById(R.id.autocomplete_player);
 		autocompleteValue.setHint("Team name");
 		ParseQuery<ParseObject> teamsQuery = ParseQuery.getQuery("Team");
@@ -109,7 +113,7 @@ public class GameTeamsActivity extends ListActivity {
 		refreshButton = (ImageButton) this.findViewById(R.id.refresh_bt);
 		playButton = (Button) this.findViewById(R.id.play);
 		gameTeamsList = (ListView) this.findViewById(android.R.id.list);
-		
+
 		addButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -133,14 +137,14 @@ public class GameTeamsActivity extends ListActivity {
 				}
 			}
 		});
-		
+
 		refreshButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				gameTeamsParseAdapter.loadObjects();
 			}
 		});
-		
+
 		// Play button
 		playButton.setVisibility(View.VISIBLE);
 		playButton.setOnClickListener(new OnClickListener() {
@@ -169,14 +173,14 @@ public class GameTeamsActivity extends ListActivity {
 						np.setWrapSelectorWheel(false);
 						alertDialog.setView(np);
 						alertDialog.setPositiveButton("START", new DialogInterface.OnClickListener() {
-							
+
 							@Override
 							public void onClick(DialogInterface dialog, int id) {
 								final Intent intent = new Intent(context, GameActivity.class);
 								intent.putExtra("GAME_ID", gameId);
 								intent.putExtra("MINUTES", np.getValue());
 								startActivity(intent);
-								
+
 							}
 						});
 						alertDialog.setNegativeButton("CANCEL", null);
@@ -191,9 +195,20 @@ public class GameTeamsActivity extends ListActivity {
 				}
 			}
 		});
-		
+
 		initParseAdapter();
-		
+
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			onBackPressed();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 	
 	@Override
@@ -209,7 +224,7 @@ public class GameTeamsActivity extends ListActivity {
 		currentUser.put("state", 1);
 		currentUser.saveInBackground();
 	}
-	
+
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		Log.d(LOGTAG, "onListItemClick");
@@ -221,7 +236,7 @@ public class GameTeamsActivity extends ListActivity {
 		intent.putExtra("TEAM_ID", teamId);
 		startActivity(intent);
 	}
-	
+
 	private void initAutoCompleteList(List<ParseObject> teams) {
 		for(ParseObject team: teams) {
 			teamsList.add(team.getString("name"));
@@ -232,7 +247,7 @@ public class GameTeamsActivity extends ListActivity {
 			autocompleteValue.setAdapter(teamsAdapter);
 		}
 	}
-	
+
 	private void initParseAdapter() {
 		ParseQuery<ParseObject> gameQuery = ParseQuery.getQuery("Game");
 		gameQuery.whereEqualTo("objectId", gameId);
@@ -253,7 +268,7 @@ public class GameTeamsActivity extends ListActivity {
 				}
 				autocompleteValue.setEnabled(enable);
 				addButton.setEnabled(enable);
-				
+
 				gameTeamsParseAdapter.addOnQueryLoadListener(new OnQueryLoadListener<ParseObject>() {
 					@Override
 					public void onLoaded(List<ParseObject> arg0, Exception arg1) {
@@ -265,12 +280,12 @@ public class GameTeamsActivity extends ListActivity {
 						progress.setVisibility(View.VISIBLE);
 						gameTeamsList.setVisibility(View.VISIBLE);
 					}
-		    	});
+				});
 				setListAdapter(gameTeamsParseAdapter);
 			}
 		});
 	}
-	
+
 	// Add team to game
 	private void addTeamToGame(final String teamName) {
 		// Parse query
@@ -304,7 +319,7 @@ public class GameTeamsActivity extends ListActivity {
 										}
 									});
 								}
-								
+
 							});
 							return;
 						}
@@ -366,7 +381,7 @@ public class GameTeamsActivity extends ListActivity {
 			}
 		});
 	}
-	
+
 	private void addTeam(final ParseObject game, ParseObject team, final List<ParseObject> players) {
 		game.getRelation("teams").add(team);
 		game.saveInBackground(new SaveCallback() {

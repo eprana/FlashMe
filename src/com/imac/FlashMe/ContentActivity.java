@@ -88,6 +88,8 @@ public class ContentActivity extends Activity implements
 	 	
 	 	actionBar.setIcon(R.drawable.ic_menu);
 	 	actionBar.setDisplayShowTitleEnabled(false);
+	 	actionBar.setDisplayHomeAsUpEnabled(true); 
+	 	actionBar.setHomeButtonEnabled(true);
 	 	actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         
 	 	for(TabAction tab : tabs) {
@@ -113,6 +115,9 @@ public class ContentActivity extends Activity implements
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
+		    case android.R.id.home:
+				onBackPressed();
+				return true;
 	        case R.id.action_edit_profile:
 	        	Intent intent = new Intent(getApplicationContext(), EditActivity.class);
 	        	startActivityForResult(intent, EDIT_PROFILE);

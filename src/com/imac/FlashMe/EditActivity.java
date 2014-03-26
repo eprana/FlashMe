@@ -30,6 +30,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
@@ -68,6 +69,8 @@ public class EditActivity extends Activity {
 		
 		getActionBar().setIcon(R.drawable.ic_menu);
 		getActionBar().setDisplayShowTitleEnabled(false);
+		getActionBar().setDisplayHomeAsUpEnabled(true); 
+		getActionBar().setHomeButtonEnabled(true);
 		
 		currentUser = ParseUser.getCurrentUser();
 		avatarView = (ImageView) findViewById(R.id.profile_picture);
@@ -253,6 +256,17 @@ public class EditActivity extends Activity {
 		finish();
 		Intent intent = new Intent(getApplicationContext(), MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     	startActivity(intent);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			onBackPressed();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 	
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {  

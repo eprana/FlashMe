@@ -58,6 +58,7 @@ import android.os.Handler;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
@@ -150,8 +151,11 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		gameId = intent.getStringExtra("GAME_ID");
 		minutes = intent.getIntExtra("MINUTES", 20);
 		
+		// Action bar
 		getActionBar().setIcon(R.drawable.ic_menu);
 		getActionBar().setDisplayShowTitleEnabled(false);
+		getActionBar().setDisplayHomeAsUpEnabled(true); 
+		getActionBar().setHomeButtonEnabled(true);
 
 		// Get layout elements
 		inflater = LayoutInflater.from(context);
@@ -190,6 +194,17 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		initGame();
 	}
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			onBackPressed();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+	
 	// Initialize game
 	private void initGame() {
 		// Get game

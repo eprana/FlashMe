@@ -58,9 +58,11 @@ public class ProfileActivity extends Activity {
 		context = ProfileActivity.this;
 		inflater = LayoutInflater.from(context);
 		Intent intent = getIntent();
-		
+
 		getActionBar().setIcon(R.drawable.ic_menu);
 		getActionBar().setDisplayShowTitleEnabled(false);
+		getActionBar().setDisplayHomeAsUpEnabled(true); 
+		getActionBar().setHomeButtonEnabled(true);
 
 		// Initialize members
 		currentUser = ParseUser.getCurrentUser();
@@ -74,7 +76,7 @@ public class ProfileActivity extends Activity {
 		rankValue = (TextView) this.findViewById(R.id.rank_value);
 		defeatsValue = (TextView) this.findViewById(R.id.defeats_value);
 		victoriesValue = (TextView) this.findViewById(R.id.victories_value);
-				
+
 		profileUserId = intent.getStringExtra("USER");
 		ParseQuery<ParseUser> query =  ParseUser.getQuery();
 		query.whereEqualTo("objectId", profileUserId);
@@ -84,14 +86,14 @@ public class ProfileActivity extends Activity {
 				profileUser = user;
 				if(profileUser != null && userNameProfileView != null) {
 					userNameProfileView.setText(String.valueOf(profileUser.getString("username") + "'s profile"));
-					
+
 					// Load display data
 					loadProfileData(context);
 				}
-				
+
 			}
 		});
-		
+
 		refreshButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -99,37 +101,48 @@ public class ProfileActivity extends Activity {
 				loadProfilePicture(context);
 			}
 		});
-		
-		
+
+
 	}
-		
+
 	@Override
 	protected void onPause() {
 		super.onPause();
 	}
-	
+
 	@Override
 	protected void onResume() {
 		super.onResume();
 	}
-	
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			onBackPressed();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+
 	public void loadProfileData(final Context context) {
 
 		// Get user's statistics
 		loadStatistics();
-		
+
 		// Get user's images
 		loadProfilePicture(context);
-    	loadMarkerImage(context);
+		loadMarkerImage(context);
 	}
-	
+
 	private void loadStatistics() {
-	    totalScoreView.setText("TOTAL SCORE : "+ String.valueOf(profileUser.getInt("totalScore")));
-	    bestScoreValue.setText(String.valueOf(profileUser.getInt("bestScore")));
+		totalScoreView.setText("TOTAL SCORE : "+ String.valueOf(profileUser.getInt("totalScore")));
+		bestScoreValue.setText(String.valueOf(profileUser.getInt("bestScore")));
 		rankValue.setText(String.valueOf(profileUser.getInt("rank")));
 		defeatsValue.setText(String.valueOf(profileUser.getInt("defeats")));
 		victoriesValue.setText(String.valueOf(profileUser.getInt("victories")));
-		
+
 		ParseQuery<ParseObject> markerQuery = ParseQuery.getQuery("Marker");
 		markerQuery.whereEqualTo("Id", profileUser.getInt("markerId"));
 		markerQuery.getFirstInBackground( new GetCallback<ParseObject>(){
@@ -139,7 +152,7 @@ public class ProfileActivity extends Activity {
 			}
 		});
 	}
-	
+
 	private void loadProfilePicture(final Context context) {
 		profileUser.refreshInBackground(new RefreshCallback() {
 			@Override
@@ -162,16 +175,16 @@ public class ProfileActivity extends Activity {
 			}
 		});progress.setVisibility(View.GONE);
 	}
-	
+
 	private void loadMarkerImage(final Context context) {
 		ParseQuery<ParseObject> markerQuery = ParseQuery.getQuery("Marker");
-    	markerQuery.whereEqualTo("Id", profileUser.getInt("MarkerId"));
-    	markerQuery.getFirstInBackground(new GetCallback<ParseObject>() {
-			
+		markerQuery.whereEqualTo("Id", profileUser.getInt("MarkerId"));
+		markerQuery.getFirstInBackground(new GetCallback<ParseObject>() {
+
 			@Override
 			public void done(ParseObject marker, ParseException e) {
 				ParseFile markerFile = (ParseFile) marker.getParseFile("thumb");
-		    	markerFile.getDataInBackground(new GetDataCallback() {
+				markerFile.getDataInBackground(new GetDataCallback() {
 					public void done(byte[] data, ParseException e) {
 						if (e != null){
 							Toast.makeText(context, "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
