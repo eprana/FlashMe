@@ -398,8 +398,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 			public void onDataChange(DataSnapshot snapshot) {
 				Log.d(LOGTAG, "NB PLAYERS : "+snapshot.getChildrenCount());
 				nbPlayersReady = snapshot.getChildrenCount();
-				//if(nbPlayersReady == markerIdToPlayerId.size()) {
-				if(nbPlayersReady == 1) {
+				if(nbPlayersReady == markerIdToPlayerId.size()) {
 					waitingDialog.dismiss();
 					initTimer();
 
@@ -414,8 +413,19 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	}
 
 	private void waitingForPlayers() {
-		waitingDialog = ProgressDialog.show(context, gameName, "Waiting for other players to be ready...", true);
+		waitingDialog = new ProgressDialog(context);
+		waitingDialog.setTitle(gameName);
+		waitingDialog.setMessage("Waiting for other players to be ready...");
+		waitingDialog.setCancelable(false);
+		
+		waitingDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+			@Override
+	         public void onClick(DialogInterface dialog, int which) {
+	            onBackPressed();
+	        }
+	    });
 		waitingDialog.show();
+				
 		updateNbPlayers();
 	}
 
@@ -567,7 +577,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 						finalCount++;
 
-						if(finalCount == 1 /*teamIdToPlayerIdArray.size()*/) {
+						if(finalCount == teamIdToPlayerIdArray.size()) {
 							if(bestTeamId.equals(currentUserTeam)) {
 								currentUser.increment("victories");
 							}
@@ -719,11 +729,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	@Override
 	protected void onDestroy() {
 		Log.d(LOGTAG, "onDestroy");
-		//		try {
-		//			vuforiaAppSession.stopAR();
-		//		} catch (SampleApplicationException e) {
-		//			Log.e(LOGTAG, e.getString());
-		//		}
+
 		super.onDestroy();
 		mTextures.clear();
 		mTextures = null;

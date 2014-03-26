@@ -98,7 +98,8 @@
         <!-- _______________ MAIN ACTIVITY _______________ -->
         <activity android:label="@string/app_name"
                   android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize"
-                  android:name="com.imac.FlashMe.MainActivity">
+                  android:name="com.imac.FlashMe.MainActivity"
+                  android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -108,38 +109,45 @@
         <!-- _______________ SIGN UP ACTIVITY _______________ -->
         <activity
             android:name="com.imac.FlashMe.SignUpActivity"
-            android:label="@string/title_activity_sign_up" />
+            android:label="@string/title_activity_sign_up" 
+            android:screenOrientation="portrait"/>
 
         <!-- _______________ CONTENT ACTIVITY _______________ -->        
         <activity
             android:name="com.imac.FlashMe.ContentActivity"
-            android:label="@string/title_activity_content" />
+            android:label="@string/title_activity_content" 
+            android:screenOrientation="portrait"/>
         
         <!-- _______________ TEAM PLAYERS ACTIVITY _______________ -->        
         <activity
             android:name="com.imac.FlashMe.TeamPlayersActivity"
-            android:label="@string/title_activity_players" />
+            android:label="@string/title_activity_players" 
+            android:screenOrientation="portrait"/>
         
         <!-- _______________ GAME TEAMS ACTIVITY _______________ -->        
         <activity
             android:name="com.imac.FlashMe.GameTeamsActivity"
-            android:label="@string/title_activity_teams" />
+            android:label="@string/title_activity_teams" 
+            android:screenOrientation="portrait"/>
         
         
         <!-- _______________ GAME ACTIVITY _______________ -->        
         <activity
             android:name="com.imac.FlashMe.GameActivity"
-            android:label="@string/title_activity_game"/>
+            android:label="@string/title_activity_game"
+            android:screenOrientation="portrait"/>
                 
         <!-- _______________ EDIT ACTIVITY _______________ -->        
         <activity
             android:name="com.imac.FlashMe.EditActivity"
-            android:label="@string/title_edit_activity" />
+            android:label="@string/title_edit_activity" 
+            android:screenOrientation="portrait"/>
         
         <!-- _______________ PROFILE ACTIVITY _______________ -->        
         <activity
             android:name="com.imac.FlashMe.ProfileActivity"
-            android:label="@string/title_profile_activity" />
+            android:label="@string/title_profile_activity" 
+            android:screenOrientation="portrait"/>
       
     </application>
 
