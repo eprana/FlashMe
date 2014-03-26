@@ -149,6 +149,9 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		Intent intent = getIntent();
 		gameId = intent.getStringExtra("GAME_ID");
 		minutes = intent.getIntExtra("MINUTES", 20);
+		
+		getActionBar().setIcon(R.drawable.ic_menu);
+		getActionBar().setDisplayShowTitleEnabled(false);
 
 		// Get layout elements
 		inflater = LayoutInflater.from(context);
@@ -592,7 +595,8 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		if(isCreator) {
 			// Sort user by descending score
 			ParseQuery<ParseUser> query = ParseUser.getQuery();
-			query.orderByDescending("totalScore");						
+			query.orderByDescending("totalScore");		
+			Log.d("Zizanie", "Order");
 			query.findInBackground(new FindCallback<ParseUser>() {
 
 				@Override
@@ -602,7 +606,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 						rankCount = 1;
 						// For each user
 						while(it.hasNext()) {
-							ParseUser user = it.next();
+							final ParseUser user = it.next();
 							final int markerId = user.getInt("markerId");
 							ParseQuery<ParseObject> markerQuery = ParseQuery.getQuery("Marker");
 							markerQuery.whereEqualTo("Id", markerId);
@@ -674,12 +678,12 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 							}
 
 							// Scores
-							computeScore();
-							updateRank();
+							computeScore();							
 							doPlayerWin();
 
 							// Game state
-							updateGameState();						
+							updateGameState();		
+							updateRank();
 
 						}
 					}
@@ -693,7 +697,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 		// Creator handle timer
 		if(isCreator) {
-			new CountDownTimer(15000 /*minutes*60000*/, 1000) {
+			new CountDownTimer(30000/*minutes*60000*/, 1000) {
 				public void onTick(long millisUntilFinished) {
 					int minutesRemaining = (int) Math.floor((millisUntilFinished/1000)/60);
 					int secondsRemaining = (int) ((millisUntilFinished/1000) - (minutesRemaining*60));
