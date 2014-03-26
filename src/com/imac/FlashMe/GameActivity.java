@@ -108,7 +108,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	private ImageView munitionsIcon;
 	private int minutes;
 	private ProgressDialog waitingDialog;
-	
+
 	// Vibrator and sounds
 	private Vibrator vibrator;
 	private SoundPool soundPool;
@@ -119,7 +119,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	private int pointsSoundID;
 	private int deathSoundID;
 	boolean loaded = false;
-	
+
 	SampleApplicationSession vuforiaAppSession;
 	private SampleApplicationGLView mGlView;
 	private GameRenderer mRenderer;
@@ -181,7 +181,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		munitionsSoundID = soundPool.load(this, R.raw.munitions, 1);
 		pointsSoundID = soundPool.load(this, R.raw.points, 1);
 		deathSoundID = soundPool.load(this, R.raw.death, 1);
-		
+
 		lastMarkerId = -1;
 
 		initGame();
@@ -463,7 +463,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		t_yourScore.setText("Your score : " + playerScore);
 		t_yourScore.setTextSize(20);
 		ll.addView(t_yourScore);
-		
+
 		for(final String teamId : teamsId) {
 
 			// Get parse team
@@ -474,12 +474,12 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 				public void done(ParseObject team, ParseException e) {
 					String teamName = team.getString("name");
 					finalCountWinner++;
-					
+
 					// Best team
 					if(teamId.equals(bestTeamId)) {
 						bestTeamName = teamName;					
 					}
-					
+
 					// Text view for the team
 					TextView t_team = new TextView(context);
 					String teamScore;
@@ -493,7 +493,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 					t_team.setText(teamName + " score : " + teamScore);
 					t_team.setTextSize(20);
 					ll.addView(t_team);
-					
+
 					// Text view for winning team 
 					if(finalCountWinner == teamIdToPlayerIdArray.size()) {
 						// Winning team
@@ -508,7 +508,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 			});
 		}
-		
+
 		// Alert Dialog
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
 		alertDialogBuilder.setView(promptsView);
@@ -523,10 +523,12 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 						gameRef.removeValue();
 						gameRef = null;
 					}
-					
+
 				}
 
 				finish();
+				final Intent intent = new Intent(context, ContentActivity.class);
+				startActivity(intent);
 
 			}
 		});
@@ -536,7 +538,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 	private void doPlayerWin() {
 		Iterator<Entry<String, ArrayList<String>>> it = teamIdToPlayerIdArray.entrySet().iterator();	
-		
+
 		// For each team
 		while(it.hasNext()) {
 			final String teamId = it.next().getKey();
@@ -588,7 +590,6 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 	private void updateRank() {
 		if(isCreator) {
-			Log.d("Zizanie", "RANK");
 			// Sort user by descending score
 			ParseQuery<ParseUser> query = ParseUser.getQuery();
 			query.orderByDescending("totalScore");						
@@ -597,12 +598,10 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 				@Override
 				public void done(List<ParseUser> userlist, ParseException e) {
 					if (e == null) {
-						Log.d("Zizanie", "Size : " + Integer.toString(userlist.size()));
 						Iterator<ParseUser> it = userlist.iterator();
 						rankCount = 1;
 						// For each user
 						while(it.hasNext()) {
-							Log.d("Zizanie", "Rank : " + rankCount);
 							ParseUser user = it.next();
 							final int markerId = user.getInt("markerId");
 							ParseQuery<ParseObject> markerQuery = ParseQuery.getQuery("Marker");
@@ -610,20 +609,11 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 							markerQuery.getFirstInBackground( new GetCallback<ParseObject>(){
 								@Override
 								public void done(ParseObject marker, ParseException e) {
-									Log.d("Zizanie", "Put rank : " + rankCount + "in marker : " + markerId);
 									marker.put("rank", rankCount);
 									++rankCount;
-									try {
-										marker.save();
-									} catch (ParseException e1) {
-										// TODO Auto-generated catch block
-										e1.printStackTrace();
-									}
+									marker.saveInBackground();
 								}
 							});
-
-							//s++rankCount;
-
 						}
 
 					} else {
@@ -649,7 +639,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 			});
 		}	
 	}
-	
+
 	private void gameListening() {
 		gameRef.addValueEventListener(new ValueEventListener() {
 
@@ -672,7 +662,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 						// End of a game
 						if(timeValue.equals("0:1")) {
 							Log.d("Zizanie", "Game is FINISHED ! ");
-							
+
 							// End Vuforia
 							try {
 								vuforiaAppSession.stopAR();
@@ -687,7 +677,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 							// Game state
 							updateGameState();						
-								
+
 						}
 					}
 				}	
@@ -722,11 +712,11 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	@Override
 	protected void onDestroy() {
 		Log.d(LOGTAG, "onDestroy");
-//		try {
-//			vuforiaAppSession.stopAR();
-//		} catch (SampleApplicationException e) {
-//			Log.e(LOGTAG, e.getString());
-//		}
+		//		try {
+		//			vuforiaAppSession.stopAR();
+		//		} catch (SampleApplicationException e) {
+		//			Log.e(LOGTAG, e.getString());
+		//		}
 		super.onDestroy();
 		mTextures.clear();
 		mTextures = null;
@@ -764,36 +754,36 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 			}
 			else {
 				// Gauge full
-				 vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-				 vibrator.vibrate(300);
+				vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+				vibrator.vibrate(300);
 
-				 AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-				 float actualVolume = (float) audioManager
-				 		.getStreamVolume(AudioManager.STREAM_MUSIC);
-				 float maxVolume = (float) audioManager
+				AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+				float actualVolume = (float) audioManager
+						.getStreamVolume(AudioManager.STREAM_MUSIC);
+				float maxVolume = (float) audioManager
 						.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-		    	 float volume = actualVolume / maxVolume;
+				float volume = actualVolume / maxVolume;
 
-		    	  //Is the sound loaded already?
-				 if (loaded) {
-					 switch(globalGunId){
-						 case 0:
-							 //gun
-							 soundPool.play(gunSoundID, volume, volume, 1, 0, 1f);
-							 break;
-						 case 1:
-							 //chain saw
-							 soundPool.play(chainsawSoundID, volume, volume, 1, 0, 1f);
-							 break;
-						 case 2:
-							 //scourge
-							 soundPool.play(scourgeSoundID, volume, volume, 1, 0, 1f);
-							 break;
-						 default:
-							 break;
-					 }
-					
-				 }
+				//Is the sound loaded already?
+				if (loaded) {
+					switch(globalGunId){
+					case 0:
+						//gun
+						soundPool.play(gunSoundID, volume, volume, 1, 0, 1f);
+						break;
+					case 1:
+						//chain saw
+						soundPool.play(chainsawSoundID, volume, volume, 1, 0, 1f);
+						break;
+					case 2:
+						//scourge
+						soundPool.play(scourgeSoundID, volume, volume, 1, 0, 1f);
+						break;
+					default:
+						break;
+					}
+
+				}
 				gauge.getLayoutParams().height = 0;
 				int plus = 1;
 				if(!isEnnemy(playerId)) {
@@ -826,18 +816,18 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 				if(nbMunitions > 0) {
 					vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-					 vibrator.vibrate(300);
-	
-					 AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-					 float actualVolume = (float) audioManager
-					 		.getStreamVolume(AudioManager.STREAM_MUSIC);
-					 float maxVolume = (float) audioManager
+					vibrator.vibrate(300);
+
+					AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+					float actualVolume = (float) audioManager
+							.getStreamVolume(AudioManager.STREAM_MUSIC);
+					float maxVolume = (float) audioManager
 							.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-			    	 float volume = actualVolume / maxVolume;
-			    	 
-			    	 soundPool.play(munitionsSoundID, volume, volume, 1, 0, 1f);
+					float volume = actualVolume / maxVolume;
+
+					soundPool.play(munitionsSoundID, volume, volume, 1, 0, 1f);
 				}
-				
+
 				return Transaction.success(currentData);
 			}
 
@@ -863,8 +853,8 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 				handler.post(new Runnable() { // This thread runs in the UI
 					@Override
 					public void run() {
-						 vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-						 vibrator.vibrate(300);
+						vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+						vibrator.vibrate(300);
 						switch(gunId) {
 						case 0:
 							munitionsIcon.setImageResource(R.drawable.ic_munitions);
@@ -910,27 +900,27 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 	public void updateCurrentUserPoints(int points) {
 		updatePoints(currentUser.getObjectId(), points);
-		
-		 vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-		 vibrator.vibrate(300);
 
-		 AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-		 float actualVolume = (float) audioManager
-		 		.getStreamVolume(AudioManager.STREAM_MUSIC);
-		 float maxVolume = (float) audioManager
+		vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+		vibrator.vibrate(300);
+
+		AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+		float actualVolume = (float) audioManager
+				.getStreamVolume(AudioManager.STREAM_MUSIC);
+		float maxVolume = (float) audioManager
 				.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-		 float volume = actualVolume / maxVolume;
-		
+		float volume = actualVolume / maxVolume;
+
 		if(points > 0) {	    	 
-			 vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-			 vibrator.vibrate(300);
-	    	 soundPool.play(pointsSoundID, volume, volume, 1, 0, 1f);
+			vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+			vibrator.vibrate(300);
+			soundPool.play(pointsSoundID, volume, volume, 1, 0, 1f);
 		}else {
-			 vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-			 vibrator.vibrate(300);
-			 soundPool.play(deathSoundID, volume, volume, 1, 0, 1f);
+			vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+			vibrator.vibrate(300);
+			soundPool.play(deathSoundID, volume, volume, 1, 0, 1f);
 		}
-		
+
 	}
 
 	private void updatePoints(String playerId, final int points) {
