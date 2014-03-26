@@ -97,6 +97,15 @@ public class ProfileFragment extends Fragment {
 		rankValue.setText(String.valueOf(currentUser.getInt("rank")));
 		defeatsValue.setText(String.valueOf(currentUser.getInt("defeats")));
 		victoriesValue.setText(String.valueOf(currentUser.getInt("victories")));
+		
+		ParseQuery<ParseObject> markerQuery = ParseQuery.getQuery("Marker");
+		markerQuery.whereEqualTo("Id", currentUser.getInt("markerId"));
+		markerQuery.getFirstInBackground( new GetCallback<ParseObject>(){
+			@Override
+			public void done(ParseObject marker, ParseException e) {
+				rankValue.setText(Integer.toString(marker.getInt("rank")));
+			}
+		});
 	}
 	
 	private void loadProfilePicture(final Context context) {

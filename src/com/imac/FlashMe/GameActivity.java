@@ -87,6 +87,7 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 	private String bestTeamId = "TOTO";
 	private String bestTeamName;
 	private int playerScore = 0;
+	private int rankCount;
 
 	private int finalCount = 0;
 	private int finalCountWinner = 0;
@@ -518,8 +519,11 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 			public void onClick(DialogInterface dialog, int which) {
 				// Delete Firebase
 				if(isCreator) {
-					gameRef.removeValue();
-					gameRef = null;
+					if(gameRef != null) {
+						gameRef.removeValue();
+						gameRef = null;
+					}
+					
 				}
 
 				finish();
@@ -582,6 +586,55 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 		}
 	}
 
+	private void updateRank() {
+		if(isCreator) {
+			Log.d("Zizanie", "RANK");
+			// Sort user by descending score
+			ParseQuery<ParseUser> query = ParseUser.getQuery();
+			query.orderByDescending("totalScore");						
+			query.findInBackground(new FindCallback<ParseUser>() {
+
+				@Override
+				public void done(List<ParseUser> userlist, ParseException e) {
+					if (e == null) {
+						Log.d("Zizanie", "Size : " + Integer.toString(userlist.size()));
+						Iterator<ParseUser> it = userlist.iterator();
+						rankCount = 1;
+						// For each user
+						while(it.hasNext()) {
+							Log.d("Zizanie", "Rank : " + rankCount);
+							ParseUser user = it.next();
+							final int markerId = user.getInt("markerId");
+							ParseQuery<ParseObject> markerQuery = ParseQuery.getQuery("Marker");
+							markerQuery.whereEqualTo("Id", markerId);
+							markerQuery.getFirstInBackground( new GetCallback<ParseObject>(){
+								@Override
+								public void done(ParseObject marker, ParseException e) {
+									Log.d("Zizanie", "Put rank : " + rankCount + "in marker : " + markerId);
+									marker.put("rank", rankCount);
+									++rankCount;
+									try {
+										marker.save();
+									} catch (ParseException e1) {
+										// TODO Auto-generated catch block
+										e1.printStackTrace();
+									}
+								}
+							});
+
+							//s++rankCount;
+
+						}
+
+					} else {
+						Log.d("Zizanie", "EXCEPTION");
+						// handle Parse Exception here
+					}
+				}
+			});
+		}
+	}
+
 	private void updateGameState() {
 		if(isCreator) {
 			ParseQuery<ParseObject> query = ParseQuery.getQuery("Game");
@@ -629,44 +682,12 @@ public class GameActivity  extends Activity implements SampleApplicationControl 
 
 							// Scores
 							computeScore();
+							updateRank();
 							doPlayerWin();
 
 							// Game state
-							updateGameState();
-							
-							
-
-							// Rank
-							/*if(isCreator) {
-								Log.d("Zizanie", "RANK");
-								ParseQuery<ParseUser> query = ParseUser.getQuery();
-								query.orderByDescending("totalScore");						
-								query.findInBackground(new FindCallback<ParseUser>() {
-
-									@Override
-									public void done(List<ParseUser> userlist, ParseException e) {
-										if (e == null) {
-											Log.d("Zizanie", "Size : " + Integer.toString(userlist.size()));
-											Iterator<ParseUser> it = userlist.iterator();
-											int i = 1;
-											while(it.hasNext()) {
-												ParseUser user = it.next();
-												Log.d("Zizanie", "User : " + user.toString());
-												Log.d("Zizanie", "Rank : " + Integer.toString(i));
-												user.put("rank", i);
-												user.put("tamere", 28);
-												user.saveInBackground();
-												++i;
-
-											}
-
-										} else {
-											Log.d("Zizanie", "EXCEPTION");
-											// handle Parse Exception here
-										}
-									}
-								});
-							}*/	
+							updateGameState();						
+								
 						}
 					}
 				}	

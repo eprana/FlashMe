@@ -91,7 +91,7 @@ public class ProfileActivity extends Activity {
 				
 			}
 		});
-
+		
 		refreshButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -129,6 +129,15 @@ public class ProfileActivity extends Activity {
 		rankValue.setText(String.valueOf(profileUser.getInt("rank")));
 		defeatsValue.setText(String.valueOf(profileUser.getInt("defeats")));
 		victoriesValue.setText(String.valueOf(profileUser.getInt("victories")));
+		
+		ParseQuery<ParseObject> markerQuery = ParseQuery.getQuery("Marker");
+		markerQuery.whereEqualTo("Id", profileUser.getInt("markerId"));
+		markerQuery.getFirstInBackground( new GetCallback<ParseObject>(){
+			@Override
+			public void done(ParseObject marker, ParseException e) {
+				rankValue.setText(Integer.toString(marker.getInt("rank")));
+			}
+		});
 	}
 	
 	private void loadProfilePicture(final Context context) {
